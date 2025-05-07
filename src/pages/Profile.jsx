@@ -476,7 +476,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/header';
 import '../styles/profile.css';
 import { FaUser, FaBitcoin, FaCopy } from 'react-icons/fa';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 function Profile() {
   const navigate = useNavigate();
@@ -915,7 +915,7 @@ function Profile() {
                   Copy Address
                 </button>
                 <div className="qr-code">
-                  <QRCode value={`${depositData.cryptoCurrency.toLowerCase()}:${depositResult.payAddress}?amount=${depositResult.payAmount}`} />
+                  <QRCodeCanvas value={`${depositData.cryptoCurrency.toLowerCase()}:${depositResult.payAddress}?amount=${depositResult.payAmount}`} />
                 </div>
                 <button
                   onClick={() => {
