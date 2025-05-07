@@ -4,16 +4,21 @@
 /* General page styling */
 .home-page {
   /* background-color: #f9fafb; Softer, modern background color */
-  font-family: 'Inter', sans-serif; /* Use Inter for body text */
-  line-height: 1.6; /* Slightly increased for readability */
-  color: #1f2a44; /* Darker text for better contrast */
+  font-family: 'Inter', sans-serif;
+  /* Use Inter for body text */
+  line-height: 1.6;
+  /* Slightly increased for readability */
+  color: #1f2a44;
+  /* Darker text for better contrast */
 }
 
 /* Hero section */
 .hero {
-  background: linear-gradient(135deg, #5b21b6, #ec4899); /* Updated gradient for vibrancy */
+  background: linear-gradient(135deg, #5b21b6, #ec4899);
+  /* Updated gradient for vibrancy */
   color: #ffffff;
-  padding: 8rem 0; /* Increased padding for a more spacious feel */
+  padding: 8rem 0;
+  /* Increased padding for a more spacious feel */
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -26,7 +31,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent); /* Subtle overlay */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+  /* Subtle overlay */
   opacity: 0.5;
   z-index: 1;
 }
@@ -34,79 +40,110 @@
 .container {
   position: relative;
   z-index: 2;
-  max-width: 1280px; /* Slightly wider for modern screens */
+  max-width: 1280px;
+  /* Slightly wider for modern screens */
   margin: 0 auto;
-  padding: 0 2rem; /* Increased padding for better spacing */
+  padding: 0 2rem;
+  /* Increased padding for better spacing */
 }
 
 .hero-title {
-  font-family: 'Poppins', sans-serif; /* Replaced Fredoka One with Poppins */
-  font-size: 4.5rem; /* Larger for impact */
-  font-weight: 700; /* Bold weight for prominence */
+  font-family: 'Poppins', sans-serif;
+  /* Replaced Fredoka One with Poppins */
+  font-size: 4.5rem;
+  /* Larger for impact */
+  font-weight: 700;
+  /* Bold weight for prominence */
   margin-bottom: 1.75rem;
   letter-spacing: -0.02em;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow for depth */
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* Stronger shadow for depth */
 }
 
 .hero-description {
-  font-family: 'Inter', sans-serif; /* Use Inter for cleaner, professional description */
-  font-size: 1.75rem; /* Larger for readability */
-  font-weight: 400; /* Regular weight for balance */
-  max-width: 900px; /* Wider for balance */
+  font-family: 'Inter', sans-serif;
+  /* Use Inter for cleaner, professional description */
+  font-size: 1.75rem;
+  /* Larger for readability */
+  font-weight: 400;
+  /* Regular weight for balance */
+  max-width: 900px;
+  /* Wider for balance */
   margin: 0 auto 3.5rem;
-  line-height: 1.8; /* Improved readability */
+  line-height: 1.8;
+  /* Improved readability */
   opacity: 0.9;
-  color: #f3f4f6; /* Lighter for contrast */
+  color: #f3f4f6;
+  /* Lighter for contrast */
 }
 
 .hero-actions {
   display: flex;
-  gap: 1.75rem; /* Slightly larger gap */
+  gap: 1.75rem;
+  /* Slightly larger gap */
   justify-content: center;
-  flex-wrap: wrap; /* Ensure buttons wrap gracefully on smaller screens */
+  flex-wrap: wrap;
+  /* Ensure buttons wrap gracefully on smaller screens */
 }
 
 .hero-button {
   background-color: #ffffff;
-  color: #5b21b6; /* Match gradient for cohesion */
-  padding: 1.3rem 3rem; /* Larger padding for prominence */
-  border-radius: 16px; /* Softer, modern corners */
-  font-family: 'Poppins', sans-serif; /* Use Poppins for bold, modern buttons */
-  font-weight: 600; /* Slightly lighter than 700 for balance */
+  color: #5b21b6;
+  /* Match gradient for cohesion */
+  padding: 1.3rem 3rem;
+  /* Larger padding for prominence */
+  border-radius: 16px;
+  /* Softer, modern corners */
+  font-family: 'Poppins', sans-serif;
+  /* Use Poppins for bold, modern buttons */
+  font-weight: 600;
+  /* Slightly lighter than 700 for balance */
   font-size: 1.15rem;
   text-transform: uppercase;
-  transition: all 0.3s ease-in-out; /* Smoother transitions */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+  transition: all 0.3s ease-in-out;
+  /* Smoother transitions */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  /* Stronger shadow */
   text-decoration: none;
 }
 
 .hero-button:hover,
 .hero-button:focus-visible {
-  background-color: #f3e8ff; /* Light purple tint on hover */
-  transform: translateY(-4px); /* Slightly more lift */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+  background-color: #f3e8ff;
+  /* Light purple tint on hover */
+  transform: translateY(-4px);
+  /* Slightly more lift */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  /* Deeper shadow on hover */
 }
 
 /* Banner section */
 .banner-container {
-  max-width: 1280px; /* Match container width */
+  max-width: 1280px;
+  /* Match container width */
   width: 95%;
-  height: 700px; /* Taller for impact */
-  margin: 50px auto; /* More margin */
-  border-radius: 8px; /* Softer corners */
+  height: 700px;
+  /* Taller for impact */
+  margin: 50px auto;
+  /* More margin */
+  border-radius: 8px;
+  /* Softer corners */
   overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  /* Stronger shadow */
 }
 
 .banner-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease; /* Smooth zoom effect */
+  transition: transform 0.5s ease;
+  /* Smooth zoom effect */
 }
 
 .banner-container:hover .banner-img {
-  transform: scale(1.05); /* Subtle zoom on hover */
+  transform: scale(1.05);
+  /* Subtle zoom on hover */
 }
 
 /* Responsive design */
@@ -118,11 +155,13 @@
   }
 
   .hero {
-    padding: 6rem 0; /* Reduced padding */
+    padding: 6rem 0;
+    /* Reduced padding */
   }
 
   .hero-title {
-    font-size: 3.5rem; /* Smaller but still bold */
+    font-size: 3.5rem;
+    /* Smaller but still bold */
   }
 
   .hero-description {
@@ -131,7 +170,8 @@
 
   .banner-container {
     width: 90%;
-    height: 300px; /* Adjust height */
+    height: 300px;
+    /* Adjust height */
   }
 }
 
@@ -155,12 +195,13 @@
 
   .hero-button {
     width: 100%;
-    max-width: 320px; /* Slightly wider */
+    max-width: 320px;
+    /* Slightly wider */
     padding: 1.2rem 2.5rem;
   }
 
   .banner-container {
-    width: 90%;
+    width: 95%;
     height: 400px;
   }
 }
@@ -178,17 +219,13 @@
     font-size: 1.1rem;
   }
 
-  .hero-actions {
-    
-  }
-  
-
   .banner-container {
-    width: 90%;
+    width: 95%;
     height: 200px;
+    margin: 30px auto;
   }
 
   .banner-img {
-    height: 250px;
+    height: 220px;
   }
 }
