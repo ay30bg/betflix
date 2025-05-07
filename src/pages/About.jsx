@@ -9,12 +9,11 @@ function About() {
       <section className="about-section">
         <h2 className="section-title">How It Works</h2>
         <p>
-          BetFlix is a thrilling color prediction game. Bet on Red, Green, or Blue, and see if your prediction matches the result. Each round is quick, exciting, and fair!
+          BetFlix is a thrilling color prediction game. Bet on Red and Green and see if your prediction matches the result. Each round is quick, exciting, and fair!
         </p>
         <div className="section-visual">
           <div className="color-icon red"></div>
           <div className="color-icon green"></div>
-          <div className="color-icon blue"></div> {/* Added missing blue icon */}
         </div>
       </section>
       <section className="about-section">
