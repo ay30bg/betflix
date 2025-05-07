@@ -1,6 +1,7 @@
 import '../styles/login.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/header';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -39,8 +40,13 @@ function Login() {
     }
   };
 
+  const handleBack = () => {
+    navigate('/');
+  };
+
   return (
     <div className="login-page container">
+      <Header />
       <h1 className='login-header'>Login</h1>
       <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
@@ -70,13 +76,20 @@ function Login() {
         <button type="submit" className="login-button">
           Login
         </button>
+        <p>
+          Don't have an account? <a href="/sign-up">Sign Up</a>
+        </p>
       </form>
-      <p>
-        Don't have an account? <a href="/signup">Sign Up</a>
-      </p>
-      <a href="/" className="back-link">
-        Back to Home
-      </a>
+      <button 
+      className='back-btn'
+      onClick={handleBack}
+      >
+      Back to Home
+      </button>
+
+      {/* <a href="/" className="back-link">
+          Back to Home
+        </a> */}
     </div>
   );
 }
