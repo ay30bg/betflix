@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import Banner from '../assets/betflix_banner.png';
+import { useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 
 function Home() {
+const navigate = useNavigate(); // Hook for navigation
+
+const handleSignUp = () => {
+  navigate('/sign-up');
+};
+
+
   return (
     <div className="home-page">
       <Header />
@@ -29,6 +37,7 @@ function Home() {
           alt="BetFlix game preview"
           className="banner-img"
           loading="lazy"
+          onClick={handleSignUp}
         />
       </div>
     </div>
