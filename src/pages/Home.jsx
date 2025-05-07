@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from 'react-router-dom';
 import Header from '../components/header';
-import Banner from '../assets/wingo_banner.jpg'
+import Banner from '../assets/betflix_banner.png';
 import '../styles/home.css';
 
 function Home() {
