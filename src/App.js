@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Game from './pages/Game';
 import History from './pages/History';
 import Verify from './pages/Verify';
+import Signup from './pages/SignUp';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/game" element={<Game />} />
           <Route path="/history" element={<History />} />
           <Route path="/verify" element={<Verify />} />
+          <Route path="/sign-up" element={<Signup />} />
         </Routes>
         <Navbar />
       </Router>
