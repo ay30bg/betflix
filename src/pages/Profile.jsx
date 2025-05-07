@@ -6,80 +6,16 @@ import { FaUser, FaWallet, FaMoneyCheckAlt, FaCopy } from 'react-icons/fa';
 
 function Profile() {
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  // Initialize user from localStorage or default
-  const [user, setUser] = useState(() => {
-    try {
-      const savedUser = localStorage.getItem('userProfile');
-      return savedUser
-        ? JSON.parse(savedUser)
-        : { username: 'Player1', email: 'player1@example.com', balance: 1000 };
-    } catch (err) {
-      console.error('Error parsing userProfile:', err);
-      return { username: 'Player1', email: 'player1@example.com', balance: 1000 };
-    }
-  });
-
-  // Compute betting stats
-  const [stats, setStats] = useState(() => {
-    try {
-      const savedBets = localStorage.getItem('betHistory');
-      const bets = savedBets ? JSON.parse(savedBets) : [];
-      return {
-        totalBets: bets.length,
-        wins: bets.filter((bet) => bet.won === true).length,
-        losses: bets.filter((bet) => bet.won === false).length,
-      };
-    } catch (err) {
-      console.error('Error parsing betHistory:', err);
-      return { totalBets: 0, wins: 0, losses: 0 };
-    }
-  });
-
-  // Generate referral link
-  const [referralLink, setReferralLink] = useState(() => {
-    const baseUrl = window.location.origin;
-    return `${baseUrl}/signup?ref=${encodeURIComponent(user.username)}`;
-  });
-
-  // Sync stats and user with localStorage changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      try {
-        // Update user
-        const savedUser = localStorage.getItem('userProfile');
-        if (savedUser) {
-          const parsedUser = JSON.parse(savedUser);
-          setUser(parsedUser);
-          // Update referral link when username changes
-          setReferralLink(`${window.location.origin}/signup?ref=${encodeURIComponent(parsedUser.username)}`);
-        }
-        // Update stats
-        const savedBets = localStorage.getItem('betHistory');
-        const bets = savedBets ? JSON.parse(savedBets) : [];
-        setStats({
-          totalBets: bets.length,
-          wins: bets.filter((bet) => bet.won === true).length,
-          losses: bets.filter((bet) => bet.won === false).length,
-        });
-      } catch (err) {
-        console.error('Error parsing localStorage:', err);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  // Save user to localStorage
-  useEffect(() => {
-    localStorage.setItem('userProfile', JSON.stringify(user));
-  }, [user]);
-
+  // State for user data, stats, and referral link
+  const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({ totalBets: 0, wins: 0, losses: 0 });
+  const [referralLink, setReferralLink] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ username: user.username });
+  const [formData, setFormData] = useState({ username: '' });
   const [depositData, setDepositData] = useState({ amount: '' });
   const [withdrawData, setWithdrawData] = useState({ amount: '' });
   const [errors, setErrors] = useState({ profile: '', deposit: '', withdraw: '' });
@@ -93,6 +29,55 @@ function Profile() {
     setNotification(notification);
     notificationTimeout = setTimeout(() => setNotification(null), 3000);
   };
+
+  // Fetch initial data on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const [userResponse, statsResponse, referralResponse] = await Promise.all([
+          fetch(`${API_URL}/api/user/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_URL}/api/bets/stats`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_URL}/api/referral/link`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const userData = await userResponse.json();
+        const statsData = await statsResponse.json();
+        const referralData = await referralResponse.json();
+
+        if (!userResponse.ok) throw new Error(userData.error || 'Failed to fetch profile');
+        if (!statsResponse.ok) throw new Error(statsData.error || 'Failed to fetch stats');
+        if (!referralResponse.ok) throw new Error(referralData.error || 'Failed to fetch referral link');
+
+        setUser(userData);
+        setFormData({ username: userData.username });
+        setStats(statsData);
+        setReferralLink(referralData.referralLink);
+      } catch (err) {
+        setNotificationWithTimeout({ type: 'error', message: err.message });
+        if (err.message.includes('Invalid or expired token')) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
 
   // Handle copy referral link
   const handleCopyReferralLink = async () => {
@@ -114,15 +99,31 @@ function Profile() {
     }
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setUser((prev) => ({ ...prev, username: formData.username }));
-      setReferralLink(`${window.location.origin}/signup?ref=${encodeURIComponent(formData.username)}`);
+      const response = await fetch(`${API_URL}/api/user/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ username: formData.username }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update profile');
+      }
+
+      setUser(data.user);
       setIsModalOpen(false);
       setErrors((prev) => ({ ...prev, profile: '' }));
       setNotificationWithTimeout({ type: 'success', message: 'Profile updated successfully!' });
     } catch (err) {
-      setErrors((prev) => ({ ...prev, profile: 'Failed to update profile' }));
-      setNotificationWithTimeout({ type: 'error', message: 'Failed to update profile' });
+      setErrors((prev) => ({ ...prev, profile: err.message }));
+      setNotificationWithTimeout({ type: 'error', message: err.message });
+      if (err.message.includes('Invalid or expired token')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -142,15 +143,32 @@ function Profile() {
     }
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setUser((prev) => ({ ...prev, balance: prev.balance + amount }));
+      const response = await fetch(`${API_URL}/api/transactions/deposit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ amount }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to deposit funds');
+      }
+
+      setUser((prev) => ({ ...prev, balance: data.balance }));
       setIsDepositModalOpen(false);
       setDepositData({ amount: '' });
       setErrors((prev) => ({ ...prev, deposit: '' }));
-      setNotificationWithTimeout({ type: 'success', message: `Deposited $${amount.toFixed(2)} successfully!` });
+      setNotificationWithTimeout({ type: 'success', message: data.message });
     } catch (err) {
-      setErrors((prev) => ({ ...prev, deposit: 'Failed to deposit funds' }));
-      setNotificationWithTimeout({ type: 'error', message: 'Failed to deposit funds' });
+      setErrors((prev) => ({ ...prev, deposit: err.message }));
+      setNotificationWithTimeout({ type: 'error', message: err.message });
+      if (err.message.includes('Invalid or expired token')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -170,28 +188,64 @@ function Profile() {
     }
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setUser((prev) => ({ ...prev, balance: prev.balance - amount }));
+      const response = await fetch(`${API_URL}/api/transactions/withdraw`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ amount }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to withdraw funds');
+      }
+
+      setUser((prev) => ({ ...prev, balance: data.balance }));
       setIsWithdrawModalOpen(false);
       setWithdrawData({ amount: '' });
       setErrors((prev) => ({ ...prev, withdraw: '' }));
-      setNotificationWithTimeout({ type: 'success', message: `Withdrew $${amount.toFixed(2)} successfully!` });
+      setNotificationWithTimeout({ type: 'success', message: data.message });
     } catch (err) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Failed to withdraw funds' }));
-      setNotificationWithTimeout({ type: 'error', message: 'Failed to withdraw funds' });
+      setErrors((prev) => ({ ...prev, withdraw: err.message }));
+      setNotificationWithTimeout({ type: 'error', message: err.message });
+      if (err.message.includes('Invalid or expired token')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   // Handle logout
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (window.confirm('Are you sure you want to log out?')) {
-      localStorage.removeItem('userProfile');
-      localStorage.removeItem('betHistory');
-      navigate('/login');
+      try {
+        await fetch(`${API_URL}/api/auth/logout`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        localStorage.removeItem('token');
+        navigate('/login');
+      } catch (err) {
+        console.error('Logout failed:', err);
+        setNotificationWithTimeout({ type: 'error', message: 'Failed to log out' });
+      }
     }
   };
+
+  // Render loading state if user data is not yet fetched
+  if (!user) {
+    return (
+      <div className="profile-page container">
+        <div className="loading-spinner" aria-live="polite">
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-page container">
@@ -374,7 +428,6 @@ function Profile() {
           <div className="modal-content">
             <button
               onClick={() => {
-                setIsWithdrawModalOpen(false);
                 setIsWithdrawModalOpen(false);
                 setErrors((prev) => ({ ...prev, withdraw: '' }));
               }}
