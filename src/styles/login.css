@@ -1,93 +1,200 @@
-/* .login-page {
+/* login.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.login-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 20px;
-  background-color: #f4f4f9;
-}
-
-.container {
-  max-width: 400px;
-  width: 100%;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Matches Profile gradient */
+  padding: 2rem 1rem;
+  font-family: 'Inter', sans-serif; /* Matches Profile body font */
 }
 
 .login-header {
-  font-size: 2rem;
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #1e40af; /* Matches Profile heading color */
   margin-bottom: 1.5rem;
-  color: #333;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Matches Profile heading shadow */
+  font-family: 'Poppins', sans-serif; /* Matches Profile heading font */
 }
 
 .login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  background: #ffffff; /* Matches Profile card background */
+  padding: 2rem;
+  border-radius: 8px; /* Matches Profile card border-radius */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); /* Matches Profile card shadow */
   width: 100%;
+  max-width: 400px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Matches Profile card transition */
+}
+
+.login-form:hover {
+  transform: translateY(-2px); /* Matches Profile card hover effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Matches Profile card hover shadow */
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
+  display: block;
   font-size: 1rem;
+  font-weight: 600; /* Matches Profile label weight */
+  color: #1f2937; /* Matches Profile label color */
   margin-bottom: 0.5rem;
-  color: #555;
+  font-family: 'Inter', sans-serif; /* Matches Profile label font */
 }
 
 .form-group input {
+  width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 2px solid #d1d5db; /* Matches Profile input border */
+  border-radius: 8px; /* Matches Profile input border-radius */
   outline: none;
-  transition: border-color 0.3s;
+  transition: border-color 0.2s ease; /* Matches Profile input transition */
+  font-family: 'Inter', sans-serif; /* Matches Profile input font */
 }
 
 .form-group input:focus {
-  border-color: #007bff;
+  border-color: #1e40af; /* Matches Profile input focus border */
+  box-shadow: 0 0 5px rgba(30, 64, 175, 0.3); /* Matches Profile input focus shadow */
 }
 
 .login-button {
+  width: 100%;
   padding: 0.75rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #fff;
-  background-color: #007bff;
+  background: #1e40af; /* Matches Profile primary button color */
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* Matches Profile button border-radius */
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background 0.2s, transform 0.2s; /* Matches Profile button transition */
+  text-transform: uppercase; /* Matches Profile button style */
+  font-family: 'Poppins', sans-serif; /* Matches Profile button font */
 }
 
-.login-button:hover {
-  background-color: #0056b3;
+.login-button:hover:not(:disabled) {
+  background: #1e3a8a; /* Matches Profile primary button hover */
+  transform: translateY(-2px); /* Matches Profile button hover effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Matches Profile button hover shadow */
 }
 
-p {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #555;
+.login-button:disabled {
+  background: #9ca3af; /* Matches Profile disabled button */
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-p a {
-  color: #007bff;
+.login-form p {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: #1f2937; /* Matches Profile text color */
+  font-family: 'Inter', sans-serif; /* Matches Profile text font */
+}
+
+.login-form a {
+  color: #3b82f6; /* Matches Profile link color */
   text-decoration: none;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif; /* Matches Profile link font */
 }
 
-p a:hover {
+.login-form a:hover {
   text-decoration: underline;
 }
 
+.back-btn{
+  width: 100%;
+  height: 50px;
+  border-radius: 8px;
+  margin: 20px auto;
+  background-color: #ef4444;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+}
+
 .back-link {
-  display: inline-block;
+  display: block;
+  text-align: center;
   margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #007bff;
+  font-size: 1rem;
+  color: #3b82f6; /* Matches Profile link color */
   text-decoration: none;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif; /* Matches Profile link font */
 }
 
 .back-link:hover {
   text-decoration: underline;
-} */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-header {
+    font-size: 2rem; /* Matches Profile responsive heading */
+  }
+
+  .login-form {
+    padding: 1.5rem; /* Matches Profile responsive padding */
+  }
+
+  .form-group input,
+  .login-button {
+    font-size: 0.9rem; /* Matches Profile responsive font */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 1.5rem 0.75rem; /* Matches Profile responsive padding */
+  }
+
+  .login-header {
+    font-size: 1.8rem; /* Matches Profile responsive heading */
+  }
+
+  .login-form {
+    padding: 1rem; /* Matches Profile responsive padding */
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .login-button {
+    font-size: 0.9rem; /* Matches Profile responsive font */
+  }
+}
