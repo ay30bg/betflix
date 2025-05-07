@@ -1,0 +1,65 @@
+.history-page {
+    padding: 2rem 0;
+  }
+  
+  .history-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+  }
+  
+  .history-table th {
+    background-color: #f3f4f6;
+    font-weight: bold;
+  }
+  
+  .history-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    /* tenant_id: 1rem; */
+  }
+  
+  .pagination button {
+    background-color: #1e40af;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .pagination button:hover {
+    background-color: #1e3a8a;
+  }
+  
+  .pagination button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    .history-table {
+      font-size: 0.9rem;
+    }
+  
+    .history-table th,
+    .history-table td {
+      padding: 0.5rem;
+    }
+  }

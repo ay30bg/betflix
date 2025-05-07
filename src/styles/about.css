@@ -1,0 +1,111 @@
+.about-page {
+  padding: 2rem 0;
+}
+
+.about-page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.about-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #1e40af;
+}
+
+.about-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.section-visual {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.color-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.color-icon.red {
+  background-color: #ef4444;
+}
+
+.color-icon.green {
+  background-color: #10b981;
+}
+
+.color-icon.blue {
+  background-color: #3b82f6;
+}
+
+.about-button {
+  display: block;
+  background-color: #1e40af;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-align: center;
+  max-width: 200px;
+  margin: 0 auto;
+  text-decoration: none;
+  /* Ensure no underline */
+}
+
+.about-button:hover,
+.about-button:focus-visible {
+  background-color: #1e3a8a;
+}
+
+/* New Terms Link Styling */
+.terms-link {
+  display: inline-block;
+  color: #1e40af;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.terms-link:hover,
+.terms-link:focus-visible {
+  color: #1e3a8a;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .about-section {
+    margin: 12px;
+  }
+
+
+  .about-page h1 {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .about-section {
+    padding: 1rem;
+  }
+
+  .about-button {
+    max-width: 100%;
+    margin: 0px 12px;
+  }
+}
