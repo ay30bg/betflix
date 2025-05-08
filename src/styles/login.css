@@ -140,24 +140,37 @@
 }
 
 .password-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
-.password-wrapper input {
-  flex: 1;
+.password-input {
+  width: 100%;
+  padding-right: 40px; /* Space for the icon */
 }
 
-.show-password-btn {
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 5px 10px;
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   cursor: pointer;
-  border-radius: 4px;
+  font-size: 20px; /* Adjust icon size */
+  color: #666; /* Adjust icon color */
+  user-select: none; /* Prevent text selection */
 }
 
-.show-password-btn:disabled {
+.eye-icon:hover {
+  color: #333; /* Darker color on hover */
+}
+
+.eye-icon:focus {
+  outline: 2px solid #007bff; /* Focus ring for accessibility */
+  outline-offset: 2px;
+}
+
+.password-input:disabled + .eye-icon {
   cursor: not-allowed;
   opacity: 0.6;
 }
