@@ -101,8 +101,8 @@ function Login() {
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </span>
-            <a href="/forgot-password">Forgot Password?</a>
           </div>
+          <a href="/forgot-password">Forgot Password?</a>
           </div>
 {/*         <p className="forgot-password">
             <a href="/forgot-password">Forgot Password?</a>
