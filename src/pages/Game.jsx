@@ -8,37 +8,37 @@ import HistoryTable from '../components/HistoryTable';
 import Header from '../components/header';
 import '../styles/game.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
 const fetchUserProfile = async () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('Please log in to continue');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/user/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to fetch profile');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Profile fetch failed: ${response.status}`);
   }
   return response.json();
 };
 
 const fetchBets = async () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('Please log in to continue');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/bets/history`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to fetch bets');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Bets fetch failed: ${response.status}`);
   }
   return response.json();
 };
 
 const placeBet = async (betData) => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('Please log in to continue');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/bets`, {
     method: 'POST',
     headers: {
@@ -48,8 +48,8 @@ const placeBet = async (betData) => {
     body: JSON.stringify(betData),
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to process bet');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
   }
   return response.json();
 };
@@ -60,7 +60,6 @@ function Game() {
   const { setBalance } = useBalance();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [lastResult, setLastResult] = useState(null);
 
   // Fetch user profile
   const { data: userData, isLoading: userLoading, error: userError } = useQuery({
@@ -69,18 +68,25 @@ function Game() {
     onSuccess: (data) => setBalance(data.balance),
     onError: (err) => {
       setError(err.message);
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
+    retry: 0, // Disable retries for faster error feedback
   });
 
   // Fetch bets
   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
     queryKey: ['bets'],
     queryFn: fetchBets,
-    onError: (err) => {
-      setError(err.message);
-      if (err.message.includes('log in')) navigate('/login');
+    onError: (err) =>	{ setError(err.message);
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
+    retry: 0,
   });
 
   // Place bet mutation
@@ -125,27 +131,20 @@ function Game() {
   };
 
   if (userLoading || betsLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="game-page container">
+        <Header />
+        <div className="loading-spinner" aria-live="polite">Loading...</div>
+      </div>
+    );
   }
 
   if (userError || betsError) {
     return (
       <div className="game-page container">
         <Header />
-        <p className="game-error" role="alert">
-          {error || 'Failed to load game data. Please try again.'}
-        </p>
-      </div>
-    );
-  }
-
-  if (!userData || !betsData) {
-    return (
-      <div className="game-page container">
-        <Header />
-        <p className="game-error" role="alert">
-          No data available. Please log in or try again.
-        </p>
+        <p className="game-error" role="alert">{error || 'Failed to load game data. Please try again or log in.'}</p>
+        <button onClick={() => navigate('/login')} className="login-button">Log In</button>
       </div>
     );
   }
@@ -157,9 +156,7 @@ function Game() {
         {error && <p className="game-error" role="alert">{error}</p>}
       </div>
       {isLoading && (
-        <div className="loading-spinner" aria-live="polite">
-          Processing Bet...
-        </div>
+        <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
       )}
       {lastResult && (
         <div
