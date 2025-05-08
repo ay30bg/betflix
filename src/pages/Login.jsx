@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'; // Import eye icons
-import Header from '../components/header';
+import AuthHeader from '../components/AuthHeader';
 import '../styles/login.css';
 
 function Login() {
@@ -63,7 +63,7 @@ function Login() {
 
   return (
     <div className="login-page container">
-      <Header />
+      <AuthHeader />
       <h1 className="login-header">Login</h1>
       <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
