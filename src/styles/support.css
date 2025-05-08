@@ -1,0 +1,370 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Support Page */
+.support-page {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Inter', sans-serif; /* Default font for body text */
+}
+
+/* Support Page Title */
+.support-page .support-header {
+  font-size: 2.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #1e40af;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif; /* Poppins for headings */
+}
+
+/* Support Intro */
+.support-intro {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.support-intro p {
+  font-size: 1.1rem;
+  color: #1f2937;
+  line-height: 1.5;
+  font-family: 'Inter', sans-serif; /* Inter for body text */
+}
+
+/* Support Tabs Section */
+.support-tabs {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 2rem;
+}
+
+/* Tab Buttons */
+.tab-buttons {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 1.5rem;
+  gap: 10px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #4b5563;
+  transition: color 0.2s, border-bottom 0.2s;
+  font-family: 'Poppins', sans-serif; /* Poppins for buttons */
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-button:hover,
+.tab-button.active {
+  color: #1e40af;
+  border-bottom: 2px solid #1e40af;
+}
+
+.tab-button[aria-selected='true'] {
+  font-weight: 700;
+  color: #1e40af;
+}
+
+/* Tab Content */
+.tab-content {
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif; /* Inter for tab content */
+}
+
+/* FAQ Tab */
+.faq-tab .search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  border: 2px solid #d1d5db;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.faq-tab .search-bar:focus-within {
+  border-color: #1e40af;
+}
+
+.faq-tab .search-bar input {
+  border: none;
+  flex: 1;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif; /* Inter for input text */
+}
+
+.faq-tab .search-bar input:focus {
+  outline: none;
+}
+
+.faq-tab .search-icon {
+  color: #4b5563;
+  font-size: 1.2rem;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.faq-item {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.faq-item h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e40af;
+  font-family: 'Poppins', sans-serif; /* Poppins for FAQ headings */
+}
+
+.faq-item p {
+  margin: 0;
+  font-size: 1rem;
+  color: #1f2937;
+  line-height: 1.5;
+  font-family: 'Inter', sans-serif; /* Inter for FAQ text */
+}
+
+/* Contact Tab */
+.contact-tab p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif; /* Inter for body text */
+}
+
+.contact-options {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-options li {
+  font-size: 1.1rem;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif; /* Inter for list items */
+}
+
+.contact-options li strong {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.contact-options a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.contact-options a:hover {
+  color: #0056b3;
+}
+
+.live-chat-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #10b981;
+  color: #fff;
+  transition: background 0.2s, transform 0.2s;
+  font-family: 'Poppins', sans-serif; /* Poppins for buttons */
+}
+
+.live-chat-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.live-chat-btn:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Guides Tab */
+.guides-tab p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif; /* Inter for body text */
+}
+
+.guide-links,
+.responsible-gambling ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.guide-links li,
+.responsible-gambling li {
+  font-size: 1.1rem;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif; /* Inter for list items */
+}
+
+.guide-links a,
+.responsible-gambling a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.guide-links a:hover,
+.responsible-gambling a:hover {
+  color: #0056b3;
+}
+
+.responsible-gambling {
+  margin-top: 1.5rem;
+}
+
+.responsible-gambling h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 0.75rem;
+  font-family: 'Poppins', sans-serif; /* Poppins for headings */
+}
+
+/* Back Button */
+.back-btn {
+  background: #ef4444;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  text-transform: uppercase;
+  font-family: 'Poppins', sans-serif; /* Poppins for buttons */
+}
+
+.back-btn:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .support-page {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .support-header {
+    font-size: 2rem;
+  }
+
+  .support-intro p {
+    font-size: 1rem;
+  }
+
+  .support-tabs {
+    padding: 1.5rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .tab-content {
+    padding: 1rem;
+  }
+
+  .faq-item {
+    padding: 1rem;
+  }
+
+  .faq-item h3 {
+    font-size: 1.1rem;
+  }
+
+  .faq-item p {
+    font-size: 0.9rem;
+  }
+
+  .contact-options li,
+  .guide-links li,
+  .responsible-gambling li {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .tab-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tab-button {
+    width: 100%;
+    text-align: left;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+}
