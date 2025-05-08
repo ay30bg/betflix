@@ -33,11 +33,6 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease; /* Matches Profile/Login card transition */
 }
 
-.signup-form:hover {
-  transform: translateY(-2px); /* Matches Profile/Login card hover effect */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Matches Profile/Login card hover shadow */
-}
-
 .form-group {
   margin-bottom: 1.5rem;
 }
