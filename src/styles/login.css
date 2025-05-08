@@ -156,6 +156,19 @@
   opacity: 0.6;
 }
 
+.forgot-password {
+  margin-top: 8px;
+  text-align: right;
+  font-size: 14px;
+}
+.forgot-password a {
+  color: #007bff;
+  text-decoration: none;
+}
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
