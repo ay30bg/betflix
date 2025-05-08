@@ -312,14 +312,16 @@ function Profile() {
     return (
       <div className="profile-page container">
         <Header />
-        <ptippy({
-          offset: [0, 20]
-        })
-        .p('p', {}, 'Failed to load profile data. Please try again or log in.')
-        .p('button', {
-          onClick: () => navigate('/login'),
-          className: 'login-button'
-        }, 'Log In')
+        <p className="profile-error" role="alert">
+          {notification?.message || 'Failed to load profile data. Please try again or log in.'}
+        </p>
+        <button
+          onClick={() => navigate('/login')}
+          className="login-button"
+          aria-label="Log In"
+        >
+          Log In
+        </button>
       </div>
     );
   }
