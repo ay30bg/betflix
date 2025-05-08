@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
-import Header from '../components/header';
+import Header from '../components/Header';
 import '../styles/game.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
@@ -60,6 +60,7 @@ function Game() {
   const { setBalance } = useBalance();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [lastResult, setLastResult] = useState(null); // Define lastResult
 
   // Fetch user profile
   const { data: userData, isLoading: userLoading, error: userError } = useQuery({
@@ -73,14 +74,15 @@ function Game() {
         navigate('/login');
       }
     },
-    retry: 0, // Disable retries for faster error feedback
+    retry: 0,
   });
 
   // Fetch bets
   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
     queryKey: ['bets'],
     queryFn: fetchBets,
-    onError: (err) =>	{ setError(err.message);
+    onError: (err) => {
+      setError(err.message);
       if (err.message.includes('log in')) {
         localStorage.removeItem('token');
         navigate('/login');
@@ -107,7 +109,7 @@ function Game() {
 
   const getResultColorClass = (result, type) => {
     if (type === 'color') {
-      return result.toLowerCase();
+      return result?.toLowerCase() || '';
     }
     return parseInt(result) % 2 === 0 ? 'green' : 'red';
   };
@@ -143,8 +145,26 @@ function Game() {
     return (
       <div className="game-page container">
         <Header />
-        <p className="game-error" role="alert">{error || 'Failed to load game data. Please try again or log in.'}</p>
-        <button onClick={() => navigate('/login')} className="login-button">Log In</button>
+        <p className="game-error" role="alert">
+          {error || 'Failed to load game data. Please try again or log in.'}
+        </p>
+        <button onClick={() => navigate('/login')} className="login-button">
+          Log In
+        </button>
+      </div>
+    );
+  }
+
+  if (!userData || !betsData) {
+    return (
+      <div className="game-page container">
+        <Header />
+        <p className="game-error" role="alert">
+          No data available. Please log in or try again.
+        </p>
+        <button onClick={() => navigate('/login')} className="login-button">
+          Log In
+        </button>
       </div>
     );
   }
