@@ -51,6 +51,7 @@
 // const placeBet = async (betData) => {
 //   const token = localStorage.getItem('token');
 //   if (!token) throw new Error('Authentication required');
+//   console.log('Sending bet to server:', betData);
 //   const response = await fetch(`${API_URL}/api/bets`, {
 //     method: 'POST',
 //     headers: {
@@ -61,9 +62,12 @@
 //   });
 //   if (!response.ok) {
 //     const errorData = await response.json().catch(() => ({}));
+//     console.error('Bet response error:', errorData);
 //     throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
 //   }
-//   return response.json();
+//   const data = await response.json();
+//   console.log('Bet response success:', data);
+//   return data;
 // };
 
 // function Game() {
@@ -117,12 +121,17 @@
 //   const mutation = useMutation({
 //     mutationFn: placeBet,
 //     onSuccess: (data) => {
+//       console.log('Mutation success:', data);
 //       setBalance(data.balance);
 //       setLastResult({ ...data.bet, payout: data.bet.payout });
 //       queryClient.invalidateQueries(['bets']);
 //       queryClient.invalidateQueries(['userProfile']);
 //     },
-//     onError: (err) => setError(err.message),
+//     onError: (err) => {
+//       console.error('Mutation error:', err.message);
+//       setError(err.message);
+//     },
+//     onSettled: () => console.log('Mutation settled'),
 //   });
 
 //   const getResultColorClass = useCallback((result, type) => {
@@ -133,6 +142,7 @@
 //   }, []);
 
 //   const handleBet = async ({ type, value, amount, clientSeed, color, exactMultiplier }) => {
+//     console.log('Handling bet:', { type, value, amount, clientSeed, color, exactMultiplier });
 //     setError('');
 //     try {
 //       if (amount > userData.balance) {
@@ -140,6 +150,7 @@
 //       }
 //       await mutation.mutateAsync({ type, value, amount, clientSeed, color, exactMultiplier });
 //     } catch (err) {
+//       console.error('Handle bet error:', err.message);
 //       setError(err.message);
 //     }
 //   };
@@ -173,9 +184,13 @@
 //     <div className="game-page container">
 //       <Header />
 //       <div className="game958">
-//         {error && <p className="game-error" role="alert">{error}</p>}
+//         {error && (
+//           <p className="game-error" role="alert" style={{ color: 'red', fontWeight: 'bold' }}>
+//             {error}
+//           </p>
+//         )}
 //         <div className="round-info">
-//           <p>Current Round: {roundData?.period}</p>
+//           <p>Current Round: {roundData?.period || 'Loading...'}</p>
 //           <p>Time Left: {Math.floor(timeLeft)} seconds</p>
 //         </div>
 //       </div>
@@ -222,6 +237,7 @@
 //         isLoading={mutation.isLoading}
 //         balance={userData.balance}
 //         isDisabled={userData.balance === 0 || mutation.isLoading}
+//         roundData={roundData}
 //       />
 //       <HistoryTable bets={betsData || []} />
 //     </div>
@@ -230,8 +246,7 @@
 
 // export default Game;
 
-
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
@@ -309,6 +324,7 @@ function Game() {
   const { setBalance } = useBalance();
   const [error, setError] = useState('');
   const [lastResult, setLastResult] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   const { data: userData, isLoading: userLoading, error: userError } = useQuery({
     queryKey: ['userProfile'],
@@ -316,6 +332,7 @@ function Game() {
     onSuccess: (data) => setBalance(data.balance),
     onError: (err) => {
       setError(err.message);
+      setTimeout(() => setError(''), 5000);
       if (err.message === 'Authentication required') {
         localStorage.removeItem('token');
         navigate('/login');
@@ -329,6 +346,7 @@ function Game() {
     queryFn: fetchBets,
     onError: (err) => {
       setError(err.message);
+      setTimeout(() => setError(''), 5000);
       if (err.message === 'Authentication required') {
         localStorage.removeItem('token');
         navigate('/login');
@@ -340,9 +358,13 @@ function Game() {
   const { data: roundData, isLoading: roundLoading } = useQuery({
     queryKey: ['currentRound'],
     queryFn: fetchCurrentRound,
-    refetchInterval: 1000, // Refetch every second for countdown
+    refetchInterval: 1000,
+    onSuccess: (data) => {
+      console.log('Fetched roundData:', data);
+    },
     onError: (err) => {
       setError(err.message);
+      setTimeout(() => setError(''), 5000);
       if (err.message === 'Authentication required') {
         localStorage.removeItem('token');
         navigate('/login');
@@ -350,6 +372,19 @@ function Game() {
     },
     retry: 0,
   });
+
+  // Update timeLeft every second
+  useEffect(() => {
+    if (roundData?.expiresAt) {
+      const updateTimeLeft = () => {
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
+        setTimeLeft(Math.floor(timeRemaining));
+      };
+      updateTimeLeft();
+      const interval = setInterval(updateTimeLeft, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [roundData]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
@@ -359,10 +394,12 @@ function Game() {
       setLastResult({ ...data.bet, payout: data.bet.payout });
       queryClient.invalidateQueries(['bets']);
       queryClient.invalidateQueries(['userProfile']);
+      setError('');
     },
     onError: (err) => {
       console.error('Mutation error:', err.message);
       setError(err.message);
+      setTimeout(() => setError(''), 5000);
     },
     onSettled: () => console.log('Mutation settled'),
   });
@@ -374,17 +411,19 @@ function Game() {
     return parseInt(result) % 2 === 0 ? 'green' : 'red';
   }, []);
 
-  const handleBet = async ({ type, value, amount, clientSeed, color, exactMultiplier }) => {
-    console.log('Handling bet:', { type, value, amount, clientSeed, color, exactMultiplier });
-    setError('');
+  const handleBet = async (betData) => {
+    console.log('Handling bet:', betData);
+    if (betData.error) {
+      setError(betData.error);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
     try {
-      if (amount > userData.balance) {
-        throw new Error('Bet amount exceeds available balance');
-      }
-      await mutation.mutateAsync({ type, value, amount, clientSeed, color, exactMultiplier });
+      await mutation.mutateAsync(betData);
     } catch (err) {
       console.error('Handle bet error:', err.message);
       setError(err.message);
+      setTimeout(() => setError(''), 5000);
     }
   };
 
@@ -411,20 +450,18 @@ function Game() {
     );
   }
 
-  const timeLeft = roundData ? Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000) : 0;
-
   return (
     <div className="game-page container">
       <Header />
       <div className="game958">
         {error && (
-          <p className="game-error" role="alert" style={{ color: 'red', fontWeight: 'bold' }}>
+          <p className="game-error" role="alert">
             {error}
           </p>
         )}
         <div className="round-info">
           <p>Current Round: {roundData?.period || 'Loading...'}</p>
-          <p>Time Left: {Math.floor(timeLeft)} seconds</p>
+          <p>Time Left: {timeLeft} seconds</p>
         </div>
       </div>
       {mutation.isLoading && (
@@ -469,7 +506,7 @@ function Game() {
         onSubmit={handleBet}
         isLoading={mutation.isLoading}
         balance={userData.balance}
-        isDisabled={userData.balance === 0 || mutation.isLoading}
+        isDisabled={userData.balance === 0 || mutation.isLoading || timeLeft < 5}
         roundData={roundData}
       />
       <HistoryTable bets={betsData || []} />
