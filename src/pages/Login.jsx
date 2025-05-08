@@ -103,11 +103,10 @@ function Login() {
             </span>
             <a href="/forgot-password">Forgot Password?</a>
           </div>
-          
-{/*         </div>
-        <p className="forgot-password">
+          </div>
+{/*         <p className="forgot-password">
             <a href="/forgot-password">Forgot Password?</a>
-          </p> */}
+          </p>  */}
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="login-button" disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
