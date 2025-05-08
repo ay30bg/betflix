@@ -1,5 +1,7 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BalanceProvider } from './context/BalanceContext';
 import Navbar from './components/navbar';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -22,19 +24,21 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/sign-up" element={<Signup />} />
-        </Routes>
-        <Navbar />
-      </Router>
+      <BalanceProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/verify" element={<Verify />} />
+            <Route path="/sign-up" element={<Signup />} />
+          </Routes>
+        </Router>
+      </BalanceProvider>
     </QueryClientProvider>
   );
 }
