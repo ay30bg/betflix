@@ -163,7 +163,7 @@
   margin-left: -12px; /* Counteract parent padding for far-left alignment */
 }
 
-.forgot-password a {
+/* .forgot-password a {
   color: #007bff;
   text-decoration: none;
   margin: 0; /* Remove negative margins */
@@ -171,7 +171,7 @@
 
 .forgot-password a:hover {
   text-decoration: underline;
-}
+} */
 
 /* Animations */
 @keyframes fadeIn {
