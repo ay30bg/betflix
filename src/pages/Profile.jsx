@@ -122,7 +122,7 @@ function Profile() {
     queryKey: ['userProfile'],
     queryFn: fetchUserProfile,
     onSuccess: (data) => {
-      setBalance(data.balance);
+      setBalance(data.balance || 0);
       setFormData({ username: data.username || '' });
     },
     onError: (err) => {
@@ -209,12 +209,12 @@ function Profile() {
   const withdrawMutation = useMutation({
     mutationFn: initiateWithdrawal,
     onSuccess: (data) => {
-      setBalance(data.balance);
-      queryClient.setQueryData(['userProfile'], (old) => ({ ...old, balance: data.balance }));
+      setBalance(data.balance || 0);
+      queryClient.setQueryData(['userProfile'], (old) => ({ ...old, balance: data.balance || 0 }));
       setIsWithdrawModalOpen(false);
       setWithdrawData({ amount: '', cryptoCurrency: 'BTC', walletAddress: '' });
       setErrors((prev) => ({ ...prev, withdraw: '' }));
-      setNotification({ type: 'success', message: data.message });
+      setNotification({ type: 'success', message: data.message || 'Withdrawal initiated!' });
     },
     onError: (err) => {
       setErrors((prev) => ({ ...prev, withdraw: err.message }));
@@ -235,10 +235,11 @@ function Profile() {
 
   const handleCopyReferralLink = async () => {
     try {
+      if (!referralLink) throw new Error('No referral link available');
       await navigator.clipboard.writeText(referralLink);
       setNotification({ type: 'success', message: 'Referral link copied to clipboard!' });
     } catch (err) {
-      setNotification({ type: 'error', message: 'Failed to copy referral link' });
+      setNotification({ type: 'error', message: err.message });
     }
   };
 
@@ -310,7 +311,23 @@ function Profile() {
         <p className="profile-error" role="alert">
           {notification?.message || 'Failed to load profile data. Please try again or log in.'}
         </p>
-        <button onClick={() => navigate('/login')} className="login-button">Log In</button>
+        <button onClick={() => navigate('/login')} className="login-button">
+          Log In
+        </button>
+      </div>
+    );
+  }
+
+  if (!user || !stats) {
+    return (
+      <div className="profile-page container">
+        <Header />
+        <p className="profile-error" role="alert">
+          No data available. Please log in or try again.
+        </p>
+        <button onClick={() => navigate('/login')} className="login-button">
+          Log In
+        </button>
       </div>
     );
   }
@@ -327,8 +344,8 @@ function Profile() {
       <div className="profile-container">
         <div className="profile-info">
           <h2>User Information</h2>
-          <p><strong>Username:</strong> {user.username}</p>
-          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Username:</strong> {user.username || 'N/A'}</p>
+          <p><strong>Email:</strong> {user.email || 'N/A'}</p>
           <p><strong>Balance:</strong> ${balance.toFixed(2)}</p>
           <div className="profile-button-group">
             <button
@@ -380,9 +397,9 @@ function Profile() {
         </div>
         <div className="betting-stats">
           <h2>Betting Statistics</h2>
-          <p><strong>Total Bets:</strong> {stats.totalBets}</p>
-          <p><strong>Wins:</strong> {stats.wins}</p>
-          <p><strong>Losses:</strong> {stats.losses}</p>
+          <p><strong>Total Bets:</strong> {stats.totalBets || 0}</p>
+          <p><strong>Wins:</strong> {stats.wins || 0}</p>
+          <p><strong>Losses:</strong> {stats.losses || 0}</p>
           <p>
             <strong>Win Rate:</strong>{' '}
             {stats.totalBets > 0
