@@ -104,9 +104,6 @@ function Login() {
           </div>
           <a href="/forgot-password">Forgot Password?</a>
           </div>
-{/*         <p className="forgot-password">
-            <a href="/forgot-password">Forgot Password?</a>
-          </p>  */}
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="login-button" disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
