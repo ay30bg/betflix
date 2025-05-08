@@ -156,23 +156,6 @@
   opacity: 0.6;
 }
 
-.forgot-password {
-  margin: 3px 0; /* Keep vertical margin, remove horizontal */
-  font-size: 14px;
-  text-align: left; /* Align text to the left */
-  margin-left: -12px; /* Counteract parent padding for far-left alignment */
-}
-
-/* .forgot-password a {
-  color: #007bff;
-  text-decoration: none;
-  margin: 0; /* Remove negative margins */
-}
-
-.forgot-password a:hover {
-  text-decoration: underline;
-} */
-
 /* Animations */
 @keyframes fadeIn {
   from {
