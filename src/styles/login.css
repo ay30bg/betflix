@@ -157,14 +157,15 @@
 }
 
 .forgot-password {
-  margin: 3px -12px;
+  margin: 3px 0; /* Remove negative margins */
   font-size: 14px;
+  text-align: left; /* Align to the left */
 }
 
 .forgot-password a {
   color: #007bff;
   text-decoration: none;
-  margin: 0 -15px;
+  margin: 0; /* Remove negative margins */
 }
 
 .forgot-password a:hover {
