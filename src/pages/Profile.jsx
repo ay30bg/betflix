@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBalance } from '../context/BalanceContext';
-import Header from '../components/Header';
+import Header from '../components/header';
 import '../styles/profile.css';
 import { FaUser, FaBitcoin, FaCopy } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
