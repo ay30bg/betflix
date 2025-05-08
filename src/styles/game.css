@@ -21,17 +21,41 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; 
-  gap: 1rem; 
+  justify-content: flex-start;
+  gap: 1.5rem; /* Increased gap for better spacing */
 }
 
-.game-page h1 {
-  font-size: 2.75rem;
+/* Game Error (for Game.jsx errors) */
+.game-error {
+  font-size: 1.25rem; /* Larger font for visibility */
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  color: #fff;
+  background: #ef4444; /* Red background for emphasis */
+  padding: 1rem;
+  border-radius: 8px;
   text-align: center;
-  color: #1e40af;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Round Info (Current Round and Time Left) */
+.round-info {
+  background: #ffffff; /* White background for contrast */
+  padding: 1.25rem;
+  border-radius: 12px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.round-info p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0.5rem 0;
 }
 
 /* Header (Balance and Reset Button) */
@@ -80,44 +104,6 @@ body {
 .reset-balance-button:disabled {
   background: #9ca3af;
   cursor: not-allowed;
-}
-
-/* Timer */
-.timer {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #4b5563;
-  background: #ffffff;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  margin-bottom: 1.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.timer.warning {
-  color: #ef4444;
-  animation: pulse 1s infinite;
-}
-
-.timer strong {
-  font-weight: 800;
-  color: #1e40af;
-}
-
-.timer::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #1e40af);
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: left;
-  animation: progress var(--timer-duration, 30s) linear forwards;
 }
 
 /* Bet Form */
@@ -249,8 +235,8 @@ body {
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1.2rem; /* Larger font for clarity */
+  font-weight: 600;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -266,7 +252,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7); /* Darker overlay for focus */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -281,7 +267,7 @@ body {
   width: 90%;
   max-width: 450px;
   position: relative;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.3s ease;
 }
 
@@ -365,10 +351,14 @@ body {
 }
 
 .modal-error {
-  color: #ef4444;
-  font-size: 0.9rem;
+  color: #fff;
+  background: #ef4444; /* Red background for emphasis */
+  font-size: 1rem;
+  font-weight: 600;
   text-align: center;
+  padding: 0.75rem;
   margin: 0.5rem 0;
+  border-radius: 6px;
 }
 
 .modal-submit {
@@ -461,13 +451,13 @@ body {
 
 /* Loading Spinner */
 .loading-spinner {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #1e40af;
   text-align: center;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   position: relative;
-  padding-left: 2rem;
+  padding-left: 2.5rem;
 }
 
 .loading-spinner::before {
@@ -475,9 +465,9 @@ body {
   position: absolute;
   left: 0;
   top: 50%;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 3px solid #1e40af;
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid #1e40af;
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -486,54 +476,54 @@ body {
 
 /* Result Display */
 .result {
-  font-size: 1.5rem;
+  font-size: 1.75rem; /* Larger font for prominence */
   font-weight: 700;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 16px;
-  /* margin: 2rem 0; */
-  margin: 30px 0;
+  margin: 2rem 0;
   text-align: center;
   background: #ffffff;
   position: relative;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px; /* Slightly wider for visibility */
   line-height: 1.6;
-  animation: slideUp 0.4s ease-out;
+  animation: slideUp 0.5s ease-out;
+  z-index: 10; /* Ensure above other elements */
 }
 
 .result:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
 }
 
 .result.red {
-  border-left: 10px solid #ef4444;
+  border-left: 12px solid #ef4444;
   background: linear-gradient(90deg, #fef2f2 0%, #ffe4e6 100%);
 }
 
 .result.green {
-  border-left: 10px solid #10b981;
+  border-left: 12px solid #10b981;
   background: linear-gradient(90deg, #ecfdf5 0%, #d1fae5 100%);
 }
 
 .result.won {
-  border: 4px solid #10b981;
+  border: 5px solid #10b981;
   background: linear-gradient(90deg, #d1fae5 10%, #ecfdf5 100%);
   color: #065f46;
 }
 
 .result.lost {
-  border: 4px solid #ef4444;
+  border: 5px solid #ef4444;
   background: linear-gradient(90deg, #fee2e2 10%, #fef2f2 100%);
   color: #b91c1c;
 }
 
 .result-header {
-  font-size: 2rem;
+  font-size: 2.25rem; /* Larger for emphasis */
   font-weight: 800;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   text-transform: uppercase;
 }
 
@@ -545,14 +535,14 @@ body {
 }
 
 .result-detail {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1f2937;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .result-payout {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #1e40af;
   background: linear-gradient(90deg, #3b82f6, #1e40af);
@@ -562,14 +552,14 @@ body {
 
 .result-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 16px;
+  right: 16px;
   background: #e5e7eb;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  font-size: 1.4rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -580,87 +570,17 @@ body {
 
 /* No Result Message */
 .no-result {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #6b7280;
   text-align: center;
-  padding: 2rem;
+  padding: 2.5rem;
   background: #ffffff;
   border-radius: 16px;
   margin: 2rem 0;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 600px;
-}
-
-.round-info {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.round-info p {
-  margin: 0.5rem 0;
-  font-size: 1.1rem;
-  color: #333;
-}
-
-/* Simplified Animation */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
-/* Animations */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes progressBar {
-  0% {
-    transform: scaleX(0);
-  }
-  50% {
-    transform: scaleX(1);
-  }
-  100% {
-    transform: scaleX(0);
-    transform-origin: right;
-  }
-}
-
-@keyframes fadeInText {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Spinner Animation */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* Animations */
@@ -684,6 +604,23 @@ body {
   }
 }
 
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -696,24 +633,23 @@ body {
   }
 }
 
-@keyframes progress {
-  0% {
-    transform: scaleX(0);
-  }
-  100% {
-    transform: scaleX(1);
-  }
-}
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .game-page h1 {
-    font-size: 2rem;
+  .game-page {
+    padding: 1.5rem 0.75rem;
   }
 
-  .game-balance {
-    font-size: 1.25rem;
-    padding: 0.75rem 1.5rem;
+  .game-error {
+    font-size: 1.1rem;
+    padding: 0.75rem;
+  }
+
+  .round-info {
+    padding: 1rem;
+  }
+
+  .round-info p {
+    font-size: 1.1rem;
   }
 
   .bet-form-container {
@@ -721,13 +657,12 @@ body {
   }
 
   .color-button-group {
-    flex-direction: row;
     gap: 0.75rem;
   }
 
   .color-button {
-    width: 100%;
-    max-width: 230px;
+    width: 120px;
+    font-size: 1rem;
   }
 
   .ball-button {
@@ -744,6 +679,30 @@ body {
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .result {
+    font-size: 1.5rem;
+    padding: 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .result-header {
+    font-size: 2rem;
+  }
+
+  .result-detail {
+    font-size: 1.25rem;
+  }
+
+  .result-payout {
+    font-size: 1.5rem;
+  }
+
+  .no-result {
+    font-size: 1.25rem;
+    padding: 2rem;
   }
 
   .history-table th,
@@ -761,6 +720,29 @@ body {
 
   .modal-content h2 {
     font-size: 1.5rem;
+  }
+
+  .result {
+    font-size: 1.3rem;
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .result-header {
+    font-size: 1.75rem;
+  }
+
+  .result-detail {
+    font-size: 1.1rem;
+  }
+
+  .result-payout {
+    font-size: 1.3rem;
+  }
+
+  .no-result {
+    font-size: 1.1rem;
+    padding: 1.5rem;
   }
 
   .history-table {
@@ -796,59 +778,5 @@ body {
     font-weight: 600;
     color: #4b5563;
     width: 40%;
-  }
-}
-
-/* Responsive Adjustments for Result */
-@media (max-width: 768px) {
-  .result {
-    font-size: 1.3rem;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-  }
-
-  .result-header {
-    font-size: 1.75rem;
-  }
-
-  .result-detail {
-    font-size: 1.1rem;
-  }
-
-  .result-payout {
-    font-size: 1.3rem;
-  }
-
-  .no-result {
-    font-size: 1.1rem;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    border-radius: 5px;
-  }
-}
-
-@media (max-width: 600px) {
-  .result {
-    font-size: 1.2rem;
-    padding: 1.25rem;
-    max-width: 100%;
-  }
-
-  .result-header {
-    font-size: 1.5rem;
-  }
-
-  .result-detail {
-    font-size: 1rem;
-  }
-
-  .result-payout {
-    font-size: 1.2rem;
-  }
-
-  .no-result {
-    font-size: 1rem;
-    padding: 1.25rem;
-    border-radius: 5px;
   }
 }
