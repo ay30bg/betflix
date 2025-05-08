@@ -593,6 +593,20 @@ body {
   max-width: 600px;
 }
 
+.round-info {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.round-info p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
 /* Simplified Animation */
 @keyframes slideUp {
   from {
