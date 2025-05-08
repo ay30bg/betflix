@@ -1,50 +1,3 @@
-// // src/App.jsx
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-// import { BalanceProvider } from './context/BalanceContext';
-// import Navbar from './components/navbar';
-// import Home from './pages/Home';
-// import About from './pages/About';
-// import Profile from './pages/Profile';
-// import Login from './pages/Login';
-// import Game from './pages/Game';
-// import History from './pages/History';
-// import Verify from './pages/Verify';
-// import Signup from './pages/SignUp';
-
-// const queryClient = new QueryClient({
-//   defaultOptions: {
-//     queries: {
-//       retry: 1,
-//       refetchOnWindowFocus: false,
-//     },
-//   },
-// });
-
-// function App() {
-//   return (
-//     <QueryClientProvider client={queryClient}>
-//       <BalanceProvider>
-//         <Router>
-//           <Navbar />
-//           <Routes>
-//             <Route path="/" element={<Home />} />
-//             <Route path="/about" element={<About />} />
-//             <Route path="/profile" element={<Profile />} />
-//             <Route path="/login" element={<Login />} />
-//             <Route path="/game" element={<Game />} />
-//             <Route path="/history" element={<History />} />
-//             <Route path="/verify" element={<Verify />} />
-//             <Route path="/sign-up" element={<Signup />} />
-//           </Routes>
-//         </Router>
-//       </BalanceProvider>
-//     </QueryClientProvider>
-//   );
-// }
-
-// export default App;
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BalanceProvider } from './context/BalanceContext';
@@ -57,6 +10,7 @@ import Game from './pages/Game';
 import History from './pages/History';
 import Verify from './pages/Verify';
 import Signup from './pages/SignUp';
+import Support from './pages/support';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -84,6 +38,7 @@ function Layout() {
         <Route path="/history" element={<History />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/sign-up" element={<Signup />} />
+        <Route path="/support" element={<Support />} />
       </Routes>
     </>
   );
