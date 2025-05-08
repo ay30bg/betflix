@@ -8,49 +8,50 @@ import '../styles/profile.css';
 import { FaUser, FaBitcoin, FaCopy } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
 const fetchUserProfile = async () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('Please log in to continue');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/user/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to fetch profile');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Profile fetch failed: ${response.status}`);
   }
   return response.json();
 };
 
 const fetchStats = async () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('Please log in to continue');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/bets/stats`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to fetch stats');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Stats fetch failed: ${response.status}`);
   }
   return response.json();
 };
 
 const fetchReferralLink = async () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error('Please log in to continue');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/referral/link`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to fetch referral link');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Referral fetch failed: ${response.status}`);
   }
   return response.json();
 };
 
 const updateProfile = async ({ username }) => {
   const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/user/profile`, {
     method: 'PUT',
     headers: {
@@ -60,14 +61,15 @@ const updateProfile = async ({ username }) => {
     body: JSON.stringify({ username }),
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to update profile');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Profile update failed: ${response.status}`);
   }
   return response.json();
 };
 
 const initiateDeposit = async ({ amount, cryptoCurrency }) => {
   const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/transactions/crypto-deposit`, {
     method: 'POST',
     headers: {
@@ -77,14 +79,15 @@ const initiateDeposit = async ({ amount, cryptoCurrency }) => {
     body: JSON.stringify({ amount, cryptoCurrency }),
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to initiate crypto deposit');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Deposit initiation failed: ${response.status}`);
   }
   return response.json();
 };
 
 const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress }) => {
   const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required. Please log in.');
   const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
     method: 'POST',
     headers: {
@@ -94,8 +97,8 @@ const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress }) => 
     body: JSON.stringify({ amount, cryptoCurrency, walletAddress }),
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to initiate crypto withdrawal');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
   }
   return response.json();
 };
@@ -120,12 +123,16 @@ function Profile() {
     queryFn: fetchUserProfile,
     onSuccess: (data) => {
       setBalance(data.balance);
-      setFormData({ username: data.username });
+      setFormData({ username: data.username || '' });
     },
     onError: (err) => {
       setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
+    retry: 0,
   });
 
   // Fetch stats
@@ -134,8 +141,12 @@ function Profile() {
     queryFn: fetchStats,
     onError: (err) => {
       setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
+    retry: 0,
   });
 
   // Fetch referral link
@@ -144,8 +155,12 @@ function Profile() {
     queryFn: fetchReferralLink,
     onError: (err) => {
       setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
+    retry: 0,
   });
 
   const [referralLink, setReferralLink] = useState('');
@@ -168,7 +183,10 @@ function Profile() {
     onError: (err) => {
       setErrors((prev) => ({ ...prev, profile: err.message }));
       setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
   });
 
@@ -181,7 +199,10 @@ function Profile() {
     onError: (err) => {
       setErrors((prev) => ({ ...prev, deposit: err.message }));
       setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
   });
 
@@ -198,7 +219,10 @@ function Profile() {
     onError: (err) => {
       setErrors((prev) => ({ ...prev, withdraw: err.message }));
       setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) navigate('/login');
+      if (err.message.includes('log in')) {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
     },
   });
 
@@ -274,9 +298,7 @@ function Profile() {
     return (
       <div className="profile-page container">
         <Header />
-        <div className="loading-spinner" aria-live="polite">
-          Loading...
-        </div>
+        <div className="loading-spinner" aria-live="polite">Loading...</div>
       </div>
     );
   }
@@ -286,19 +308,9 @@ function Profile() {
       <div className="profile-page container">
         <Header />
         <p className="profile-error" role="alert">
-          {notification?.message || 'Failed to load profile data. Please try again.'}
+          {notification?.message || 'Failed to load profile data. Please try again or log in.'}
         </p>
-      </div>
-    );
-  }
-
-  if (!user || !stats || !referralData) {
-    return (
-      <div className="profile-page container">
-        <Header />
-        <p className="profile-error" role="alert">
-          No data available. Please log in or try again.
-        </p>
+        <button onClick={() => navigate('/login')} className="login-button">Log In</button>
       </div>
     );
   }
@@ -360,7 +372,7 @@ function Profile() {
               onClick={handleCopyReferralLink}
               className="copy-referral-button"
               aria-label="Copy referral link"
-              disabled={false}
+              disabled={!referralLink}
             >
               Copy Link <FaCopy style={{ marginLeft: '0.5rem' }} />
             </button>
