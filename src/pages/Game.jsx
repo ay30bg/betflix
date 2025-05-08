@@ -157,7 +157,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
-import Header from '../components/Header';
+import Header from '../components/header';
 import '../styles/game.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
