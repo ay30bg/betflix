@@ -12,19 +12,16 @@
 // import ball7 from '../assets/ball7.svg';
 // import ball8 from '../assets/ball8.svg';
 // import ball9 from '../assets/ball9.svg';
-// import Timer from './Timer';
 
-// function BetForm({ onSubmit, isLoading, balance, isDisabled }) {
+// function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
 //   const [selection, setSelection] = useState({ type: null, value: null });
 //   const [amount, setAmount] = useState('');
 //   const [clientSeed, setClientSeed] = useState(
 //     `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`
 //   );
 //   const [error, setError] = useState('');
-//   const [pendingBets, setPendingBets] = useState([]);
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [isSubmitting, setIsSubmitting] = useState(false);
-//   const isProcessingRef = useRef(false);
 //   const modalRef = useRef(null);
 //   const firstFocusableElementRef = useRef(null);
 //   const lastFocusableElementRef = useRef(null);
@@ -59,7 +56,7 @@
 //     setError('');
 //   };
 
-//   const handleModalSubmit = (e) => {
+//   const handleModalSubmit = async (e) => {
 //     e.preventDefault();
 //     if (isSubmitting) return;
 //     setIsSubmitting(true);
@@ -78,7 +75,7 @@
 //     const newClientSeed = `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`;
 //     const bet = {
 //       type: selection.type,
-//       value: selection.value,
+//       value: selection.value.toString(), // Ensure value is string
 //       amount: betAmount,
 //       clientSeed: newClientSeed,
 //     };
@@ -86,35 +83,17 @@
 //       bet.color = getNumberColor(selection.value);
 //       bet.exactMultiplier = EXACT_NUMBER_MULTIPLIER;
 //     }
-//     console.log('Adding bet with clientSeed:', newClientSeed);
-//     setPendingBets((prev) => [...prev, bet]);
-//     setIsModalOpen(false);
-//     setSelection({ type: null, value: null });
-//     setAmount('');
-//     setClientSeed(newClientSeed);
-//     setIsSubmitting(false);
-//   };
-
-//   const handleTimerEnd = async () => {
-//     if (pendingBets.length === 0) return;
-//     if (isProcessingRef.current) {
-//       console.log('Skipping handleTimerEnd: already processing');
-//       return;
-//     }
-//     isProcessingRef.current = true;
-
-//     const betsToSubmit = [...pendingBets];
-//     setPendingBets([]);
-//     console.log('Submitting bets:', betsToSubmit);
+//     console.log('Submitting bet:', bet);
 //     try {
-//       for (const bet of betsToSubmit) {
-//         await onSubmit(bet);
-//       }
+//       await onSubmit(bet);
+//       setIsModalOpen(false);
+//       setSelection({ type: null, value: null });
+//       setAmount('');
+//       setClientSeed(newClientSeed);
 //     } catch (err) {
-//       setError(`Failed to submit bets: ${err.message}`);
-//       setPendingBets(betsToSubmit);
+//       setError(`Failed to place bet: ${err.message}`);
 //     } finally {
-//       isProcessingRef.current = false;
+//       setIsSubmitting(false);
 //     }
 //   };
 
@@ -157,6 +136,8 @@
 //     }
 //   }, [isModalOpen]);
 
+//   const timeLeft = roundData ? Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000) : 0;
+
 //   return (
 //     <div className="bet-form-container">
 //       <form className="bet-form" onSubmit={(e) => e.preventDefault()}>
@@ -172,7 +153,7 @@
 //                 aria-label="Bet on Red"
 //                 disabled={isDisabled}
 //               >
-//                Red
+//                 Red
 //               </button>
 //               <button
 //                 type="button"
@@ -182,7 +163,7 @@
 //                 aria-label="Bet on Green"
 //                 disabled={isDisabled}
 //               >
-//                Green
+//                 Green
 //               </button>
 //             </div>
 //           </div>
@@ -227,11 +208,11 @@
 //         </div>
 
 //         <div className="period-timer-container">
-//           <span className="period-text" aria-label="Period ID">
-//             Period: {clientSeed.slice(0, 8)}
+//           <span className="period-text" aria-label="Round ID">
+//             Round: {roundData?.period || 'Loading...'}
 //           </span>
 //           <span className="timer-text" aria-live="polite">
-//             <Timer onTimerEnd={handleTimerEnd} />
+//             Time Left: {Math.floor(timeLeft)} seconds
 //           </span>
 //         </div>
 //       </form>
@@ -303,6 +284,10 @@
 //   isLoading: PropTypes.bool.isRequired,
 //   balance: PropTypes.number.isRequired,
 //   isDisabled: PropTypes.bool.isRequired,
+//   roundData: PropTypes.shape({
+//     period: PropTypes.string,
+//     expiresAt: PropTypes.string,
+//   }),
 // };
 
 // export default BetForm;
@@ -322,13 +307,12 @@ import ball7 from '../assets/ball7.svg';
 import ball8 from '../assets/ball8.svg';
 import ball9 from '../assets/ball9.svg';
 
-function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
+function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft }) {
   const [selection, setSelection] = useState({ type: null, value: null });
   const [amount, setAmount] = useState('');
   const [clientSeed, setClientSeed] = useState(
     `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`
   );
-  const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef(null);
@@ -356,35 +340,53 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
   const handleColorSelect = (color) => {
     setSelection({ type: 'color', value: color });
     setIsModalOpen(true);
-    setError('');
   };
 
   const handleNumberSelect = (number) => {
     setSelection({ type: 'number', value: number });
     setIsModalOpen(true);
-    setError('');
   };
 
   const handleModalSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
-    setError('');
+
+    if (!selection.type || !selection.value) {
+      onSubmit({ error: 'Please select a bet type and value' });
+      setIsSubmitting(false);
+      return;
+    }
+
     const betAmount = Number(amount);
-    if (!betAmount || betAmount <= 0) {
-      setError('Please enter a valid bet amount');
+    if (!betAmount || betAmount <= 0 || Number.isNaN(betAmount)) {
+      onSubmit({ error: 'Please enter a valid bet amount' });
       setIsSubmitting(false);
       return;
     }
+
     if (betAmount > balance) {
-      setError('Insufficient balance');
+      onSubmit({ error: 'Insufficient balance' });
       setIsSubmitting(false);
       return;
     }
+
+    if (selection.type === 'color' && !['Green', 'Red'].includes(selection.value)) {
+      onSubmit({ error: 'Invalid color selected' });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (selection.type === 'number' && !/^\d$/.test(selection.value.toString())) {
+      onSubmit({ error: 'Invalid number selected' });
+      setIsSubmitting(false);
+      return;
+    }
+
     const newClientSeed = `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`;
     const bet = {
       type: selection.type,
-      value: selection.value.toString(), // Ensure value is string
+      value: selection.value.toString(),
       amount: betAmount,
       clientSeed: newClientSeed,
     };
@@ -400,7 +402,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
       setAmount('');
       setClientSeed(newClientSeed);
     } catch (err) {
-      setError(`Failed to place bet: ${err.message}`);
+      onSubmit({ error: `Failed to place bet: ${err.message}` });
     } finally {
       setIsSubmitting(false);
     }
@@ -413,7 +415,6 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
   const closeModal = () => {
     setIsModalOpen(false);
     setAmount('');
-    setError('');
     setSelection({ type: null, value: null });
     setIsSubmitting(false);
   };
@@ -445,12 +446,11 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
     }
   }, [isModalOpen]);
 
-  const timeLeft = roundData ? Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000) : 0;
+  const isBettingDisabled = isDisabled || timeLeft < 5;
 
   return (
     <div className="bet-form-container">
       <form className="bet-form" onSubmit={(e) => e.preventDefault()}>
-        {error && <p className="bet-error" role="alert">{error}</p>}
         <div className="button-balls-container">
           <div className="form-group color-buttons">
             <div className="color-button-group">
@@ -460,7 +460,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
                 onClick={() => handleColorSelect('Red')}
                 aria-pressed={selection.type === 'color' && selection.value === 'Red'}
                 aria-label="Bet on Red"
-                disabled={isDisabled}
+                disabled={isBettingDisabled}
               >
                 Red
               </button>
@@ -470,7 +470,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
                 onClick={() => handleColorSelect('Green')}
                 aria-pressed={selection.type === 'color' && selection.value === 'Green'}
                 aria-label="Bet on Green"
-                disabled={isDisabled}
+                disabled={isBettingDisabled}
               >
                 Green
               </button>
@@ -484,7 +484,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
                 className={`ball-button ${selection.type === 'number' && selection.value === ball.number ? 'selected' : ''} ball-${ball.color.toLowerCase()}`}
                 onClick={() => handleNumberSelect(ball.number)}
                 aria-label={`Bet on number ${ball.number} (${ball.color})`}
-                disabled={isDisabled}
+                disabled={isBettingDisabled}
               >
                 <img
                   src={ball.src}
@@ -503,7 +503,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
                 className={`ball-button ${selection.type === 'number' && selection.value === ball.number ? 'selected' : ''} ball-${ball.color.toLowerCase()}`}
                 onClick={() => handleNumberSelect(ball.number)}
                 aria-label={`Bet on number ${ball.number} (${ball.color})`}
-                disabled={isDisabled}
+                disabled={isBettingDisabled}
               >
                 <img
                   src={ball.src}
@@ -521,7 +521,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
             Round: {roundData?.period || 'Loading...'}
           </span>
           <span className="timer-text" aria-live="polite">
-            Time Left: {Math.floor(timeLeft)} seconds
+            Time Left: {timeLeft} seconds
           </span>
         </div>
       </form>
@@ -554,7 +554,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
                   placeholder="Enter amount"
                   min="1"
                   required
-                  disabled={isDisabled || isSubmitting}
+                  disabled={isBettingDisabled || isSubmitting}
                   className="modal-input"
                 />
               </div>
@@ -565,18 +565,17 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData }) {
                     type="button"
                     className="suggested-amount-button"
                     onClick={() => handleSuggestedAmount(suggestedAmount)}
-                    disabled={isDisabled || isSubmitting}
+                    disabled={isBettingDisabled || isSubmitting}
                   >
                     {suggestedAmount}
                   </button>
                 ))}
               </div>
-              {error && <p className="modal-error" role="alert">{error}</p>}
               <button
                 type="submit"
-                disabled={isLoading || isDisabled || isSubmitting}
+                disabled={isLoading || isBettingDisabled || isSubmitting}
                 className="modal-submit"
-                aria-disabled={isLoading || isDisabled || isSubmitting}
+                aria-disabled={isLoading || isBettingDisabled || isSubmitting}
               >
                 {isSubmitting ? 'Placing Bet...' : 'Place Bet'}
               </button>
@@ -597,6 +596,7 @@ BetForm.propTypes = {
     period: PropTypes.string,
     expiresAt: PropTypes.string,
   }),
+  timeLeft: PropTypes.number.isRequired,
 };
 
 export default BetForm;
