@@ -158,13 +158,16 @@
 
 .forgot-password {
   margin-top: 8px;
-  text-align: right;
+  align-items: flex-start;
+  justify-content: flex-start;
   font-size: 14px;
 }
+
 .forgot-password a {
   color: #007bff;
   text-decoration: none;
 }
+
 .forgot-password a:hover {
   text-decoration: underline;
 }
