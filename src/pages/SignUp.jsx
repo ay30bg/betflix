@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/header';
+import AuthHeader from '../components/AuthHeader';
 import '../styles/signup.css';
 
 function Signup() {
@@ -61,7 +61,7 @@ function Signup() {
 
   return (
     <div className="signup-page container">
-      <Header />
+      <AuthHeader />
       <h1 className="signup-header">Sign Up</h1>
       <form onSubmit={handleSubmit} className="signup-form">
         <div className="form-group">
