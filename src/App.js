@@ -11,6 +11,7 @@ import History from './pages/History';
 import Verify from './pages/Verify';
 import Signup from './pages/SignUp';
 import Support from './pages/support';
+import ForgotPassword from './pages/ForgotPassword';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ function Layout() {
         <Route path="/verify" element={<Verify />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/support" element={<Support />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </>
   );
