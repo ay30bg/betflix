@@ -12,6 +12,7 @@ import Verify from './pages/Verify';
 import Signup from './pages/SignUp';
 import Support from './pages/support';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,7 @@ function Layout() {
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/support" element={<Support />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </>
   );
