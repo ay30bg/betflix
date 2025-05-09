@@ -315,17 +315,83 @@ import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
-import Header from '../components/header';
+import Header from '../components/Header';
 import '../styles/game.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// ... (fetchBets, fetchCurrentRound, placeBet, fetchBetResult unchanged)
+// API Functions
+const fetchBets = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Bets fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const fetchCurrentRound = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/current`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Round fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const placeBet = async (betData) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  console.log('Sending bet to server:', betData);
+  const response = await fetch(`${API_URL}/api/bets`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(betData),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error('Bet response error:', errorData);
+    throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
+  }
+  const data = await response.json();
+  console.log('Bet response success:', data);
+  return data;
+};
+
+const fetchBetResult = async (period) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  console.log('Fetching bet result for period:', period);
+  const response = await fetch(`${API_URL}/api/bets/result/${period}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error('Bet result fetch error:', errorData);
+    throw new Error(errorData.error || `Bet result fetch failed: ${response.status}`);
+  }
+  const data = await response.json();
+  console.log('Bet result fetched:', data);
+  return data;
+};
 
 function Game() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { balance, isLoading: balanceLoading, error: balanceError } = useBalance();
+  const { balance, setBalance, isLoading: balanceLoading, error: balanceError } = useBalance();
   const [error, setError] = useState('');
   const [lastResult, setLastResult] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -337,7 +403,7 @@ function Game() {
     onError: (err) => {
       setError(err.message);
       setTimeout(() => setError(''), 5000);
-      if (err.message === 'Authentication required') {
+      if (err.message.includes('Authentication required')) {
         localStorage.removeItem('token');
         navigate('/login');
       }
@@ -355,7 +421,7 @@ function Game() {
     onError: (err) => {
       setError(err.message);
       setTimeout(() => setError(''), 5000);
-      if (err.message === 'Authentication required') {
+      if (err.message.includes('Authentication required')) {
         localStorage.removeItem('token');
         navigate('/login');
       }
@@ -363,13 +429,50 @@ function Game() {
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  // ... (useEffect for timeLeft unchanged)
+  // Update timeLeft every second
+  useEffect(() => {
+    if (roundData?.expiresAt) {
+      const updateTimeLeft = () => {
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
+        setTimeLeft(Math.floor(timeRemaining));
+      };
+      updateTimeLeft();
+      const interval = setInterval(updateTimeLeft, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [roundData]);
+
+  // Fetch bet result when round ends
+  const fetchResult = useCallback(async () => {
+    try {
+      const data = await fetchBetResult(pendingBet.period);
+      setLastResult({ ...data.bet, payout: data.bet.payout });
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      queryClient.invalidateQueries(['bets']);
+      setPendingBet(null);
+    } catch (err) {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+    }
+  }, [pendingBet, queryClient, setBalance]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && pendingBet) {
+      fetchResult();
+    }
+  }, [timeLeft, pendingBet, fetchResult]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
     onSuccess: (data) => {
-      console.log('Mutation success:', data);
+      console.log('Bet API response:', data);
       if (typeof data.balance === 'number') {
+        // Warn if API balance differs significantly from context balance
+        if (Math.abs(data.balance - (balance ?? 0)) > 0.01) {
+          console.warn('Balance mismatch:', { api: data.balance, context: balance });
+        }
         setBalance(data.balance);
       }
       setPendingBet(data.bet);
@@ -381,6 +484,13 @@ function Game() {
       setTimeout(() => setError(''), 5000);
     },
   });
+
+  const getResultColorClass = useCallback((result, type) => {
+    if (type === 'color') {
+      return result?.toLowerCase() || '';
+    }
+    return parseInt(result) % 2 === 0 ? 'green' : 'red';
+  }, []);
 
   const handleBet = async (betData) => {
     console.log('Handling bet:', betData);
@@ -402,8 +512,6 @@ function Game() {
     }
   };
 
-  // ... (getResultColorClass, fetchBetResult useEffect unchanged)
-
   if (balanceLoading || betsLoading || roundLoading) {
     return (
       <div className="game-page container">
@@ -417,8 +525,11 @@ function Game() {
     return (
       <div className="game-page container">
         <Header />
-        <p className="game-error" role="alert">{balanceError || betsError.message}</p>
-        {balanceError?.includes('Authentication required') && (
+        <p className="game-error" role="alert" aria-live="polite">
+          {balanceError?.message || betsError?.message}
+        </p>
+        {(balanceError?.message.includes('Authentication required') ||
+          betsError?.message.includes('Authentication required')) && (
           <button onClick={() => navigate('/login')} className="login-button">
             Log In
           </button>
