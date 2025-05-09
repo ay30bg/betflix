@@ -403,7 +403,7 @@ function Profile() {
               aria-label="Deposit crypto"
               disabled={depositMutation.isLoading}
             >
-              <p><Deposit <FaBitcoin /></p>
+              <p>Deposit <FaBitcoin /></p>
             </button>
             <button
               onClick={() => setIsWithdrawModalOpen(true)}
