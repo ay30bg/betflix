@@ -441,61 +441,103 @@
 .crypto-withdraw-button {
     padding: 0.75rem;
     border: none;
-    border-radius: 8px;
-    font-size: 1.5rem; /* Larger font for icons */
+    border-radius: 12px; /* Softer, more modern rounded corners */
+    font-size: 1.25rem; /* Slightly smaller icon size for balance */
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s ease; /* Smooth transition for all properties */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px; /* Fixed width for icon-only buttons */
-    height: 48px; /* Fixed height for icon-only buttons */
+    width: 56px; /* Slightly larger for better touch target */
+    height: 56px; /* Consistent height */
+    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); /* Subtle gradient background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.5); /* 3D effect */
     font-family: 'Poppins', sans-serif; /* Consistent with other buttons */
+    position: relative; /* For pseudo-element effects */
+    overflow: hidden; /* Contain pseudo-element animations */
 }
 
 .crypto-deposit-button {
-    background: #10b981; /* Green to indicate deposit/addition */
-    color: #fff;
+    color: #10b981; /* Green icon color for deposit */
+}
+
+.crypto-deposit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
 }
 
 .crypto-deposit-button:hover:not(:disabled) {
-    background: #059669; /* Darker green on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Green gradient on hover */
+    color: #fff; /* White icon on hover */
+    transform: translateY(-2px) scale(1.05); /* Slight lift and scale */
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3); /* Enhanced shadow */
+}
+
+.crypto-deposit-button:hover::before {
+    opacity: 1; /* Show radial gradient effect on hover */
 }
 
 .crypto-deposit-button:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3); /* Focus ring */
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.4); /* Prominent focus ring */
 }
 
 .crypto-deposit-button:disabled {
-    background: #9ca3af; /* Gray for disabled state */
+    background: #e5e7eb; /* Neutral gray for disabled state */
+    color: #9ca3af; /* Grayed-out icon */
+    box-shadow: none; /* Remove shadow */
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 .crypto-withdraw-button {
-    background: #f59e0b; /* Amber to indicate withdrawal/removal */
-    color: #fff;
+    color: #f59e0b; /* Amber icon color for withdraw */
+}
+
+.crypto-withdraw-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 30%, rgba(245, 158, 11, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
 }
 
 .crypto-withdraw-button:hover:not(:disabled) {
-    background: #d97706; /* Darker amber on hover */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); /* Amber gradient on hover */
+    color: #fff; /* White icon on hover */
+    transform: translateY(-2px) scale(1.05); /* Slight lift and scale */
+    box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3); /* Enhanced shadow */
+}
+
+.crypto-withdraw-button:hover::before {
+    opacity: 1; /* Show radial gradient effect on hover */
 }
 
 .crypto-withdraw-button:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3); /* Focus ring */
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.4); /* Prominent focus ring */
 }
 
 .crypto-withdraw-button:disabled {
-    background: #9ca3af; /* Gray for disabled state */
+    background: #e5e7eb; /* Neutral gray for disabled state */
+    color: #9ca3af; /* Grayed-out icon */
+    box-shadow: none; /* Remove shadow */
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 /* Animations */
