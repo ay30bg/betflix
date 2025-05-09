@@ -156,6 +156,97 @@
   opacity: 0.6;
 }
 
+/* Forgot Password Page */
+.forgot-password-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Matches Login gradient */
+  padding: 2rem 1rem;
+  font-family: 'Inter', sans-serif; /* Matches Login body font */
+}
+
+.forgot-password-header {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #1e40af; /* Matches Login heading color */
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Matches Login heading shadow */
+  font-family: 'Poppins', sans-serif; /* Matches Login heading font */
+}
+
+.forgot-password-form {
+  background: #ffffff; /* Matches Login card background */
+  padding: 2rem;
+  border-radius: 8px; /* Matches Login card border-radius */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); /* Matches Login card shadow */
+  width: 100%;
+  max-width: 400px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Matches Login card transition */
+}
+
+.forgot-password-form p {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: #1f2937; /* Matches Login text color */
+  font-family: 'Inter', sans-serif; /* Matches Login text font */
+}
+
+.forgot-password-form a {
+  color: #3b82f6; /* Matches Login link color */
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif; /* Matches Login link font */
+}
+
+.forgot-password-form a:hover {
+  text-decoration: underline;
+}
+
+.error-message, .success-message {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.error-message {
+  color: #ef4444; /* Matches Profile error color */
+}
+
+.success-message {
+  color: #10b981; /* Green for success */
+}
+
+/* Responsive Design for Forgot Password */
+@media (max-width: 768px) {
+  .forgot-password-header {
+    font-size: 2rem; /* Matches Login responsive heading */
+  }
+
+  .forgot-password-form {
+    padding: 1.5rem; /* Matches Login responsive padding */
+  }
+}
+
+@media (max-width: 480px) {
+  .forgot-password-page {
+    padding: 1.5rem 0.75rem; /* Matches Login responsive padding */
+  }
+
+  .forgot-password-header {
+    font-size: 1.8rem; /* Matches Login responsive heading */
+  }
+
+  .forgot-password-form {
+    padding: 1rem; /* Matches Login responsive padding */
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
