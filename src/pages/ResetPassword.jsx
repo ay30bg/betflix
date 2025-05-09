@@ -116,4 +116,10 @@ function ResetPassword() {
         </p>
       </form>
       <button className="back-btn" onClick={handleBack} disabled={isLoading}>
-        Back
+        Back to Login
+      </button>
+    </div>
+  );
+}
+
+export default ResetPassword;
