@@ -269,10 +269,10 @@ function Game() {
               {error}
             </p>
           )}
-          <div className="round-info">
+{/*           <div className="round-info">
             <p>Current Round: {roundData?.period || 'Loading...'}</p>
             <p>Time Left: {timeLeft} seconds</p>
-          </div>
+          </div> */}
         </div>
         {mutation.isLoading && (
           <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
