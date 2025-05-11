@@ -763,7 +763,7 @@ import Header from '../components/header';
 import '../styles/profile.css';
 import { FaUser, FaCopy } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
-import ReactTooltip from 'react-tooltip'; // Import react-tooltip
+import { Tooltip } from 'react-tooltip'; // Use named import for react-tooltip v5
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
@@ -1582,11 +1582,10 @@ function Profile() {
       )}
 
       {/* Tooltips */}
-      <ReactTooltip id="referral-tooltip" place="top" effect="solid" />
-      <ReactTooltip id="network-tooltip" place="top" effect="solid" />
+      <Tooltip id="referral-tooltip" place="top" variant="dark" />
+      <Tooltip id="network-tooltip" place="top" variant="dark" />
     </div>
   );
 }
 
 export default Profile;
-
