@@ -298,7 +298,7 @@
 
 // export default memo(Game);
 
-import { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react'; // Added React import
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
