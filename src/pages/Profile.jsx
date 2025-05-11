@@ -809,20 +809,6 @@ const fetchReferralLink = async () => {
   return response.json();
 };
 
-// Fetch referral stats
-const fetchReferralStats = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('Authentication required. Please log in.');
-  const response = await fetch(`${API_URL}/api/referral/stats`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
-    throw new Error(errorData || `Referral stats fetch failed: ${response.status}`);
-  }
-  return response.json();
-};
-
 // Update profile
 const updateProfile = async ({ username }) => {
   const token = localStorage.getItem('token');
@@ -938,20 +924,6 @@ function Profile() {
   const { data: referralData, isLoading: referralLoading, error: referralError } = useQuery({
     queryKey: ['referralLink'],
     queryFn: fetchReferralLink,
-    onError: (err) => {
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
-      }
-    },
-    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('log in'),
-  });
-
-  // Fetch referral stats
-  const { data: referralStats, isLoading: referralStatsLoading, error: referralStatsError } = useQuery({
-    queryKey: ['referralStats'],
-    queryFn: fetchReferralStats,
     onError: (err) => {
       setNotification({ type: 'error', message: err.message });
       if (err.message.includes('log in')) {
@@ -1138,7 +1110,7 @@ function Profile() {
     },
   });
 
-  if (balanceLoading || userLoading || statsLoading || referralLoading || referralStatsLoading) {
+  if (balanceLoading || userLoading || statsLoading || referralLoading) {
     return (
       <div className="profile-page container">
         <Header />
@@ -1147,12 +1119,12 @@ function Profile() {
     );
   }
 
-  if (balanceError || userError || statsError || referralError || referralStatsError) {
+  if (balanceError || userError || statsError || referralError) {
     return (
       <div className="profile-page container">
         <Header />
         <p className="profile-error" role="alert">
-          {notification?.message || balanceError?.message || userError?.message || statsError?.message || referralError?.message || referralStatsError?.message || 'Failed to load profile data. Please try again or log in.'}
+          {notification?.message || balanceError?.message || userError?.message || statsError?.message || referralError?.message || 'Failed to load profile data. Please try again or log in.'}
         </p>
         <button
           onClick={() => navigate('/login')}
@@ -1165,7 +1137,7 @@ function Profile() {
     );
   }
 
-  if (!user || !stats || !referralStats) {
+  if (!user || !stats) {
     return (
       <div className="profile-page container">
         <Header />
@@ -1245,12 +1217,6 @@ function Profile() {
             >
               Copy Link <FaCopy style={{ marginLeft: '0.5rem' }} />
             </button>
-          </div>
-          {/* Referral Statistics */}
-          <div className="referral-stats">
-            <h3>Referral Statistics</h3>
-            <p><strong>Users Referred:</strong> {referralStats.referredUsers || 0}</p>
-            <p><strong>Total Earnings:</strong> ${(referralStats.earnings || 0).toFixed(2)}</p>
           </div>
         </div>
         <div className="betting-stats">
