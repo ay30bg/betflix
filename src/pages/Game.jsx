@@ -1,4 +1,4 @@
-// import { useState, useEffect, useCallback } from 'react';
+// import { useState, useEffect, useCallback, memo } from 'react';
 // import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 // import { useNavigate } from 'react-router-dom';
 // import { useBalance } from '../context/BalanceContext';
@@ -9,19 +9,7 @@
 
 // const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// const fetchUserProfile = async () => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   const response = await fetch(`${API_URL}/api/user/profile`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   if (!response.ok) {
-//     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(`Profile fetch failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
+// // API Functions
 // const fetchBets = async () => {
 //   const token = localStorage.getItem('token');
 //   if (!token) throw new Error('Authentication required');
@@ -29,8 +17,9 @@
 //     headers: { Authorization: `Bearer ${token}` },
 //   });
 //   if (!response.ok) {
+//     const errorData = await response.text().catch(() => 'Unknown error');
 //     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(`Bets fetch failed: ${response.status}`);
+//     throw new Error(errorData || `Bets fetch failed: ${response.status}`);
 //   }
 //   return response.json();
 // };
@@ -42,8 +31,9 @@
 //     headers: { Authorization: `Bearer ${token}` },
 //   });
 //   if (!response.ok) {
+//     const errorData = await response.text().catch(() => 'Unknown error');
 //     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(`Round fetch failed: ${response.status}`);
+//     throw new Error(errorData || `Round fetch failed: ${response.status}`);
 //   }
 //   return response.json();
 // };
@@ -90,26 +80,11 @@
 // function Game() {
 //   const queryClient = useQueryClient();
 //   const navigate = useNavigate();
-//   const { setBalance } = useBalance();
+//   const { balance, setBalance, isLoading: balanceLoading, error: balanceError } = useBalance();
 //   const [error, setError] = useState('');
 //   const [lastResult, setLastResult] = useState(null);
 //   const [timeLeft, setTimeLeft] = useState(0);
 //   const [pendingBet, setPendingBet] = useState(null);
-
-//   const { data: userData, isLoading: userLoading, error: userError } = useQuery({
-//     queryKey: ['userProfile'],
-//     queryFn: fetchUserProfile,
-//     onSuccess: (data) => setBalance(data.balance),
-//     onError: (err) => {
-//       setError(err.message);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message === 'Authentication required') {
-//         localStorage.removeItem('token');
-//         navigate('/login');
-//       }
-//     },
-//     retry: 0,
-//   });
 
 //   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
 //     queryKey: ['bets'],
@@ -117,12 +92,12 @@
 //     onError: (err) => {
 //       setError(err.message);
 //       setTimeout(() => setError(''), 5000);
-//       if (err.message === 'Authentication required') {
+//       if (err.message.includes('Authentication required')) {
 //         localStorage.removeItem('token');
 //         navigate('/login');
 //       }
 //     },
-//     retry: 0,
+//     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
 //   });
 
 //   const { data: roundData, isLoading: roundLoading } = useQuery({
@@ -135,12 +110,12 @@
 //     onError: (err) => {
 //       setError(err.message);
 //       setTimeout(() => setError(''), 5000);
-//       if (err.message === 'Authentication required') {
+//       if (err.message.includes('Authentication required')) {
 //         localStorage.removeItem('token');
 //         navigate('/login');
 //       }
 //     },
-//     retry: 0,
+//     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
 //   });
 
 //   // Update timeLeft every second
@@ -157,31 +132,39 @@
 //   }, [roundData]);
 
 //   // Fetch bet result when round ends
+//   const fetchResult = useCallback(async () => {
+//     try {
+//       const data = await fetchBetResult(pendingBet.period);
+//       setLastResult({ ...data.bet, payout: data.bet.payout });
+//       if (typeof data.balance === 'number') {
+//         setBalance(data.balance);
+//       }
+//       queryClient.invalidateQueries(['bets']);
+//       setPendingBet(null);
+//     } catch (err) {
+//       setError(err.message);
+//       setTimeout(() => setError(''), 5000);
+//     }
+//   }, [pendingBet, queryClient, setBalance]);
+
 //   useEffect(() => {
 //     if (timeLeft === 0 && pendingBet) {
-//       const fetchResult = async () => {
-//         try {
-//           const data = await fetchBetResult(pendingBet.period);
-//           setLastResult({ ...data.bet, payout: data.bet.payout });
-//           setBalance(data.balance);
-//           queryClient.invalidateQueries(['bets']);
-//           queryClient.invalidateQueries(['userProfile']);
-//           setPendingBet(null);
-//         } catch (err) {
-//           setError(err.message);
-//           setTimeout(() => setError(''), 5000);
-//         }
-//       };
 //       fetchResult();
 //     }
-//   }, [timeLeft, pendingBet, queryClient, setBalance]);
+//   }, [timeLeft, pendingBet, fetchResult]);
 
 //   const mutation = useMutation({
 //     mutationFn: placeBet,
 //     onSuccess: (data) => {
-//       console.log('Mutation success:', data);
-//       setBalance(data.balance);
-//       setPendingBet(data.bet); // Store bet until round ends
+//       console.log('Bet API response:', data);
+//       if (typeof data.balance === 'number') {
+//         // Warn if API balance differs significantly from context balance
+//         if (Math.abs(data.balance - (balance ?? 0)) > 0.01) {
+//           console.warn('Balance mismatch:', { api: data.balance, context: balance });
+//         }
+//         setBalance(data.balance);
+//       }
+//       setPendingBet(data.bet);
 //       setError('');
 //     },
 //     onError: (err) => {
@@ -189,7 +172,6 @@
 //       setError(err.message);
 //       setTimeout(() => setError(''), 5000);
 //     },
-//     onSettled: () => console.log('Mutation settled'),
 //   });
 
 //   const getResultColorClass = useCallback((result, type) => {
@@ -206,16 +188,20 @@
 //       setTimeout(() => setError(''), 5000);
 //       return;
 //     }
+//     if (betData.amount > (balance ?? 0)) {
+//       setError('Insufficient balance');
+//       setTimeout(() => setError(''), 5000);
+//       return;
+//     }
 //     try {
 //       await mutation.mutateAsync(betData);
 //     } catch (err) {
-//       console.error('Handle bet error:', err.message);
 //       setError(err.message);
 //       setTimeout(() => setError(''), 5000);
 //     }
 //   };
 
-//   if (userLoading || betsLoading || roundLoading) {
+//   if (balanceLoading || betsLoading || roundLoading) {
 //     return (
 //       <div className="game-page container">
 //         <Header />
@@ -224,12 +210,15 @@
 //     );
 //   }
 
-//   if (userError || betsError) {
+//   if (balanceError || betsError) {
 //     return (
 //       <div className="game-page container">
 //         <Header />
-//         <p className="game-error" role="alert">{error}</p>
-//         {error === 'Authentication required' && (
+//         <p className="game-error" role="alert" aria-live="polite">
+//           {balanceError?.message || betsError?.message}
+//         </p>
+//         {(balanceError?.message.includes('Authentication required') ||
+//           betsError?.message.includes('Authentication required')) && (
 //           <button onClick={() => navigate('/login')} className="login-button">
 //             Log In
 //           </button>
@@ -243,7 +232,7 @@
 //       <Header />
 //       <div className="game958">
 //         {error && (
-//           <p className="game-error" role="alert">
+//           <p className="game-error" role="alert" aria-live="polite">
 //             {error}
 //           </p>
 //         )}
@@ -260,6 +249,7 @@
 //           key={lastResult.period}
 //           className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
 //           role="alert"
+//           aria-live="polite"
 //         >
 //           <button
 //             className="result-close"
@@ -296,8 +286,8 @@
 //       <BetForm
 //         onSubmit={handleBet}
 //         isLoading={mutation.isLoading}
-//         balance={userData.balance}
-//         isDisabled={userData.balance === 0 || mutation.isLoading || timeLeft < 5}
+//         balance={balance ?? 0}
+//         isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 5}
 //         roundData={roundData}
 //         timeLeft={timeLeft}
 //       />
@@ -306,8 +296,7 @@
 //   );
 // }
 
-// export default Game;
-
+// export default memo(Game);
 
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -317,6 +306,20 @@ import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
 import Header from '../components/header';
 import '../styles/game.css';
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return <div>Error: {this.state.error.message}</div>;
+    }
+    return this.props.children;
+  }
+}
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
@@ -332,7 +335,8 @@ const fetchBets = async () => {
     if (response.status === 401) throw new Error('Authentication required');
     throw new Error(errorData || `Bets fetch failed: ${response.status}`);
   }
-  return response.json();
+  const bets = await response.json();
+  return bets.filter(bet => bet && bet.type && bet.value !== undefined && bet.amount !== undefined);
 };
 
 const fetchCurrentRound = async () => {
@@ -344,6 +348,7 @@ const fetchCurrentRound = async () => {
   if (!response.ok) {
     const errorData = await response.text().catch(() => 'Unknown error');
     if (response.status === 401) throw new Error('Authentication required');
+    if (response.status === 429) throw new Error('Too many requests, please try again later');
     throw new Error(errorData || `Round fetch failed: ${response.status}`);
   }
   return response.json();
@@ -414,7 +419,8 @@ function Game() {
   const { data: roundData, isLoading: roundLoading } = useQuery({
     queryKey: ['currentRound'],
     queryFn: fetchCurrentRound,
-    refetchInterval: 1000,
+    refetchInterval: 6000, // Poll every 6 seconds (10 requests per minute)
+    staleTime: 6000, // Cache data for 6 seconds
     onSuccess: (data) => {
       console.log('Fetched roundData:', data);
     },
@@ -442,10 +448,21 @@ function Game() {
     }
   }, [roundData]);
 
-  // Fetch bet result when round ends
-  const fetchResult = useCallback(async () => {
+  // Fetch bet result with retry logic
+  const fetchResult = useCallback(async (retryCount = 3) => {
+    if (!pendingBet?.period) return;
     try {
       const data = await fetchBetResult(pendingBet.period);
+      if (!data.bet || typeof data.bet.result === 'undefined') {
+        if (retryCount > 0) {
+          console.warn('Bet result incomplete, retrying:', { retryCount, data });
+          setTimeout(() => fetchResult(retryCount - 1), 2000);
+          return;
+        }
+        setError('Result not available');
+        setPendingBet(null);
+        return;
+      }
       setLastResult({ ...data.bet, payout: data.bet.payout });
       if (typeof data.balance === 'number') {
         setBalance(data.balance);
@@ -458,18 +475,21 @@ function Game() {
     }
   }, [pendingBet, queryClient, setBalance]);
 
+  // Poll for result only when round is about to end
   useEffect(() => {
-    if (timeLeft === 0 && pendingBet) {
-      fetchResult();
+    if (timeLeft <= 5 && pendingBet && !lastResult) {
+      const timer = setTimeout(() => {
+        fetchResult();
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [timeLeft, pendingBet, fetchResult]);
+  }, [timeLeft, pendingBet, fetchResult, lastResult]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
     onSuccess: (data) => {
       console.log('Bet API response:', data);
       if (typeof data.balance === 'number') {
-        // Warn if API balance differs significantly from context balance
         if (Math.abs(data.balance - (balance ?? 0)) > 0.01) {
           console.warn('Balance mismatch:', { api: data.balance, context: balance });
         }
@@ -486,8 +506,9 @@ function Game() {
   });
 
   const getResultColorClass = useCallback((result, type) => {
+    if (!result) return '';
     if (type === 'color') {
-      return result?.toLowerCase() || '';
+      return result.toLowerCase();
     }
     return parseInt(result) % 2 === 0 ? 'green' : 'red';
   }, []);
@@ -539,71 +560,73 @@ function Game() {
   }
 
   return (
-    <div className="game-page container">
-      <Header />
-      <div className="game958">
-        {error && (
-          <p className="game-error" role="alert" aria-live="polite">
-            {error}
-          </p>
+    <ErrorBoundary>
+      <div className="game-page container">
+        <Header />
+        <div className="game958">
+          {error && (
+            <p className="game-error" role="alert" aria-live="polite">
+              {error}
+            </p>
+          )}
+          <div className="round-info">
+            <p>Current Round: {roundData?.period || 'Loading...'}</p>
+            <p>Time Left: {timeLeft} seconds</p>
+          </div>
+        </div>
+        {mutation.isLoading && (
+          <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
         )}
-        <div className="round-info">
-          <p>Current Round: {roundData?.period || 'Loading...'}</p>
-          <p>Time Left: {timeLeft} seconds</p>
-        </div>
-      </div>
-      {mutation.isLoading && (
-        <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
-      )}
-      {lastResult && (
-        <div
-          key={lastResult.period}
-          className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
-          role="alert"
-          aria-live="polite"
-        >
-          <button
-            className="result-close"
-            onClick={() => setLastResult(null)}
-            aria-label="Close bet result notification"
+        {lastResult && (
+          <div
+            key={lastResult.period}
+            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
+            role="alert"
+            aria-live="polite"
           >
-            ×
-          </button>
-          <div className="result-header">
-            {lastResult.won ? (
-              <span className="result-icon">🎉 You Won!</span>
-            ) : (
-              <span className="result-icon">😔 You Lost</span>
-            )}
+            <button
+              className="result-close"
+              onClick={() => setLastResult(null)}
+              aria-label="Close bet result notification"
+            >
+              ×
+            </button>
+            <div className="result-header">
+              {lastResult.won ? (
+                <span className="result-icon">🎉 You Won!</span>
+              ) : (
+                <span className="result-icon">😔 You Lost</span>
+              )}
+            </div>
+            <div className="result-detail">
+              {lastResult.type === 'color' ? `Color: ${lastResult.result || 'Pending'}` : `Number: ${lastResult.result || 'Pending'}`}
+            </div>
+            <div className="result-payout">
+              {lastResult.payout === 0
+                ? 'No Payout'
+                : lastResult.won
+                ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
+                : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
+            </div>
           </div>
-          <div className="result-detail">
-            {lastResult.type === 'color' ? `Color: ${lastResult.result}` : `Number: ${lastResult.result}`}
-          </div>
-          <div className="result-payout">
-            {lastResult.payout === 0
-              ? 'No Payout'
-              : lastResult.won
-              ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
-              : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
-          </div>
-        </div>
-      )}
-      {pendingBet && !lastResult && !mutation.isLoading && (
-        <p className="no-result">Bet placed, waiting for round to end...</p>
-      )}
-      {!pendingBet && !lastResult && !mutation.isLoading && (
-        <p className="no-result">Place a bet to see the result.</p>
-      )}
-      <BetForm
-        onSubmit={handleBet}
-        isLoading={mutation.isLoading}
-        balance={balance ?? 0}
-        isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 5}
-        roundData={roundData}
-        timeLeft={timeLeft}
-      />
-      <HistoryTable bets={betsData || []} />
-    </div>
+        )}
+        {pendingBet && !lastResult && !mutation.isLoading && (
+          <p className="no-result">Bet placed, waiting for round to end...</p>
+        )}
+        {!pendingBet && !lastResult && !mutation.isLoading && (
+          <p className="no-result">Place a bet to see the result.</p>
+        )}
+        <BetForm
+          onSubmit={handleBet}
+          isLoading={mutation.isLoading}
+          balance={balance ?? 0}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 5}
+          roundData={roundData}
+          timeLeft={timeLeft}
+        />
+        <HistoryTable bets={betsData || []} />
+      </div>
+    </ErrorBoundary>
   );
 }
 
