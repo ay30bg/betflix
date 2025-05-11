@@ -101,7 +101,7 @@ export const BalanceProvider = ({ children }) => {
 
   // Add fake money for testing (only in development)
   const addFakeMoney = (amount) => {
-    if (process.env.NODE_ENV !== 'development') {
+    if {
       console.warn('addFakeMoney is only available in development mode');
       return;
     }
