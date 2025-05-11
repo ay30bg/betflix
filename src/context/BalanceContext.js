@@ -101,10 +101,10 @@ export const BalanceProvider = ({ children }) => {
 
   // Add fake money for testing (only in development)
   const addFakeMoney = (amount) => {
-    if {
-      console.warn('addFakeMoney is only available in development mode');
-      return;
-    }
+    // if {
+    //   console.warn('addFakeMoney is only available in development mode');
+    //   return;
+    // }
     if (typeof amount !== 'number' || amount <= 0) {
       setError('Invalid amount for fake money');
       return;
