@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBalance } from '../context/BalanceContext';
 import Header from '../components/header';
 import '../styles/profile.css';
-import { FaUser, FaBitcoin, FaCopy } from 'react-icons/fa';
+import { FaUser, FaCopy } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
