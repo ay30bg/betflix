@@ -403,7 +403,7 @@ function Profile() {
               aria-label="Deposit crypto"
               disabled={depositMutation.isLoading}
             >
-              <p>Deposit </p> <FaBitcoin />
+              Deposit
             </button>
             <button
               onClick={() => setIsWithdrawModalOpen(true)}
@@ -411,7 +411,7 @@ function Profile() {
               aria-label="Withdraw crypto"
               disabled={withdrawMutation.isLoading || (balance ?? 0) === 0}
             >
-              <p>Withdraw </p> <FaBitcoin />
+              Withdraw 
             </button>
           </div>
         </div>
