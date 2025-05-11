@@ -539,6 +539,51 @@
     cursor: not-allowed;
     opacity: 0.7;
 }
+
+/* Help Icon for Tooltips */
+.help-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  font-size: 12px;
+  margin-left: 0.5rem;
+  cursor: help;
+}
+
+/* Referral Statistics */
+.referral-stats {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.referral-stats h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.referral-stats p {
+  margin: 0.5rem 0;
+}
+
+/* Optional: Customize react-tooltip appearance */
+[data-tooltip-id] {
+  z-index: 1000;
+}
+
+.tooltip {
+  background-color: #333;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
     
 /* Animations */
  /*ANIMATIONS AND RESPONSIVE STYLES REMAIN UNCHANGED */
