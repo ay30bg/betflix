@@ -1188,7 +1188,7 @@ function Profile() {
               <p>Withdraw </p> <FaBitcoin />
             </button>
             {/* Add Fake Money Button (Development Only) */}
-            {process.env.NODE_ENV === 'development' && (
+          
               <button
                 onClick={() => setIsFakeMoneyModalOpen(true)}
                 className="fake-money-button"
@@ -1196,7 +1196,7 @@ function Profile() {
               >
                 <p>Add Fake Money </p> <FaMoneyBillWave />
               </button>
-            )}
+            
           </div>
         </div>
         <div className="referral-section">
