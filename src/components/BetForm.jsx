@@ -224,7 +224,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
 
         <div className="period-timer-container">
           <span className="period-text" aria-label="Round ID">
-            Round: {roundData?.period || 'Loading...'}
+           {roundData?.period || 'Loading...'}
           </span>
           <span className="timer-text" aria-live="polite">
             Time Left: {timeLeft} seconds
