@@ -116,7 +116,7 @@ function HistoryTable({ bets }) {
         <table className="history-table" aria-label="Bet History Table">
           <thead>
             <tr>
-              <th scope="col">Period</th>
+              <th scope="col">Round</th>
               <th scope="col">Bet</th>
               <th scope="col">Amount</th>
               <th scope="col">Result</th>
