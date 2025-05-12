@@ -434,9 +434,8 @@ function Game() {
     setPendingBet,
     lastResult,
     setLastResult,
-    handleAuthError,
     notification,
-    setNotification,
+    triggerAuthError,
   } = useBalance();
   const [error, setError] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
@@ -451,7 +450,7 @@ function Game() {
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
-        handleAuthError(errorMessage);
+        triggerAuthError(errorMessage);
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
@@ -469,7 +468,7 @@ function Game() {
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
-        handleAuthError(errorMessage);
+        triggerAuthError(errorMessage);
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
@@ -485,6 +484,7 @@ function Game() {
       updateTimeLeft();
       const interval = setInterval(updateTimeLeft, 1000);
       return () => clearInterval(interval);
+hole
     }
   }, [roundData]);
 
@@ -504,7 +504,7 @@ function Game() {
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
-        handleAuthError(errorMessage);
+        triggerAuthError(errorMessage);
       }
     },
   });
@@ -537,7 +537,7 @@ function Game() {
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
-        handleAuthError(errorMessage);
+        triggerAuthError(errorMessage);
       }
     }
   };
