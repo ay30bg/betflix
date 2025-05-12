@@ -57,15 +57,13 @@
 // };
 
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 const BalanceContext = createContext();
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
 export const BalanceProvider = ({ children }) => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [balance, setBalance] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,20 +72,14 @@ export const BalanceProvider = ({ children }) => {
   const [lastResult, setLastResult] = useState(null);
   const [notification, setNotification] = useState(null);
 
-  // Handle authentication errors
-  const handleAuthError = useCallback(
-    (message) => {
-      setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
-      localStorage.removeItem('token');
-      setBalance(0);
-      setPendingBet(null);
-      setLastResult(null);
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    },
-    [navigate]
-  );
+  // Trigger authentication error (sets notification, clears token)
+  const triggerAuthError = (message) => {
+    setNotification({ type: 'error', message: message || 'Session expired. Please log in again.' });
+    localStorage.removeItem('token');
+    setBalance(0);
+    setPendingBet(null);
+    setLastResult(null);
+  };
 
   // Fetch balance
   useEffect(() => {
@@ -114,14 +106,14 @@ export const BalanceProvider = ({ children }) => {
         setError(err.message);
         setBalance(0);
         if (err.message.includes('Authentication')) {
-          handleAuthError(err.message);
+          triggerAuthError(err.message);
         }
       } finally {
         setIsLoading(false);
       }
     };
     fetchBalance();
-  }, [handleAuthError]);
+  }, [triggerAuthError]);
 
   // Poll for bet result
   useEffect(() => {
@@ -159,7 +151,7 @@ export const BalanceProvider = ({ children }) => {
         setError(err.message);
         setTimeout(() => setError(null), 5000);
         if (err.message.includes('Authentication required')) {
-          handleAuthError(err.message);
+          triggerAuthError(err.message);
         }
       }
     };
@@ -169,7 +161,7 @@ export const BalanceProvider = ({ children }) => {
     }, 5000); // Poll every 5 seconds
 
     return () => clearInterval(interval);
-  }, [pendingBet, queryClient, handleAuthError]);
+  }, [pendingBet, queryClient]);
 
   // Clear notifications after 3 seconds
   useEffect(() => {
@@ -196,9 +188,9 @@ export const BalanceProvider = ({ children }) => {
         setPendingBet,
         lastResult,
         setLastResult,
-        handleAuthError,
         notification,
         setNotification,
+        triggerAuthError,
       }}
     >
       {children}
