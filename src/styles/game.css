@@ -583,6 +583,11 @@ body {
   max-width: 600px;
 }
 
+.history-table .pending {
+  color: #ffa500; /* Orange for pending bets */
+  font-weight: bold;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
