@@ -20,180 +20,6 @@
 //     return this.props.children;
 //   }
 // }
-
-import { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import axios from 'axios';
-import BetForm from '../components/BetForm';
-import HistoryTable from '../components/HistoryTable';
-import Header from '../components/header';
-import '../styles/game.css';
-
-const socket = io('http://localhost:5000', { autoConnect: true });
-
-function Game() {
-  const [balance, setBalance] = useState(0);
-  const [bets, setBets] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [lastResult, setLastResult] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [currentRound, setCurrentRound] = useState(null);
-
-  useEffect(() => {
-    // Fetch initial data
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Please log in');
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        const [userRes, betsRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/user/me', config),
-          axios.get('http://localhost:5000/api/bets/history', config),
-        ]);
-        setBalance(userRes.data.balance);
-        setBets(betsRes.data);
-      } catch (err) {
-        setError(err.message || 'Failed to load data');
-      }
-    };
-    fetchData();
-
-    // Socket.io listeners
-    socket.on('roundStart', (round) => {
-      setCurrentRound(round);
-      setTimeLeft(Math.floor((new Date(round.expiresAt) - new Date()) / 1000));
-    });
-
-    socket.on('countdown', ({ timeLeft }) => {
-      setTimeLeft(timeLeft);
-    });
-
-    socket.on('roundResult', ({ period, result, bets }) => {
-      const userBets = bets.filter((bet) => bet.userId === localStorage.getItem('userId'));
-      if (userBets.length > 0) {
-        const latestBet = userBets[0];
-        setLastResult({
-          period,
-          type: latestBet.type,
-          value: latestBet.value,
-          amount: latestBet.amount,
-          result: latestBet.type === 'color' ? result.color : result.number,
-          won: latestBet.won,
-          payout: latestBet.payout,
-        });
-        setBets((prev) => [...userBets, ...prev].slice(0, 10));
-        setBalance((prev) => Math.max(prev + latestBet.payout, 0));
-      }
-    });
-
-    return () => {
-      socket.off('roundStart');
-      socket.off('countdown');
-      socket.off('roundResult');
-    };
-  }, []);
-
-  const handleBet = async ({ type, value, amount, clientSeed, color, exactMultiplier }) => {
-    try {
-      setIsLoading(true);
-      setError('');
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('Please log in');
-      const res = await axios.post(
-        'http://localhost:5000/api/bets',
-        { type, value, amount, clientSeed, color, exactMultiplier },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setBalance(res.data.balance);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to place bet');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getResultColorClass = (result, type) => {
-    if (type === 'color') {
-      return result.toLowerCase();
-    }
-    return result % 2 === 0 ? 'green' : 'red';
-  };
-
-  const formatTime = (seconds) => {
-    if (seconds === null) return 'Loading...';
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-  };
-
-  return (
-    <div className="game-page container">
-      <Header balance={balance} />
-      <div className="game958">
-        {error && <p className="game-error" role="alert">{error}</p>}
-        {currentRound && (
-          <div className="round-info">
-            <p>Round: {currentRound.period}</p>
-            <p>Time Left: {formatTime(timeLeft)}</p>
-          </div>
-        )}
-      </div>
-      {isLoading && (
-        <div className="loading-spinner" aria-live="polite">
-          Processing Bet...
-        </div>
-      )}
-      {lastResult && (
-        <div
-          key={lastResult.period}
-          className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
-          role="alert"
-        >
-          <button
-            className="result-close"
-            onClick={() => setLastResult(null)}
-            aria-label="Close result"
-          >
-            ×
-          </button>
-          <div className="result-header">
-            {lastResult.won ? (
-              <span className="result-icon">🎉 You Won!</span>
-            ) : (
-              <span className="result-icon">😔 You Lost</span>
-            )}
-          </div>
-          <div className="result-detail">
-            {lastResult.type === 'color' ? `Color: ${lastResult.result}` : `Number: ${lastResult.result}`}
-          </div>
-          <div className="result-payout">
-            {lastResult.payout === 0
-              ? 'No Payout'
-              : lastResult.won
-              ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
-              : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
-          </div>
-        </div>
-      )}
-      {!lastResult && !isLoading && (
-        <p className="no-result">Place a bet to see the result.</p>
-      )}
-      <button>
-        <a href="/bet-history">History</a>
-      </button>
-      <BetForm
-        onSubmit={handleBet}
-        isLoading={isLoading}
-        balance={balance}
-        isDisabled={balance === 0 || isLoading || !currentRound}
-      />
-      <HistoryTable bets={bets} />
-    </div>
-  );
-}
-
-export default Game;
 // const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
 // // API Functions (unchanged)
@@ -523,3 +349,304 @@ export default Game;
 // }
 
 // export default memo(Game);
+
+
+import React, { useState, useEffect, useCallback, memo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useBalance } from '../context/BalanceContext';
+import io from 'socket.io-client';
+import BetForm from '../components/BetForm';
+import HistoryTable from '../components/HistoryTable';
+import Header from '../components/Header';
+import '../styles/game.css';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const socket = io(API_URL, { autoConnect: true });
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return <div>Error: {this.state.error.message}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// API Functions
+const fetchBets = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Bets fetch failed: ${response.status}`);
+  }
+  const bets = await response.json();
+  return bets.filter((bet) => bet && bet.type && bet.value !== undefined && bet.amount !== undefined);
+};
+
+const placeBet = async (betData) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(betData),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+function Game() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { balance, setBalance, isLoading: balanceLoading, error: balanceError } = useBalance();
+  const [error, setError] = useState('');
+  const [notification, setNotification] = useState(null);
+  const [lastResult, setLastResult] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [currentRound, setCurrentRound] = useState(null);
+
+  // Handle authentication errors
+  const handleAuthError = useCallback(
+    (message) => {
+      setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+    },
+    [navigate]
+  );
+
+  // Fetch bets
+  const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
+    queryKey: ['bets'],
+    queryFn: fetchBets,
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
+
+  // Socket.io listeners
+  useEffect(() => {
+    socket.on('roundStart', (round) => {
+      setCurrentRound(round);
+      setTimeLeft(Math.floor((new Date(round.expiresAt) - new Date()) / 1000));
+    });
+
+    socket.on('countdown', ({ timeLeft }) => {
+      setTimeLeft(timeLeft);
+    });
+
+    socket.on('roundResult', ({ period, result, bets }) => {
+      const userBets = bets.filter((bet) => bet.userId === localStorage.getItem('userId'));
+      if (userBets.length > 0) {
+        const latestBet = userBets[0];
+        setLastResult({
+          period,
+          type: latestBet.type,
+          value: latestBet.value,
+          amount: latestBet.amount,
+          result: latestBet.type === 'color' ? result.color : result.number,
+          won: latestBet.won,
+          payout: latestBet.payout,
+        });
+        setBalance((prev) => Math.max(prev + latestBet.payout, 0));
+        queryClient.setQueryData(['bets'], (old) => [...userBets, ...(old || [])].slice(0, 10));
+      }
+    });
+
+    return () => {
+      socket.off('roundStart');
+      socket.off('countdown');
+      socket.off('roundResult');
+    };
+  }, [queryClient]);
+
+  // Clear notification
+  useEffect(() => {
+    if (notification) {
+      const timeout = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [notification]);
+
+  // Place bet mutation
+  const mutation = useMutation({
+    mutationFn: placeBet,
+    onSuccess: (data) => {
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      setError('');
+    },
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    },
+  });
+
+  const getResultColorClass = useCallback((result, type) => {
+    if (!result) return '';
+    if (type === 'color') {
+      return result.toLowerCase();
+    }
+    return parseInt(result) % 2 === 0 ? 'green' : 'red';
+  }, []);
+
+  const handleBet = async (betData) => {
+    if (betData.error) {
+      setError(betData.error);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    if (betData.amount > (balance ?? 0)) {
+      setError('Insufficient balance');
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    try {
+      await mutation.mutateAsync(betData);
+    } catch (err) {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    }
+  };
+
+  // Render loading state
+  if (balanceLoading || betsLoading) {
+    return (
+      <ErrorBoundary>
+        <div className="game-page container">
+          <Header />
+          <div className="loading-spinner" aria-live="polite">
+            Loading...
+          </div>
+        </div>
+      </ErrorBoundary>
+    );
+  }
+
+  // Render main UI
+  return (
+    <ErrorBoundary>
+      <div className="game-page container">
+        <Header />
+        {notification && (
+          <div className={`result ${notification.type}`} role="alert" aria-live="polite">
+            {notification.message}
+          </div>
+        )}
+        {error && !notification && (
+          <p className="game-error" role="alert" aria-live="polite">
+            {error}
+          </p>
+        )}
+        {(balanceError || betsError) && (
+          <p className="game-error" role="alert" aria-live="polite">
+            {balanceError?.message || betsError?.message}
+          </p>
+        )}
+        <div className="game958">
+          {currentRound && (
+            <div className="round-info">
+              <p>Current Round: {currentRound.period}</p>
+              <p>Time Left: {timeLeft !== null ? `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}` : 'Loading...'}</p>
+            </div>
+          )}
+        </div>
+        {mutation.isLoading && (
+          <div className="loading-spinner" aria-live="polite">
+            Processing Bet...
+          </div>
+        )}
+        {lastResult && (
+          <div
+            key={lastResult.period}
+            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
+            role="alert"
+            aria-live="polite"
+          >
+            <button
+              className="result-close"
+              onClick={() => setLastResult(null)}
+              aria-label="Close bet result notification"
+            >
+              ×
+            </button>
+            <div className="result-header">
+              {lastResult.won ? (
+                <span className="result-icon">🎉 You Won!</span>
+              ) : (
+                <span className="result-icon">😔 You Lost</span>
+              )}
+            </div>
+            <div className="result-detail">
+              {lastResult.type === 'color' ? `Color: ${lastResult.result || 'Pending'}` : `Number: ${lastResult.result || 'Pending'}`}
+            </div>
+            <div className="result-payout">
+              {lastResult.payout === 0
+                ? 'No Payout'
+                : lastResult.won
+                ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
+                : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
+            </td>
+            </div>
+          </div>
+        )}
+        {!lastResult && !mutation.isLoading && (
+          <p className="no-result">Place a bet to see the result.</p>
+        )}
+        <button>
+          <a href="/bet-history">History</a>
+        </button>
+        <BetForm
+          onSubmit={handleBet}
+          isLoading={mutation.isLoading}
+          balance={balance ?? 0}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 5 || !currentRound}
+        />
+        <HistoryTable bets={betsData || []} />
+      </div>
+    </ErrorBoundary>
+  );
+}
+
+export default memo(Game);
