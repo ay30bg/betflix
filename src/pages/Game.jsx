@@ -385,7 +385,7 @@ const fetchBets = async () => {
   });
   if (!response.ok) {
     const errorData = await response.text().catch(() => 'Unknown error');
-    if (response.status === 401) throw new Error('Authentication required')";
+    if (response.status === 401) throw new Error('Authentication required');
     throw new Error(errorData || `Bets fetch failed: ${response.status}`);
   }
   const bets = await response.json();
@@ -534,7 +534,7 @@ function Game() {
       if (!data.bet || typeof data.bet.result === 'undefined') {
         console.warn(`Result not ready, retries left: ${retryCount}`);
         if (retryCount > 0) {
-          setTimeout(() => fetchResult(retryCount - 1), 3000); // Increased retry delay
+          setTimeout(() => fetchResult(retryCount - 1), 3000); // 3s retry delay
           return;
         }
         setError('Result not available');
@@ -564,9 +564,9 @@ function Game() {
     }
   }, [pendingBet, queryClient, setBalance, handleAuthError]);
 
-  // Poll for result earlier to avoid expiration
+  // Updated: Trigger fetchResult earlier for 2-minute rounds
   useEffect(() => {
-    if (timeLeft <= 10 && pendingBet && !lastResult) { // Changed from <= 5 to <= 10
+    if (timeLeft <= 15 && pendingBet && !lastResult) { // Changed to <= 15
       const timer = setTimeout(() => {
         fetchResult();
       }, 1000);
@@ -665,7 +665,7 @@ function Game() {
           <div className="round-info"> {/* Uncommented for debugging */}
             <p>Current Round: {roundData?.period || 'Loading...'}</p>
             <p>Time Left: {timeLeft} seconds</p>
-            <p>Expires At: {roundData?.expiresAt || 'N/A'}</p> {/* Added for debugging */}
+            <p>Expires At: {roundData?.expiresAt || 'N/A'}</p> {/* Debug timing */}
           </div>
         </div>
         {mutation.isLoading && (
