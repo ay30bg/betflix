@@ -114,7 +114,7 @@ function HistoryTable({ bets }) {
     return { text: `Number ${bet.result ?? 'Unknown'}`, color: getNumberColor(bet.result) };
   };
 
-  // Filter out invalid bets and optionally pending bets
+  // Filter out invalid bets
   const validBets = bets.filter(
     (bet) => bet && bet.type && bet.value !== undefined && bet.amount !== undefined
   );
