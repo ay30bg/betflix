@@ -588,7 +588,12 @@ function Game() {
           {currentRound && (
             <div className="round-info">
               <p>Current Round: {currentRound.period}</p>
-              <p>Time Left: {timeLeft !== null ? `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}` : 'Loading...'}</p>
+              <p>
+                Time Left:{' '}
+                {timeLeft !== null
+                  ? `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`
+                  : 'Loading...'}
+              </p>
             </div>
           )}
         </div>
@@ -600,7 +605,9 @@ function Game() {
         {lastResult && (
           <div
             key={lastResult.period}
-            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
+            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${
+              lastResult.won ? 'won' : 'lost'
+            }`}
             role="alert"
             aria-live="polite"
           >
@@ -619,7 +626,9 @@ function Game() {
               )}
             </div>
             <div className="result-detail">
-              {lastResult.type === 'color' ? `Color: ${lastResult.result || 'Pending'}` : `Number: ${lastResult.result || 'Pending'}`}
+              {lastResult.type === 'color'
+                ? `Color: ${lastResult.result || 'Pending'}`
+                : `Number: ${lastResult.result || 'Pending'}`}
             </div>
             <div className="result-payout">
               {lastResult.payout === 0
@@ -627,7 +636,6 @@ function Game() {
                 : lastResult.won
                 ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
                 : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
-            </td>
             </div>
           </div>
         )}
