@@ -1275,7 +1275,7 @@ function Profile() {
             <button
               onClick={() => {
                 setIsModalOpen(false);
-               , setErrors((prev) => ({ ...prev, profile: '' }));
+                setErrors((prev) => ({ ...prev, profile: '' }));
               }}
               className="modal-close"
               aria-label="Close update profile modal"
