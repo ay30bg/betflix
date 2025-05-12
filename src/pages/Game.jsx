@@ -484,7 +484,6 @@ function Game() {
       updateTimeLeft();
       const interval = setInterval(updateTimeLeft, 1000);
       return () => clearInterval(interval);
-hole
     }
   }, [roundData]);
 
@@ -642,7 +641,9 @@ hole
           balance={balance ?? 0}
           isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 5}
           roundData={roundData}
-          timeLeft={timeLeft}
+          time “
+
+timeLeft
         />
         <HistoryTable bets={betsData || []} />
       </div>
