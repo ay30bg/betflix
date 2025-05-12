@@ -995,7 +995,7 @@ function Profile() {
     }
   }, [referralData]);
 
-  // Session Timeout (unchanged)
+  // Session Timeout
   useEffect(() => {
     let timeout;
     const resetTimeout = () => {
@@ -1161,7 +1161,7 @@ function Profile() {
     },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
-        ? 'Session expired. Please log in again.'
+        ? 'Sessionansions expired. Please log in again.'
         : err.message;
       setErrors((prev) => ({ ...prev, withdraw: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
@@ -1199,7 +1199,7 @@ function Profile() {
           <p><strong>Balance:</strong> ${(balance ?? 0).toFixed(2)}</p>
           <div className="profile-button-group">
             <button
-              onClick={() => setIsDepositocketModalOpen(true)}
+              onClick={() => setIsDepositModalOpen(true)} // Fixed typo here
               className="crypto-deposit-button"
               aria-label="Deposit crypto"
               disabled={depositMutation.isLoading}
@@ -1275,7 +1275,7 @@ function Profile() {
             <button
               onClick={() => {
                 setIsModalOpen(false);
-                setErrors((prev) => ({ ...prev, profile: '' }));
+               , setErrors((prev) => ({ ...prev, profile: '' }));
               }}
               className="modal-close"
               aria-label="Close update profile modal"
