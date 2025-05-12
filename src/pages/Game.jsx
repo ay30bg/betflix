@@ -428,13 +428,13 @@ const placeBet = async (betData) => {
 const fetchBetResult = async (period) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  console.log(`Fetching result for period: ${period}`); // Debug log
+  console.log(`Fetching result for period: ${period}`);
   const response = await fetch(`${API_URL}/api/bets/result/${period}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    console.error(`Error response: ${JSON.stringify(errorData)}`); // Debug log
+    console.error(`Error response: ${JSON.stringify(errorData)}`);
     throw new Error(errorData.error || `Bet result fetch failed: ${response.status}`);
   }
   return response.json();
@@ -534,7 +534,7 @@ function Game() {
       if (!data.bet || typeof data.bet.result === 'undefined') {
         console.warn(`Result not ready, retries left: ${retryCount}`);
         if (retryCount > 0) {
-          setTimeout(() => fetchResult(retryCount - 1), 3000); // 3s retry delay
+          setTimeout(() => fetchResult(retryCount - 1), 3000);
           return;
         }
         setError('Result not available');
@@ -559,14 +559,14 @@ function Game() {
       if (err.message.includes('Authentication required')) {
         handleAuthError(errorMessage);
       } else if (err.message.includes('Round has expired')) {
-        setPendingBet(null); // Clear pending bet
+        setPendingBet(null);
       }
     }
   }, [pendingBet, queryClient, setBalance, handleAuthError]);
 
-  // Updated: Trigger fetchResult earlier for 2-minute rounds
+  // Trigger fetchResult at 15 seconds for 2-minute rounds
   useEffect(() => {
-    if (timeLeft <= 15 && pendingBet && !lastResult) { // Changed to <= 15
+    if (timeLeft <= 15 && pendingBet && !lastResult) {
       const timer = setTimeout(() => {
         fetchResult();
       }, 1000);
@@ -577,7 +577,7 @@ function Game() {
   const mutation = useMutation({
     mutationFn: placeBet,
     onSuccess: (data) => {
-      console.log('Place bet response:', data); // Debug log
+      console.log('Place bet response:', data);
       if (typeof data.balance === 'number') {
         setBalance(data.balance);
       }
@@ -662,10 +662,10 @@ function Game() {
           </p>
         )}
         <div className="game958">
-          <div className="round-info"> {/* Uncommented for debugging */}
+          <div className="round-info">
             <p>Current Round: {roundData?.period || 'Loading...'}</p>
             <p>Time Left: {timeLeft} seconds</p>
-            <p>Expires At: {roundData?.expiresAt || 'N/A'}</p> {/* Debug timing */}
+            <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
           </div>
         </div>
         {mutation.isLoading && (
@@ -714,7 +714,8 @@ function Game() {
           onSubmit={handleBet}
           isLoading={mutation.isLoading}
           balance={balance ?? 0}
-          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 5}
+          // Updated: Disable betting when timeLeft < 10 seconds
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10}
           roundData={roundData}
           timeLeft={timeLeft}
         />
