@@ -6,10 +6,11 @@
 // import '../styles/profile.css';
 // import { FaUser, FaCopy } from 'react-icons/fa';
 // import { QRCodeCanvas } from 'qrcode.react';
+// import { Tooltip } from 'react-tooltip'; // Use named import for react-tooltip v5
 
 // const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// // Fetch user profile (excluding balance, as it's handled by BalanceContext)
+// // Fetch user profile
 // const fetchUserProfile = async () => {
 //   const token = localStorage.getItem('token');
 //   if (!token) throw new Error('Authentication required. Please log in.');
@@ -76,7 +77,7 @@
 //   if (!token) throw new Error('Authentication required. Please log in.');
 //   const payload = { amount, cryptoCurrency };
 //   if (cryptoCurrency === 'USDT') {
-//     payload.network = network; // Include network for USDT
+//     payload.network = network;
 //   }
 //   const response = await fetch(`${API_URL}/api/transactions/crypto-deposit`, {
 //     method: 'POST',
@@ -99,7 +100,7 @@
 //   if (!token) throw new Error('Authentication required. Please log in.');
 //   const payload = { amount, cryptoCurrency, walletAddress };
 //   if (cryptoCurrency === 'USDT') {
-//     payload.network = network; // Include network for USDT
+//     payload.network = network;
 //   }
 //   const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
 //     method: 'POST',
@@ -129,8 +130,9 @@
 //   const [withdrawData, setWithdrawData] = useState({ amount: '', cryptoCurrency: 'BTC', walletAddress: '', network: 'ERC20' });
 //   const [errors, setErrors] = useState({ profile: '', deposit: '', withdraw: '' });
 //   const [notification, setNotification] = useState(null);
+//   const [referralLink, setReferralLink] = useState('');
 
-//   // Fetch user profile (for username, email, etc.)
+//   // Fetch user profile
 //   const { data: user, isLoading: userLoading, error: userError } = useQuery({
 //     queryKey: ['userProfile'],
 //     queryFn: fetchUserProfile,
@@ -175,73 +177,38 @@
 //     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('log in'),
 //   });
 
-//   const [referralLink, setReferralLink] = useState('');
-
 //   useEffect(() => {
 //     if (referralData?.referralLink) {
 //       setReferralLink(referralData.referralLink);
 //     }
 //   }, [referralData]);
 
-//   // Mutations
-//   const updateProfileMutation = useMutation({
-//     mutationFn: updateProfile,
-//     onSuccess: (data) => {
-//       queryClient.setQueryData(['userProfile'], data.user);
-//       setIsModalOpen(false);
-//       setErrors((prev) => ({ ...prev, profile: '' }));
-//       setNotification({ type: 'success', message: 'Profile updated successfully!' });
-//     },
-//     onError: (err) => {
-//       setErrors((prev) => ({ ...prev, profile: err.message }));
-//       setNotification({ type: 'error', message: err.message });
-//       if (err.message.includes('log in')) {
+//   // Session Timeout
+//   useEffect(() => {
+//     let timeout;
+//     const resetTimeout = () => {
+//       clearTimeout(timeout);
+//       timeout = setTimeout(() => {
+//         setNotification({ type: 'info', message: 'Session expired. Please log in again.' });
 //         localStorage.removeItem('token');
 //         navigate('/login');
-//       }
-//     },
-//   });
+//       }, 30 * 60 * 1000); // 30 minutes
+//     };
 
-//   const depositMutation = useMutation({
-//     mutationFn: initiateDeposit,
-//     onSuccess: (data) => {
-//       setDepositResult(data);
-//       setErrors((prev) => ({ ...prev, deposit: '' }));
-//       // Optionally refetch balance after deposit
-//       queryClient.invalidateQueries(['userProfile']);
-//     },
-//     onError: (err) => {
-//       setErrors((prev) => ({ ...prev, deposit: err.message }));
-//       setNotification({ type: 'error', message: err.message });
-//       if (err.message.includes('log in')) {
-//         localStorage.removeItem('token');
-//         navigate('/login');
-//       }
-//     },
-//   });
+//     window.addEventListener('mousemove', resetTimeout);
+//     window.addEventListener('keypress', resetTimeout);
+//     window.addEventListener('click', resetTimeout);
+//     resetTimeout();
 
-//   const withdrawMutation = useMutation({
-//     mutationFn: initiateWithdrawal,
-//     onSuccess: (data) => {
-//       if (typeof data.balance === 'number') {
-//         setBalance(data.balance);
-//       }
-//       queryClient.setQueryData(['userProfile'], (old) => ({ ...old, balance: data.balance ?? 0 }));
-//       setIsWithdrawModalOpen(false);
-//       setWithdrawData({ amount: '', cryptoCurrency: 'BTC', walletAddress: '', network: 'ERC20' });
-//       setErrors((prev) => ({ ...prev, withdraw: '' }));
-//       setNotification({ type: 'success', message: data.message || 'Withdrawal initiated!' });
-//     },
-//     onError: (err) => {
-//       setErrors((prev) => ({ ...prev, withdraw: err.message }));
-//       setNotification({ type: 'error', message: err.message });
-//       if (err.message.includes('log in')) {
-//         localStorage.removeItem('token');
-//         navigate('/login');
-//       }
-//     },
-//   });
+//     return () => {
+//       clearTimeout(timeout);
+//       window.removeEventListener('mousemove', resetTimeout);
+//       window.removeEventListener('keypress', resetTimeout);
+//       window.removeEventListener('click', resetTimeout);
+//     };
+//   }, [navigate]);
 
+//   // Notification timeout
 //   useEffect(() => {
 //     if (notification) {
 //       const timeout = setTimeout(() => setNotification(null), 3000);
@@ -328,6 +295,64 @@
 //     }
 //   };
 
+//   // Mutations
+//   const updateProfileMutation = useMutation({
+//     mutationFn: updateProfile,
+//     onSuccess: (data) => {
+//       queryClient.setQueryData(['userProfile'], data.user);
+//       setIsModalOpen(false);
+//       setErrors((prev) => ({ ...prev, profile: '' }));
+//       setNotification({ type: 'success', message: 'Profile updated successfully!' });
+//     },
+//     onError: (err) => {
+//       setErrors((prev) => ({ ...prev, profile: err.message }));
+//       setNotification({ type: 'error', message: err.message });
+//       if (err.message.includes('log in')) {
+//         localStorage.removeItem('token');
+//         navigate('/login');
+//       }
+//     },
+//   });
+
+//   const depositMutation = useMutation({
+//     mutationFn: initiateDeposit,
+//     onSuccess: (data) => {
+//       setDepositResult(data);
+//       setErrors((prev) => ({ ...prev, deposit: '' }));
+//       queryClient.invalidateQueries(['userProfile']);
+//     },
+//     onError: (err) => {
+//       setErrors((prev) => ({ ...prev, deposit: err.message }));
+//       setNotification({ type: 'error', message: err.message });
+//       if (err.message.includes('log in')) {
+//         localStorage.removeItem('token');
+//         navigate('/login');
+//       }
+//     },
+//   });
+
+//   const withdrawMutation = useMutation({
+//     mutationFn: initiateWithdrawal,
+//     onSuccess: (data) => {
+//       if (typeof data.balance === 'number') {
+//         setBalance(data.balance);
+//       }
+//       queryClient.setQueryData(['userProfile'], (old) => ({ ...old, balance: data.balance ?? 0 }));
+//       setIsWithdrawModalOpen(false);
+//       setWithdrawData({ amount: '', cryptoCurrency: 'BTC', walletAddress: '', network: 'ERC20' });
+//       setErrors((prev) => ({ ...prev, withdraw: '' }));
+//       setNotification({ type: 'success', message: data.message || 'Withdrawal initiated!' });
+//     },
+//     onError: (err) => {
+//       setErrors((prev) => ({ ...prev, withdraw: err.message }));
+//       setNotification({ type: 'error', message: err.message });
+//       if (err.message.includes('log in')) {
+//         localStorage.removeItem('token');
+//         navigate('/login');
+//       }
+//     },
+//   });
+
 //   if (balanceLoading || userLoading || statsLoading || referralLoading) {
 //     return (
 //       <div className="profile-page container">
@@ -389,14 +414,6 @@
 //           <p><strong>Email:</strong> {user.email || 'N/A'}</p>
 //           <p><strong>Balance:</strong> ${(balance ?? 0).toFixed(2)}</p>
 //           <div className="profile-button-group">
-// {/*             <button
-//               onClick={() => setIsModalOpen(true)}
-//               className="update-profile-button"
-//               aria-label="Update profile"
-//               disabled={updateProfileMutation.isLoading}
-//             >
-//               <FaUser />
-//             </button> */}
 //             <button
 //               onClick={() => setIsDepositModalOpen(true)}
 //               className="crypto-deposit-button"
@@ -411,12 +428,21 @@
 //               aria-label="Withdraw crypto"
 //               disabled={withdrawMutation.isLoading || (balance ?? 0) === 0}
 //             >
-//               Withdraw 
+//               Withdraw
 //             </button>
 //           </div>
 //         </div>
 //         <div className="referral-section">
-//           <h2>Referral Link</h2>
+//           <h2>
+//             Referral Program
+//             <span
+//               data-tooltip-id="referral-tooltip"
+//               data-tooltip-content="Invite friends using your unique referral link to earn rewards when they sign up and place bets."
+//               className="help-icon"
+//             >
+//               ?
+//             </span>
+//           </h2>
 //           <p>Share your referral link to invite friends!</p>
 //           <div className="referral-link-container">
 //             <input
@@ -567,6 +593,13 @@
 //                   <div className="form-group">
 //                     <label htmlFor="network" className="modal-label">
 //                       Network
+//                       <span
+//                         data-tooltip-id="network-tooltip"
+//                         data-tooltip-content="Select the blockchain network for USDT deposits (ERC20 for Ethereum, TRC20 for TRON)."
+//                         className="help-icon"
+//                       >
+//                         ?
+//                       </span>
 //                     </label>
 //                     <select
 //                       id="network"
@@ -705,6 +738,13 @@
 //                 <div className="form-group">
 //                   <label htmlFor="withdraw-network" className="modal-label">
 //                     Network
+//                     <span
+//                       data-tooltip-id="network-tooltip"
+//                       data-tooltip-content="Select the blockchain network for USDT withdrawals (ERC20 for Ethereum, TRC20 for TRON)."
+//                       className="help-icon"
+//                     >
+//                       ?
+//                     </span>
 //                   </label>
 //                   <select
 //                     id="withdraw-network"
@@ -749,11 +789,16 @@
 //           </div>
 //         </div>
 //       )}
+
+//       {/* Tooltips */}
+//       <Tooltip id="referral-tooltip" place="top" variant="dark" />
+//       <Tooltip id="network-tooltip" place="top" variant="dark" />
 //     </div>
 //   );
 // }
 
 // export default Profile;
+
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -763,11 +808,11 @@ import Header from '../components/header';
 import '../styles/profile.css';
 import { FaUser, FaCopy } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Tooltip } from 'react-tooltip'; // Use named import for react-tooltip v5
+import { Tooltip } from 'react-tooltip';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// Fetch user profile
+// API Functions (unchanged)
 const fetchUserProfile = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -781,7 +826,6 @@ const fetchUserProfile = async () => {
   return response.json();
 };
 
-// Fetch stats
 const fetchStats = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -795,7 +839,6 @@ const fetchStats = async () => {
   return response.json();
 };
 
-// Fetch referral link
 const fetchReferralLink = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -809,7 +852,6 @@ const fetchReferralLink = async () => {
   return response.json();
 };
 
-// Update profile
 const updateProfile = async ({ username }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -828,7 +870,6 @@ const updateProfile = async ({ username }) => {
   return response.json();
 };
 
-// Initiate deposit
 const initiateDeposit = async ({ amount, cryptoCurrency, network }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -851,7 +892,6 @@ const initiateDeposit = async ({ amount, cryptoCurrency, network }) => {
   return response.json();
 };
 
-// Initiate withdrawal
 const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -889,6 +929,15 @@ function Profile() {
   const [notification, setNotification] = useState(null);
   const [referralLink, setReferralLink] = useState('');
 
+  // Handle authentication errors with notification and redirect
+  const handleAuthError = (message) => {
+    setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
+    localStorage.removeItem('token');
+    setTimeout(() => {
+      navigate('/login');
+    }, 3000); // Redirect after 3 seconds
+  };
+
   // Fetch user profile
   const { data: user, isLoading: userLoading, error: userError } = useQuery({
     queryKey: ['userProfile'],
@@ -897,13 +946,15 @@ function Profile() {
       setFormData({ username: data.username || '' });
     },
     onError: (err) => {
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
       }
     },
-    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('log in'),
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
   // Fetch stats
@@ -911,13 +962,15 @@ function Profile() {
     queryKey: ['stats'],
     queryFn: fetchStats,
     onError: (err) => {
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
       }
     },
-    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('log in'),
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
   // Fetch referral link
@@ -925,13 +978,15 @@ function Profile() {
     queryKey: ['referralLink'],
     queryFn: fetchReferralLink,
     onError: (err) => {
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
       }
     },
-    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('log in'),
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
   useEffect(() => {
@@ -940,7 +995,7 @@ function Profile() {
     }
   }, [referralData]);
 
-  // Session Timeout
+  // Session Timeout (unchanged)
   useEffect(() => {
     let timeout;
     const resetTimeout = () => {
@@ -1062,11 +1117,13 @@ function Profile() {
       setNotification({ type: 'success', message: 'Profile updated successfully!' });
     },
     onError: (err) => {
-      setErrors((prev) => ({ ...prev, profile: err.message }));
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setErrors((prev) => ({ ...prev, profile: errorMessage }));
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
       }
     },
   });
@@ -1079,11 +1136,13 @@ function Profile() {
       queryClient.invalidateQueries(['userProfile']);
     },
     onError: (err) => {
-      setErrors((prev) => ({ ...prev, deposit: err.message }));
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setErrors((prev) => ({ ...prev, deposit: errorMessage }));
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
       }
     },
   });
@@ -1101,15 +1160,18 @@ function Profile() {
       setNotification({ type: 'success', message: data.message || 'Withdrawal initiated!' });
     },
     onError: (err) => {
-      setErrors((prev) => ({ ...prev, withdraw: err.message }));
-      setNotification({ type: 'error', message: err.message });
-      if (err.message.includes('log in')) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setErrors((prev) => ({ ...prev, withdraw: errorMessage }));
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
       }
     },
   });
 
+  // Render loading state
   if (balanceLoading || userLoading || statsLoading || referralLoading) {
     return (
       <div className="profile-page container">
@@ -1119,42 +1181,7 @@ function Profile() {
     );
   }
 
-  if (balanceError || userError || statsError || referralError) {
-    return (
-      <div className="profile-page container">
-        <Header />
-        <p className="profile-error" role="alert">
-          {notification?.message || balanceError?.message || userError?.message || statsError?.message || referralError?.message || 'Failed to load profile data. Please try again or log in.'}
-        </p>
-        <button
-          onClick={() => navigate('/login')}
-          className="login-button"
-          aria-label="Log In"
-        >
-          Log In
-        </button>
-      </div>
-    );
-  }
-
-  if (!user || !stats) {
-    return (
-      <div className="profile-page container">
-        <Header />
-        <p className="profile-error" role="alert">
-          No data available. Please log in or try again.
-        </p>
-        <button
-          onClick={() => navigate('/login')}
-          className="login-button"
-          aria-label="Log In"
-        >
-          Log In
-        </button>
-      </div>
-    );
-  }
-
+  // Render main UI
   return (
     <div className="profile-page container">
       <Header />
@@ -1167,12 +1194,12 @@ function Profile() {
       <div className="profile-container">
         <div className="profile-info">
           <h2>User Information</h2>
-          <p><strong>Username:</strong> {user.username || 'N/A'}</p>
-          <p><strong>Email:</strong> {user.email || 'N/A'}</p>
+          <p><strong>Username:</strong> {user?.username || 'N/A'}</p>
+          <p><strong>Email:</strong> {user?.email || 'N/A'}</p>
           <p><strong>Balance:</strong> ${(balance ?? 0).toFixed(2)}</p>
           <div className="profile-button-group">
             <button
-              onClick={() => setIsDepositModalOpen(true)}
+              onClick={() => setIsDepositocketModalOpen(true)}
               className="crypto-deposit-button"
               aria-label="Deposit crypto"
               disabled={depositMutation.isLoading}
@@ -1221,12 +1248,12 @@ function Profile() {
         </div>
         <div className="betting-stats">
           <h2>Betting Statistics</h2>
-          <p><strong>Total Bets:</strong> {stats.totalBets || 0}</p>
-          <p><strong>Wins:</strong> {stats.wins || 0}</p>
-          <p><strong>Losses:</strong> {stats.losses || 0}</p>
+          <p><strong>Total Bets:</strong> {stats?.totalBets || 0}</p>
+          <p><strong>Wins:</strong> {stats?.wins || 0}</p>
+          <p><strong>Losses:</strong> {stats?.losses || 0}</p>
           <p>
             <strong>Win Rate:</strong>{' '}
-            {stats.totalBets > 0
+            {stats?.totalBets > 0
               ? ((stats.wins / stats.totalBets) * 100).toFixed(1)
               : 0}
             %
