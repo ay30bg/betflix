@@ -53,7 +53,7 @@ function Header() {
             </span>
             <strong className="balance-amount">
               {error ? (
-                'Error'
+                '$0.00'
               ) : isLoading ? (
                 <FaSpinner className="spinner" aria-label="Loading balance" />
               ) : (
