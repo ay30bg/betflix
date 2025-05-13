@@ -399,7 +399,7 @@ class ErrorBoundary extends React.Component {
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// API Functions (unchanged)
+// API Functions
 const fetchBets = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
@@ -499,9 +499,164 @@ function Game() {
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  const { data: roundData, isLoading: roundLoading_mostRecentRounds = betsData ? betsData.slice(0, 20) : [];
+  const { data: roundData, isLoading: roundLoading } = useQuery({
+    queryKey: ['currentRound'],
+    queryFn: fetchCurrentRound,
+    refetchInterval: 6000,
+    staleTime: 6000,
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
 
-  // Function to open/close modal
+  // Define mostRecentRounds based on betsData
+  const mostRecentRounds = betsData ? betsData.slice(0, 20) : [];
+
+  // Update timeLeft every second
+  useEffect(() => {
+    if (roundData?.expiresAt) {
+      const updateTimeLeft = () => {
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
+        setTimeLeft(Math.floor(timeRemaining));
+      };
+      updateTimeLeft();
+      const interval = setInterval(updateTimeLeft, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [roundData]);
+
+  // Clear notification after 3 seconds
+  useEffect(() => {
+    if (notification) {
+      const timeout = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [notification]);
+
+  // Fetch bet result with retry logic
+  const fetchResult = useCallback(async (retryCount = 3) => {
+    if (!pendingBet?.period) {
+      console.warn('No pending bet period available');
+      setError('No valid bet period available');
+      setPendingBet(null);
+      return;
+    }
+    if (!/^round-\d+$/.test(pendingBet.period)) {
+      console.warn(`Invalid period format: ${pendingBet.period}`);
+      setError('Invalid bet period format');
+      setPendingBet(null);
+      return;
+    }
+    try {
+      console.log(`Attempting to fetch result for period: ${pendingBet.period}`);
+      const data = await fetchBetResult(pendingBet.period);
+      if (!data.bet || typeof data.bet.result === 'undefined') {
+        console.warn(`Result not ready, retries left: ${retryCount}`);
+        if (retryCount > 0) {
+          setTimeout(() => fetchResult(retryCount - 1), 3000);
+          return;
+        }
+        setError('Result not available');
+        setPendingBet(null);
+        return;
+      }
+      setLastResult({ ...data.bet, payout: data.bet.payout });
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      queryClient.invalidateQueries(['bets']);
+      setPendingBet(null);
+    } catch (err) {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message.includes('Round has expired')
+        ? 'Round has ended. Please place a new bet.'
+        : err.message;
+      console.error(`Fetch result error: ${err.message}`);
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      } else if (err.message.includes('Round has expired')) {
+        setPendingBet(null);
+      }
+    }
+  }, [pendingBet, queryClient, setBalance, handleAuthError]);
+
+  // Trigger fetchResult at 15 seconds for 2-minute rounds
+  useEffect(() => {
+    if (timeLeft <= 15 && pendingBet && !lastResult) {
+      const timer = setTimeout(() => {
+        fetchResult();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [timeLeft, pendingBet, fetchResult, lastResult]);
+
+  const mutation = useMutation({
+    mutationFn: placeBet,
+    onSuccess: (data) => {
+      console.log('Place bet response:', data);
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      setPendingBet(data.bet);
+      setError('');
+    },
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    },
+  });
+
+  const getResultColorClass = useCallback((result, type) => {
+    if (!result) return '';
+    if (type === 'color') {
+      return result.toLowerCase();
+    }
+    return parseInt(result) % 2 === 0 ? 'green' : 'red';
+  }, []);
+
+  const handleBet = async (betData) => {
+    if (betData.error) {
+      setError(betData.error);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    if (betData.amount > (balance ?? 0)) {
+      setError('Insufficient balance');
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    try {
+      await mutation.mutateAsync(betData);
+    } catch (err) {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    }
+  };
+
+  // Modal toggle function
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   // Render loading state
