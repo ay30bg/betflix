@@ -466,7 +466,7 @@ const fetchBetResult = async (period) => {
 const fetchAllRounds = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  const response = await fetch(`${API_URL}/api/rounds/history`, {
+  const response = await fetch(`${API_URL}/api/bets/rounds/history`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
