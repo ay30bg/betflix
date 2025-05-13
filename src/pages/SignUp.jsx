@@ -214,11 +214,11 @@ function Signup() {
         throw new Error(data.error || 'Signup failed');
       }
 
-      // Store token if provided, but account is unverified
+      // Store JWT token
       localStorage.setItem('token', data.token);
-      setFormData({ username: '', email: '', password: '', referralCode: '' });
-      
-      // Redirect to verification page with email as query param
+      // Clear form
+      setFormData({ username: '', email: '', password: '', referralCode: searchParams.get('ref') || '' });
+      // Redirect to verify-email with email query param
       navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
     } catch (err) {
       setError(err.message);
