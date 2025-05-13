@@ -10,6 +10,7 @@ import Game from './pages/Game';
 import History from './pages/History';
 import Verify from './pages/Verify';
 import Signup from './pages/SignUp';
+import VerifyEmail from './pages/VerifyEmail';
 import Support from './pages/support';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -40,6 +41,7 @@ function Layout() {
         <Route path="/history" element={<History />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/sign-up" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/support" element={<Support />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
