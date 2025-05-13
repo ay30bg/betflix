@@ -463,6 +463,20 @@ const fetchBetResult = async (period) => {
   return response.json();
 };
 
+const fetchAllRounds = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/rounds/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Rounds fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
 function Game() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -472,7 +486,7 @@ function Game() {
   const [lastResult, setLastResult] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [pendingBet, setPendingBet] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   // Handle authentication errors
   const handleAuthError = useCallback((message) => {
@@ -517,8 +531,21 @@ function Game() {
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  // Define mostRecentRounds based on betsData
-  const mostRecentRounds = betsData ? betsData.slice(0, 20) : [];
+  const { data: allRoundsData, isLoading: roundsLoading } = useQuery({
+    queryKey: ['allRounds'],
+    queryFn: fetchAllRounds,
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
 
   // Update timeLeft every second
   useEffect(() => {
@@ -656,11 +683,8 @@ function Game() {
     }
   };
 
-  // Modal toggle function
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
-
   // Render loading state
-  if (balanceLoading || betsLoading || roundLoading) {
+  if (balanceLoading || betsLoading || roundLoading || roundsLoading) {
     return (
       <ErrorBoundary>
         <div className="game-page container">
@@ -696,14 +720,14 @@ function Game() {
             <p>Current Round: {roundData?.period || 'Loading...'}</p>
             <p>Time Left: {timeLeft} seconds</p>
             <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
+            <button
+              className="history-button"
+              onClick={() => setIsHistoryModalOpen(true)}
+              aria-label="View all rounds history"
+            >
+              View All Rounds
+            </button>
           </div>
-          <button
-            className="history-button"
-            onClick={toggleModal}
-            aria-label="View last 20 rounds history"
-          >
-            View History
-          </button>
         </div>
         {mutation.isLoading && (
           <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
@@ -747,6 +771,50 @@ function Game() {
         {!pendingBet && !lastResult && !mutation.isLoading && (
           <p className="no-result">Place a bet to see the result.</p>
         )}
+        {isHistoryModalOpen && (
+          <div className="modal-overlay" role="dialog" aria-labelledby="history-modal-title">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h2 id="history-modal-title">All Rounds History</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setIsHistoryModalOpen(false)}
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <table className="history-table">
+                  <thead>
+                    <tr>
+                      <th>Period</th>
+                      <th>Color</th>
+                      <th>Number</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allRoundsData?.length > 0 ? (
+                      allRoundsData.map((round) => (
+                        <tr key={round.period}>
+                          <td>{round.period}</td>
+                          <td className={`color-${round.result?.color?.toLowerCase()}`}>
+                            {round.result?.color || 'N/A'}
+                          </td>
+                          <td>{round.result?.number || 'N/A'}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3">No rounds available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
         <BetForm
           onSubmit={handleBet}
           isLoading={mutation.isLoading}
@@ -756,67 +824,6 @@ function Game() {
           timeLeft={timeLeft}
         />
         <HistoryTable bets={betsData || []} />
-
-        {/* Modal for History */}
-        {isModalOpen && (
-          <div className="modal-overlay" role="dialog" aria-labelledby="modal-title">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 id="modal-title">Last 20 Rounds</h2>
-                <button
-                  className="modal-close"
-                  onClick={toggleModal}
-                  aria-label="Close history modal"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="modal-body">
-                {mostRecentRounds.length > 0 ? (
-                  <table className="modal-history-table">
-                    <thead>
-                      <tr>
-                        <th>Round</th>
-                        <th>Bet Type</th>
-                        <th>Bet Value</th>
-                        <th>Amount</th>
-                        <th>Result</th>
-                        <th>Payout</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mostRecentRounds.map((bet) => (
-                        <tr key={bet._id}>
-                          <td>{bet.period}</td>
-                          <td>{bet.type}</td>
-                          <td>{bet.value}</td>
-                          <td>${bet.amount.toFixed(2)}</td>
-                          <td>{bet.result || 'Pending'}</td>
-                          <td>
-                            {bet.payout === 0
-                              ? 'No Payout'
-                              : bet.won
-                              ? `+$${Math.abs(bet.payout).toFixed(2)}`
-                              : `-$${Math.abs(bet.payout).toFixed(2)}`}
-                          </td>
-                          <td>{bet.won ? 'Won' : bet.result ? 'Lost' : 'Pending'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p>No recent rounds available.</p>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button className="modal-close-button" onClick={toggleModal}>
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </ErrorBoundary>
   );
