@@ -151,8 +151,8 @@
 /* Telegram floating button */
 .telegram-floating {
   position: fixed;
-  bottom: 50px;
-  right: 20px;
+  bottom: 80px;
+  right: 15px;
   width: 60px;
   height: 60px;
   background-color: #0088cc; /* Telegram brand color */
