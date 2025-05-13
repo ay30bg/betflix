@@ -708,7 +708,7 @@ function Game() {
             <p>Current Round: {roundData?.period || 'Loading...'}</p>
             <p>Time Left: {timeLeft} seconds</p>
             <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
-            <p>Bets Placed: {betCount}/3</ newbie>
+            <p>Bets Placed: {betCount}/3</ p>
           </div>
         </div>
         {mutation.isLoading && (
