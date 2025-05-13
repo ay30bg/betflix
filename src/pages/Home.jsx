@@ -49,7 +49,7 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import Banner from '../assets/betflix_banner.png';
-import TelegramLogo from '../assets/telegram-logo.png'; // Add your Telegram logo image here
+import TelegramLogo from '../assets/telegram-logo.svg.png'; // Add your Telegram logo image here
 import { useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 
