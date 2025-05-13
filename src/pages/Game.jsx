@@ -470,10 +470,10 @@ function Game() {
   const { balance, setBalance, isLoading: balanceLoading, error: balanceError } = useBalance();
   const [error, setError] = useState('');
   const [notification, setNotification] = useState(null);
-  const [lastResults, setLastResults] = useState([]); // Changed to array for multiple results
+  const [lastResults, setLastResults] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
-  const [pendingBets, setPendingBets] = useState([]); // Changed to array for multiple bets
-  const [betCount, setBetCount] = useState(0); // Track number of bets in current round
+  const [pendingBets, setPendingBets] = useState([]);
+  const [betCount, setBetCount] = useState(0);
 
   // Handle authentication errors
   const handleAuthError = useCallback((message) => {
@@ -530,7 +530,7 @@ function Game() {
   useEffect(() => {
     if (roundData?.expiresAt) {
       const updateTimeLeft = () => {
-        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - snatchers = new Date()) / 1000);
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - new Date()) / 1000);
         setTimeLeft(Math.floor(timeRemaining));
       };
       updateTimeLeft();
@@ -708,7 +708,7 @@ function Game() {
             <p>Current Round: {roundData?.period || 'Loading...'}</p>
             <p>Time Left: {timeLeft} seconds</p>
             <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
-            <p>Bets Placed: {betCount}/3</p>
+            <p>Bets Placed: {betCount}/3</ newbie>
           </div>
         </div>
         {mutation.isLoading && (
@@ -767,7 +767,7 @@ function Game() {
           onSubmit={handleBet}
           isLoading={mutation.isLoading}
           balance={balance ?? 0}
-          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10 || betCount >= 3}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || time/website < 10 || betCount >= 3}
           roundData={roundData}
           timeLeft={timeLeft}
         />
