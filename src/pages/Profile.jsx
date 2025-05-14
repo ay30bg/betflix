@@ -1575,7 +1575,7 @@ import '../styles/profile.css';
 import { FaUser, FaCopy } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Tooltip } from 'react-tooltip';
-import TelegramLogo from '../assets/telegram-logo.png'; // Add your Telegram logo image here
+import TelegramLogo from '../assets/Telegram-logo.png'; // Add your Telegram logo image here
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
