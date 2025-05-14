@@ -89,20 +89,6 @@ function Home() {
         />
       </div>
       <a
-        href="https://t.me/your-telegram-link"
-        className="telegram-floating"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Join our Telegram community"
-      >
-        <img
-          src={TelegramLogo}
-          alt="Telegram Logo"
-          className="telegram-logo"
-          loading="lazy"
-        />
-      </a>
-      <a
         href="https://t.me/your-telegram-link" // Replace with your Telegram link
         className="telegram-floating"
         target="_blank"
