@@ -49,7 +49,7 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import Banner from '../assets/betflix_banner.png';
-import TelegramLogo from '../assets/Telegram-logo.png'; // Add your Telegram logo image here
+import TelegramLogo from '../assets/Telegram-logo.png'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 
@@ -88,6 +88,20 @@ function Home() {
           onClick={handleSignUp}
         />
       </div>
+      <a
+        href="https://t.me/your-telegram-link"
+        className="telegram-floating"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Join our Telegram community"
+      >
+        <img
+          src={TelegramLogo}
+          alt="Telegram Logo"
+          className="telegram-logo"
+          loading="lazy"
+        />
+      </a>
       <a
         href="https://t.me/your-telegram-link" // Replace with your Telegram link
         className="telegram-floating"
