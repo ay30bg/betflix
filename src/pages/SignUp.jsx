@@ -194,38 +194,70 @@ function Signup() {
     setError('');
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.username || !formData.email || !formData.password) {
+  //     setError('Please fill in all required fields');
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(`${API_URL}/api/auth/signup`, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     const data = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(data.error || 'Signup failed');
+  //     }
+
+  //     // Store JWT token
+  //     localStorage.setItem('token', data.token);
+  //     // Clear form
+  //     setFormData({ username: '', email: '', password: '', referralCode: searchParams.get('ref') || '' });
+  //     // Redirect to verify-email with email query param
+  //     navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password) {
-      setError('Please fill in all required fields');
-      return;
+  e.preventDefault();
+  if (!formData.username || !formData.email || !formData.password) {
+    setError('Please fill in all required fields');
+    return;
+  }
+
+  setIsLoading(true);
+  try {
+    const response = await fetch(`${API_URL}/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Signup failed');
     }
 
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
-      }
-
-      // Store JWT token
-      localStorage.setItem('token', data.token);
-      // Clear form
-      setFormData({ username: '', email: '', password: '', referralCode: searchParams.get('ref') || '' });
-      // Redirect to verify-email with email query param
-      navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    localStorage.setItem('token', data.token);
+    setFormData({ username: '', email: '', password: '', referralCode: searchParams.get('ref') || '' });
+    setError('');
+    alert('A verification email has been sent to ' + formData.email);
+    navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleBack = () => {
     navigate('/');
