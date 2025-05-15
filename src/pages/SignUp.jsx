@@ -349,7 +349,7 @@
 
 // export default Signup;
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import AuthHeader from '../components/AuthHeader';
@@ -422,6 +422,10 @@ function Signup() {
     }
   };
 
+  const handleBack = () => {
+    navigate('/');
+  };
+
   return (
     <main className="signup-page container">
       <AuthHeader />
@@ -438,10 +442,62 @@ function Signup() {
             placeholder="Enter your username"
             required
             disabled={isLoading}
-            aria-describedby={error ? 'username-error' : undefined}
+            aria-describedby={error && error.includes('username') ? 'form-error' : undefined}
           />
         </div>
-        {/* Other form fields similar to original */}
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            required
+            disabled={isLoading}
+            aria-describedby={error && error.includes('email') ? 'form-error' : undefined}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              required
+              disabled={isLoading}
+              className="password-input"
+              aria-describedby={error && error.includes('password') ? 'form-error' : undefined}
+            />
+            <span
+              className="eye-icon"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setShowPassword(!showPassword)}
+            >
+              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </span>
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="referralCode">Referral Code (Optional)</label>
+          <input
+            type="text"
+            id="referralCode"
+            name="referralCode"
+            value={formData.referralCode}
+            onChange={handleChange}
+            placeholder="Enter referral code"
+            disabled={isLoading}
+          />
+        </div>
         {error && (
           <p className="error-message" id="form-error">
             {error}
@@ -454,11 +510,7 @@ function Signup() {
           Already have an account? <a href="/login">Login</a>
         </p>
       </form>
-      <button
-        className="back-btn"
-        onClick={() => navigate('/')}
-        disabled={isLoading}
-      >
+      <button className="back-btn" onClick={handleBack} disabled={isLoading}>
         Back to Home
       </button>
     </main>
