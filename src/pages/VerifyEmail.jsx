@@ -117,10 +117,10 @@ import AuthHeader from '../components/AuthHeader';
 import '../styles/verify-email.css';
 
 function VerifyEmail() {
-  const navigate = useNavigate();
+  const   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
-  const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   const [verificationCode, setVerificationCode] = useState('');
   const [error, setError] = useState('');
@@ -144,12 +144,13 @@ function VerifyEmail() {
         body: JSON.stringify({ email, code: verificationCode }),
       });
 
-      const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Verification failed');
+        const text = await response.text();
+        console.error('Response error:', response.status, text);
+        throw new Error(`Verification failed: ${text}`);
       }
 
-      // Clear form and navigate to profile
+      const data = await response.json();
       setVerificationCode('');
       navigate('/profile');
     } catch (err) {
@@ -171,10 +172,12 @@ function VerifyEmail() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to resend code');
+        const text = await response.text();
+        console.error('Resend error:', response.status, text);
+        throw new Error(`Failed to resend code: ${text}`);
       }
+
       setError('');
       alert('Verification code resent to your email');
     } catch (err) {
