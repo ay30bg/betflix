@@ -120,7 +120,7 @@ function VerifyEmail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
   const [verificationCode, setVerificationCode] = useState('');
   const [error, setError] = useState('');
