@@ -117,7 +117,7 @@ import AuthHeader from '../components/AuthHeader';
 import '../styles/verify-email.css';
 
 function VerifyEmail() {
-  const   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
