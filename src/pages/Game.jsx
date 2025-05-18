@@ -682,7 +682,7 @@ function Game() {
       }
       queryClient.invalidateQueries(['bets']);
       queryClient.invalidateQueries(['stats']); // Invalidate stats to refresh Profile stats
- alloc      setPendingBet(null);
+      setPendingBet(null);
     } catch (err) {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
