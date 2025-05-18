@@ -717,12 +717,10 @@ body {
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+  margin-bottom: 5px;
 }
 
-.round-info:hover {
-  transform: translateY(-4px); /* Slight lift on hover */
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
-}
+
 
 /* Background accent for modern flair */
 .round-info::before {
@@ -805,7 +803,7 @@ body {
 @media (max-width: 768px) {
   .round-info {
     padding: 1.25rem;
-    border-radius: 12px;
+    border-radius: 8px;
   }
 
   .round-info p {
