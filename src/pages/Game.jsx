@@ -392,8 +392,8 @@ function Game() {
         )}
         {pendingBet && !lastResult && !mutation.isLoading && (
           <div className="no-result" role="alert" aria-live="polite">
-            <p>Bet placed on round {pendingBet.period}.</p>
-            <p>Waiting for results... ({timeLeft} seconds remaining)</p>
+            <p>Bet placed on {pendingBet.period}.</p>
+            <p>Waiting for results... ⌛</p>
           </div>
         )}
         {!pendingBet && !lastResult && !mutation.isLoading && (
