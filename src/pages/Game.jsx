@@ -465,10 +465,10 @@ import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
-import Header from '../components/header';
+import Header from '../components/Header';
 import '../styles/game.css';
 
-// Error Boundary Component
+// Error Boundary Component to catch rendering errors
 class ErrorBoundary extends React.Component {
   state = { error: null };
   static getDerivedStateFromError(error) {
@@ -850,6 +850,9 @@ function Game() {
       </ErrorBoundary>
     );
   }
+
+  // Debug rendering
+  console.log('Rendering Game with betsData:', betsData);
 
   // Render main UI
   return (
