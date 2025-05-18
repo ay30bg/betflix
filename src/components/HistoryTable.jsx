@@ -89,7 +89,7 @@
 // export default HistoryTable;
 
 import PropTypes from 'prop-types';
-import '../styles/historyTable.css';
+import '../styles/game.css';
 
 function HistoryTable({ bets }) {
   const getNumberColor = (value) => {
