@@ -105,7 +105,6 @@ function HistoryTable({ bets }) {
   };
 
   const getResultDisplay = (bet) => {
-    // Use won !== undefined as fallback if status is missing
     const isPending = bet.status === 'pending' || bet.won === undefined;
     if (isPending) {
       return { text: 'Pending...', color: '' };
@@ -115,6 +114,15 @@ function HistoryTable({ bets }) {
     }
     return { text: `Number ${bet.result ?? 'N/A'}`, color: getNumberColor(bet.result) };
   };
+
+  useEffect(() => {
+    console.log(`[${new Date().toISOString()}] HistoryTable bets:`, bets.map(bet => ({
+      period: bet.period,
+      status: bet.status,
+      won: bet.won,
+      result: bet.result,
+    })));
+  }, [bets]);
 
   return (
     <div className="history-table-container">
