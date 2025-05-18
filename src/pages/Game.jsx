@@ -1623,15 +1623,16 @@ const fetchAllRounds = async () => {
   return response.json();
 };
 
-const fetchBalance = async () => {
+// Optional: Fetch profile to sync balance
+const fetchProfile = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  const response = await fetch(`${API_URL}/api/users/balance`, {
+  const response = await fetch(`${API_URL}/api/user/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
     const errorData = await response.text().catch(() => 'Unknown error');
-    throw new Error(errorData || `Balance fetch failed: ${response.status}`);
+    throw new Error(errorData || `Profile fetch failed: ${response.status}`);
   }
   return response.json();
 };
@@ -1659,10 +1660,10 @@ function Game() {
     [navigate]
   );
 
-  // Fetch balance on mount to ensure latest balance
+  // Optional: Fetch profile on mount to ensure latest balance
   useQuery({
-    queryKey: ['balance'],
-    queryFn: fetchBalance,
+    queryKey: ['profile'],
+    queryFn: fetchProfile,
     onSuccess: (data) => {
       if (typeof data.balance === 'number') {
         setBalance(data.balance);
