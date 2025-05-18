@@ -105,7 +105,9 @@ function HistoryTable({ bets }) {
   };
 
   const getResultDisplay = (bet) => {
-    if (bet.status === 'pending') {
+    // Use won !== undefined as fallback if status is missing
+    const isPending = bet.status === 'pending' || bet.won === undefined;
+    if (isPending) {
       return { text: 'Pending...', color: '' };
     }
     if (bet.type === 'color') {
@@ -132,6 +134,7 @@ function HistoryTable({ bets }) {
           <tbody>
             {bets.map((bet, index) => {
               if (!bet || !bet.type || bet.value === undefined || bet.amount === undefined) {
+                console.warn(`[${new Date().toISOString()}] Invalid bet data:`, bet);
                 return (
                   <tr key={index}>
                     <td data-label="Period">{bet?.period || 'Unknown'}</td>
@@ -142,6 +145,7 @@ function HistoryTable({ bets }) {
 
               const betDisplay = getBetDisplay(bet);
               const resultDisplay = getResultDisplay(bet);
+              const isPending = bet.status === 'pending' || bet.won === undefined;
 
               return (
                 <tr key={`${bet.period}-${index}`}>
@@ -161,9 +165,9 @@ function HistoryTable({ bets }) {
                   </td>
                   <td
                     data-label="Win/Loss"
-                    className={bet.status === 'pending' ? 'pending' : bet.won ? 'won' : 'lost'}
+                    className={isPending ? 'pending' : bet.won ? 'won' : 'lost'}
                   >
-                    {bet.status === 'pending' ? 'Pending' : bet.won ? 'Won' : 'Lost'}
+                    {isPending ? 'Pending' : bet.won ? 'Won' : 'Lost'}
                   </td>
                 </tr>
               );
