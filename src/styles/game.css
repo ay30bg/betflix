@@ -707,7 +707,7 @@ body {
 /* Round Info (Current Round and Time Left) */
 .round-info {
   background: linear-gradient(145deg, #ffffff, #f1f5f9); /* Subtle gradient for depth */
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 16px; /* Softer, modern radius */
   text-align: center;
   width: 100%;
