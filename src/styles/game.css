@@ -711,14 +711,14 @@ body {
   border-radius: 16px; /* Softer, modern radius */
   text-align: center;
   width: 100%;
-  max-width: 700px;
+  max-width: 1000px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05); /* Layered shadow for elevation */
   border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
   margin-bottom: 5px;
-  margin-bottom: 15px;
+  margin-top: 15px;
 }
 
 
