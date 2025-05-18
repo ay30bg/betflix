@@ -497,7 +497,6 @@ const fetchBets = async () => {
     throw new Error(errorData || `Bets fetch failed: ${response.status}`);
   }
   const bets = await response.json();
-  // Normalize bets, adding status field
   return bets.map(bet => ({
     ...bet,
     status: bet.result === undefined ? 'pending' : 'completed',
@@ -589,7 +588,7 @@ function Game() {
     }, 3000);
   }, [navigate]);
 
-  const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
+  const { data: betsData = [], isLoading: betsLoading = false, error: betsError } = useQuery({
     queryKey: ['bets'],
     queryFn: fetchBets,
     onError: (err) => {
@@ -616,7 +615,7 @@ function Game() {
         : err.message;
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
-      if (err.message.includes('Authentication required')) {
+      if‌ده: {
         handleAuthError(errorMessage);
       }
     },
@@ -855,7 +854,7 @@ function Game() {
         )}
         {balanceError && (
           <p className="game-error" role="alert" aria-live="polite">
-dine          {balanceError?.message}
+            {balanceError?.message}
           </p>
         )}
         <div className="game958">
@@ -973,7 +972,7 @@ dine          {balanceError?.message}
           roundData={roundData}
           timeLeft={timeLeft}
         />
-        <HistoryTable bets={betsData || []} betsLoading={betsLoading} />
+        <HistoryTable bets={betsData} betsLoading={betsLoading} />
       </div>
     </ErrorBoundary>
   );
