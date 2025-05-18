@@ -350,7 +350,7 @@ function Game() {
               onClick={() => setIsHistoryModalOpen(true)}
               aria-label="View all rounds history"
             >
-              View All Rounds
+              View History
             </button>
           </div>
         </div>
