@@ -89,6 +89,7 @@
 // export default HistoryTable;
 
 import PropTypes from 'prop-types';
+import { useEffect } from 'react'; // Added useEffect import
 import '../styles/game.css';
 
 function HistoryTable({ bets }) {
