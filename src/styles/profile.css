@@ -584,6 +584,27 @@
   border-radius: 4px;
   font-size: 14px;
 }
+
+.refresh-stats-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.refresh-stats-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+[data-tooltip-id="pending-tooltip"] {
+  cursor: help;
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
     
 /* Animations */
  /*ANIMATIONS AND RESPONSIVE STYLES REMAIN UNCHANGED */
