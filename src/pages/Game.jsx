@@ -459,7 +459,7 @@
 
 // export default memo(Game);
 
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
@@ -577,6 +577,7 @@ function Game() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [pendingBet, setPendingBet] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const hasMounted = useRef(false); // Track if component has mounted
 
   // Handle authentication errors
   const handleAuthError = useCallback((message) => {
@@ -659,25 +660,6 @@ function Game() {
     }
   }, [notification]);
 
-  // Restore pendingBet from localStorage on mount
-  useEffect(() => {
-    const storedBet = localStorage.getItem('pendingBet');
-    if (storedBet) {
-      try {
-        const parsedBet = JSON.parse(storedBet);
-        if (parsedBet?.period && /^round-\d+$/.test(parsedBet.period)) {
-          setPendingBet(parsedBet);
-          fetchResult();
-        } else {
-          localStorage.removeItem('pendingBet');
-        }
-      } catch (err) {
-        console.error('Failed to parse pendingBet from localStorage:', err);
-        localStorage.removeItem('pendingBet');
-      }
-    }
-  }, [fetchResult]);
-
   // Fetch bet result with retry logic
   const fetchResult = useCallback(
     async (retryCount = 3) => {
@@ -736,6 +718,31 @@ function Game() {
     },
     [pendingBet, queryClient, setBalance, handleAuthError]
   );
+
+  // Restore pendingBet from localStorage on mount
+  useEffect(() => {
+    if (hasMounted.current) return; // Only run on initial mount
+    hasMounted.current = true;
+
+    const storedBet = localStorage.getItem('pendingBet');
+    if (storedBet) {
+      try {
+        const parsedBet = JSON.parse(storedBet);
+        if (parsedBet?.period && /^round-\d+$/.test(parsedBet.period)) {
+          setPendingBet(parsedBet);
+          // Use a setTimeout to ensure state update completes before calling fetchResult
+          setTimeout(() => {
+            fetchResult();
+          }, 0);
+        } else {
+          localStorage.removeItem('pendingBet');
+        }
+      } catch (err) {
+        console.error('Failed to parse pendingBet from localStorage:', err);
+        localStorage.removeItem('pendingBet');
+      }
+    }
+  }, []); // Empty dependency array to run only on mount
 
   // Trigger fetchResult at 15 seconds for 2-minute rounds
   useEffect(() => {
