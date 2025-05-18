@@ -501,10 +501,12 @@ const fetchBets = async () => {
     const response = await axios.get(`${API_URL}/api/bets/history`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(`[${new Date().toISOString()}] Fetched bets:`, response.data);
     return response.data.filter(
       (bet) => bet && bet.type && bet.value !== undefined && bet.amount !== undefined
     );
   } catch (err) {
+    console.error(`[${new Date().toISOString()}] Error fetching bets:`, err.message, err.response?.data);
     if (err.response?.status === 401) throw new Error('Authentication required');
     if (err.response?.status === 429) throw new Error('Too many requests, please try again later');
     throw new Error(err.response?.data?.error || `Bets fetch failed: ${err.message}`);
@@ -518,8 +520,10 @@ const fetchCurrentRound = async () => {
     const response = await axios.get(`${API_URL}/api/bets/current`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(`[${new Date().toISOString()}] Fetched current round:`, response.data);
     return response.data;
   } catch (err) {
+    console.error(`[${new Date().toISOString()}] Error fetching current round:`, err.message, err.response?.data);
     if (err.response?.status === 401) throw new Error('Authentication required');
     if (err.response?.status === 429) throw new Error('Too many requests, please try again later');
     throw new Error(err.response?.data?.error || `Round fetch failed: ${err.message}`);
@@ -536,8 +540,10 @@ const placeBet = async (betData) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(`[${new Date().toISOString()}] Placed bet:`, response.data);
     return response.data;
   } catch (err) {
+    console.error(`[${new Date().toISOString()}] Error placing bet:`, err.message, err.response?.data);
     if (err.response?.status === 401) throw new Error('Authentication required');
     throw new Error(err.response?.data?.error || `Bet placement failed: ${err.message}`);
   }
@@ -546,14 +552,15 @@ const placeBet = async (betData) => {
 const fetchBetResult = async (period) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  console.log(`Fetching result for period: ${period}`);
+  console.log(`[${new Date().toISOString()}] Fetching result for period: ${period}`);
   try {
     const response = await axios.get(`${API_URL}/api/bets/result/${period}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(`[${new Date().toISOString()}] Bet result fetched:`, response.data);
     return response.data;
   } catch (err) {
-    console.error(`Error response: ${JSON.stringify(err.response?.data || {})}`);
+    console.error(`[${new Date().toISOString()}] Error fetching bet result:`, err.message, err.response?.data);
     if (err.response?.status === 401) throw new Error('Authentication required');
     throw new Error(err.response?.data?.error || `Bet result fetch failed: ${err.message}`);
   }
@@ -566,8 +573,10 @@ const fetchAllRounds = async () => {
     const response = await axios.get(`${API_URL}/api/bets/rounds/history`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log(`[${new Date().toISOString()}] Fetched all rounds:`, response.data);
     return response.data;
   } catch (err) {
+    console.error(`[${new Date().toISOString()}] Error fetching all rounds:`, err.message, err.response?.data);
     if (err.response?.status === 401) throw new Error('Authentication required');
     if (err.response?.status === 429) throw new Error('Too many requests, please try again later');
     throw new Error(err.response?.data?.error || `Rounds fetch failed: ${err.message}`);
@@ -607,11 +616,14 @@ function Game() {
     const savedRound = localStorage.getItem('currentRound');
     if (savedRound && pendingBet) {
       const roundData = JSON.parse(savedRound);
-      if (new Date(roundData.expiresAt) > new Date()) {
-        setTimeLeft(Math.floor((new Date(roundData.expiresAt) - Date.now()) / 1000));
+      const expiresAt = new Date(roundData.expiresAt);
+      const now = new Date();
+      if (expiresAt > now) {
+        setTimeLeft(Math.floor((expiresAt - now) / 1000));
       } else {
-        setPendingBet(null);
-        localStorage.removeItem('pendingBet');
+        // Round has ended, try fetching result immediately
+        console.log(`[${new Date().toISOString()}] Round expired, fetching result for:`, pendingBet.period);
+        fetchResult();
       }
     }
   }, [pendingBet]);
@@ -692,77 +704,91 @@ function Game() {
 
   // Fetch bet result with retry logic
   const fetchResult = useCallback(
-    async (retryCount = 3) => {
+    async (retryCount = 5) => {
       if (!pendingBet?.period) {
-        console.warn('No pending bet period available');
+        console.warn(`[${new Date().toISOString()}] No pending bet period available`);
         setError('No valid bet period available');
         setPendingBet(null);
         localStorage.removeItem('pendingBet');
         return;
       }
       if (!/^round-\d+$/.test(pendingBet.period)) {
-        console.warn(`Invalid period format: ${pendingBet.period}`);
+        console.warn(`[${new Date().toISOString()}] Invalid period format: ${pendingBet.period}`);
         setError('Invalid bet period format');
         setPendingBet(null);
         localStorage.removeItem('pendingBet');
         return;
       }
       try {
-        console.log(`Attempting to fetch result for period: ${pendingBet.period}`);
         const data = await fetchBetResult(pendingBet.period);
-        if (!data.bet || typeof data.bet.result === 'undefined') {
-          console.warn(`Result not ready, retries left: ${retryCount}`);
+        if (!data.bet || typeof data.bet.result === 'undefined' || typeof data.bet.won === 'undefined') {
+          console.warn(`[${new Date().toISOString()}] Result not ready, retries left: ${retryCount}`);
           if (retryCount > 0) {
-            setTimeout(() => fetchResult(retryCount - 1), 3000);
+            setTimeout(() => fetchResult(retryCount - 1), 5000); // Increased delay to 5s
             return;
           }
-          setError('Result not available');
+          setError('Unable to fetch bet result after multiple attempts');
           setPendingBet(null);
           localStorage.removeItem('pendingBet');
           return;
         }
+        console.log(`[${new Date().toISOString()}] Bet result processed:`, {
+          period: data.bet.period,
+          won: data.bet.won,
+          result: data.bet.result,
+          payout: data.bet.payout,
+        });
         setLastResult({ ...data.bet, payout: data.bet.payout });
         if (typeof data.balance === 'number') {
           setBalance(data.balance);
         }
-        queryClient.invalidateQueries(['bets']);
+        // Force refetch of bets to ensure HistoryTable updates
+        await queryClient.invalidateQueries(['bets']);
+        await queryClient.refetchQueries(['bets']);
         queryClient.invalidateQueries(['stats']);
         setPendingBet(null);
         localStorage.removeItem('pendingBet');
+        localStorage.removeItem('currentRound');
       } catch (err) {
+        console.error(`[${new Date().toISOString()}] Fetch result error:`, err.message, err.response?.data);
         const errorMessage = err.message.includes('Authentication required')
           ? 'Session expired. Please log in again.'
           : err.message.includes('Round has expired')
           ? 'Round has ended. Please place a new bet.'
           : err.message;
-        console.error(`Fetch result error: ${err.message}`);
         setError(errorMessage);
         setTimeout(() => setError(''), 5000);
         if (err.message.includes('Authentication required')) {
           handleAuthError(errorMessage);
-        } else if (err.message.includes('Round has expired')) {
+        } else if (retryCount > 0) {
+          console.log(`[${new Date().toISOString()}] Retrying fetchResult, retries left: ${retryCount}`);
+          setTimeout(() => fetchResult(retryCount - 1), 5000);
+        } else {
+          setError('Failed to fetch bet result');
           setPendingBet(null);
           localStorage.removeItem('pendingBet');
+          localStorage.removeItem('currentRound');
         }
       }
     },
     [pendingBet, queryClient, setBalance, handleAuthError]
   );
 
-  // Trigger fetchResult at 15 seconds or on mount if timeLeft is low
+  // Poll for result if pendingBet exists
   useEffect(() => {
-    if (pendingBet && !lastResult && timeLeft <= 15) {
-      const timer = setTimeout(() => {
+    if (pendingBet && !lastResult) {
+      const interval = setInterval(() => {
+        console.log(`[${new Date().toISOString()}] Polling for result:`, pendingBet.period);
         fetchResult();
-      }, 1000);
-      return () => clearTimeout(timer);
+      }, 10000); // Poll every 10 seconds
+      return () => clearInterval(interval);
     }
-  }, [timeLeft, pendingBet, fetchResult, lastResult]);
+  }, [pendingBet, lastResult, fetchResult]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
     onSuccess: (data) => {
-      console.log('Place bet response:', data);
+      console.log(`[${new Date().toISOString()}] Bet placed successfully:`, data);
       if (typeof data.balance === 'number') {
         setBalance(data.balance);
       }
@@ -774,6 +800,7 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
+      console.error(`[${new Date().toISOString()}] Error placing bet:`, err.message, err.response?.data);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -807,6 +834,7 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
+      console.error(`[${new Date().toISOString()}] Error in handleBet:`, err.message, err.response?.data);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -969,4 +997,3 @@ function Game() {
 }
 
 export default memo(Game);
-
