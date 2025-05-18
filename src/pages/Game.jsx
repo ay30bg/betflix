@@ -618,10 +618,14 @@ function Game() {
       const roundData = JSON.parse(savedRound);
       const expiresAt = new Date(roundData.expiresAt);
       const now = new Date();
+      console.log(`[${new Date().toISOString()}] Restoring round:`, {
+        period: roundData.period,
+        expiresAt: roundData.expiresAt,
+        timeLeft: (expiresAt - now) / 1000,
+      });
       if (expiresAt > now) {
         setTimeLeft(Math.floor((expiresAt - now) / 1000));
       } else {
-        // Round has ended, try fetching result immediately
         console.log(`[${new Date().toISOString()}] Round expired, fetching result for:`, pendingBet.period);
         fetchResult();
       }
@@ -635,6 +639,7 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
+      console.error(`[${new Date().toISOString()}] Bets query error:`, err.message);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -650,12 +655,14 @@ function Game() {
     refetchInterval: 6000,
     staleTime: 6000,
     onSuccess: (data) => {
+      console.log(`[${new Date().toISOString()}] Saving current round to localStorage:`, data);
       localStorage.setItem('currentRound', JSON.stringify(data));
     },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
+      console.error(`[${new Date().toISOString()}] Current round query error:`, err.message);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -672,6 +679,7 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
+      console.error(`[${new Date().toISOString()}] All rounds query error:`, err.message);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -685,8 +693,15 @@ function Game() {
   useEffect(() => {
     if (roundData?.expiresAt) {
       const updateTimeLeft = () => {
-        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
+        const now = new Date();
+        const expiresAt = new Date(roundData.expiresAt);
+        const timeRemaining = Math.max(0, (expiresAt - now) / 1000);
         setTimeLeft(Math.floor(timeRemaining));
+        console.log(`[${new Date().toISOString()}] Updated timeLeft:`, {
+          period: roundData.period,
+          timeLeft: timeRemaining,
+          expiresAt: roundData.expiresAt,
+        });
       };
       updateTimeLeft();
       const interval = setInterval(updateTimeLeft, 1000);
@@ -704,12 +719,13 @@ function Game() {
 
   // Fetch bet result with retry logic
   const fetchResult = useCallback(
-    async (retryCount = 5) => {
+    async (retryCount = 10) => {
       if (!pendingBet?.period) {
         console.warn(`[${new Date().toISOString()}] No pending bet period available`);
         setError('No valid bet period available');
         setPendingBet(null);
         localStorage.removeItem('pendingBet');
+        localStorage.removeItem('currentRound');
         return;
       }
       if (!/^round-\d+$/.test(pendingBet.period)) {
@@ -717,6 +733,7 @@ function Game() {
         setError('Invalid bet period format');
         setPendingBet(null);
         localStorage.removeItem('pendingBet');
+        localStorage.removeItem('currentRound');
         return;
       }
       try {
@@ -724,12 +741,13 @@ function Game() {
         if (!data.bet || typeof data.bet.result === 'undefined' || typeof data.bet.won === 'undefined') {
           console.warn(`[${new Date().toISOString()}] Result not ready, retries left: ${retryCount}`);
           if (retryCount > 0) {
-            setTimeout(() => fetchResult(retryCount - 1), 5000); // Increased delay to 5s
+            setTimeout(() => fetchResult(retryCount - 1), 10000); // 10s delay
             return;
           }
           setError('Unable to fetch bet result after multiple attempts');
           setPendingBet(null);
           localStorage.removeItem('pendingBet');
+          localStorage.removeItem('currentRound');
           return;
         }
         console.log(`[${new Date().toISOString()}] Bet result processed:`, {
@@ -742,7 +760,7 @@ function Game() {
         if (typeof data.balance === 'number') {
           setBalance(data.balance);
         }
-        // Force refetch of bets to ensure HistoryTable updates
+        // Force refetch of bets
         await queryClient.invalidateQueries(['bets']);
         await queryClient.refetchQueries(['bets']);
         queryClient.invalidateQueries(['stats']);
@@ -753,6 +771,8 @@ function Game() {
         console.error(`[${new Date().toISOString()}] Fetch result error:`, err.message, err.response?.data);
         const errorMessage = err.message.includes('Authentication required')
           ? 'Session expired. Please log in again.'
+          : err.message.includes('Round is still active')
+          ? 'Waiting for round to end...'
           : err.message.includes('Round has expired')
           ? 'Round has ended. Please place a new bet.'
           : err.message;
@@ -762,7 +782,7 @@ function Game() {
           handleAuthError(errorMessage);
         } else if (retryCount > 0) {
           console.log(`[${new Date().toISOString()}] Retrying fetchResult, retries left: ${retryCount}`);
-          setTimeout(() => fetchResult(retryCount - 1), 5000);
+          setTimeout(() => fetchResult(retryCount - 1), 10000);
         } else {
           setError('Failed to fetch bet result');
           setPendingBet(null);
@@ -774,16 +794,13 @@ function Game() {
     [pendingBet, queryClient, setBalance, handleAuthError]
   );
 
-  // Poll for result if pendingBet exists
+  // Trigger fetchResult when timeLeft <= 15
   useEffect(() => {
-    if (pendingBet && !lastResult) {
-      const interval = setInterval(() => {
-        console.log(`[${new Date().toISOString()}] Polling for result:`, pendingBet.period);
-        fetchResult();
-      }, 10000); // Poll every 10 seconds
-      return () => clearInterval(interval);
+    if (pendingBet && !lastResult && timeLeft > 0 && timeLeft <= 15) {
+      console.log(`[${new Date().toISOString()}] timeLeft <= 15, triggering fetchResult:`, { timeLeft, period: pendingBet.period });
+      fetchResult();
     }
-  }, [pendingBet, lastResult, fetchResult]);
+  }, [timeLeft, pendingBet, lastResult, fetchResult]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
