@@ -465,7 +465,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
-import Header from '../components/Header';
+import Header from '../components/header';
 import '../styles/game.css';
 
 // Error Boundary Component to catch rendering errors
