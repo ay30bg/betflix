@@ -1,465 +1,3 @@
-// import React, { useState, useEffect, useCallback, memo } from 'react';
-// import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-// import { useNavigate } from 'react-router-dom';
-// import { useBalance } from '../context/BalanceContext';
-// import BetForm from '../components/BetForm';
-// import HistoryTable from '../components/HistoryTable';
-// import Header from '../components/header';
-// import '../styles/game.css';
-
-// // Error Boundary Component
-// class ErrorBoundary extends React.Component {
-//   state = { error: null };
-//   static getDerivedStateFromError(error) {
-//     return { error };
-//   }
-//   render() {
-//     if (this.state.error) {
-//       return <div>Error: {this.state.error.message}</div>;
-//     }
-//     return this.props.children;
-//   }
-// }
-
-// const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
-
-// // API Functions
-// const fetchBets = async () => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   const response = await fetch(`${API_URL}/api/bets/history`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.text().catch(() => 'Unknown error');
-//     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(errorData || `Bets fetch failed: ${response.status}`);
-//   }
-//   const bets = await response.json();
-//   return bets.filter(bet => bet && bet.type && bet.value !== undefined && bet.amount !== undefined);
-// };
-
-// const fetchCurrentRound = async () => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   const response = await fetch(`${API_URL}/api/bets/current`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.text().catch(() => 'Unknown error');
-//     if (response.status === 401) throw new Error('Authentication required');
-//     if (response.status === 429) throw new Error('Too many requests, please try again later');
-//     throw new Error(errorData || `Round fetch failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
-// const placeBet = async (betData) => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   const response = await fetch(`${API_URL}/api/bets`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: JSON.stringify(betData),
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.json().catch(() => ({}));
-//     throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
-// const fetchBetResult = async (period) => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   console.log(`Fetching result for period: ${period}`);
-//   const response = await fetch(`${API_URL}/api/bets/result/${period}`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.json().catch(() => ({}));
-//     console.error(`Error response: ${JSON.stringify(errorData)}`);
-//     throw new Error(errorData.error || `Bet result fetch failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
-// const fetchAllRounds = async () => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   const response = await fetch(`${API_URL}/api/bets/rounds/history`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.text().catch(() => 'Unknown error');
-//     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(errorData || `Rounds fetch failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
-// function Game() {
-//   const queryClient = useQueryClient();
-//   const navigate = useNavigate();
-//   const { balance, setBalance, isLoading: balanceLoading, error: balanceError } = useBalance();
-//   const [error, setError] = useState('');
-//   const [notification, setNotification] = useState(null);
-//   const [lastResult, setLastResult] = useState(null);
-//   const [timeLeft, setTimeLeft] = useState(0);
-//   const [pendingBet, setPendingBet] = useState(null);
-//   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-
-//   // Handle authentication errors
-//   const handleAuthError = useCallback((message) => {
-//     setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
-//     localStorage.removeItem('token');
-//     setTimeout(() => {
-//       navigate('/login');
-//     }, 3000);
-//   }, [navigate]);
-
-//   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
-//     queryKey: ['bets'],
-//     queryFn: fetchBets,
-//     onError: (err) => {
-//       const errorMessage = err.message.includes('Authentication required')
-//         ? 'Session expired. Please log in again.'
-//         : err.message;
-//       setError(errorMessage);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message.includes('Authentication required')) {
-//         handleAuthError(errorMessage);
-//       }
-//     },
-//     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-//   });
-
-//   const { data: roundData, isLoading: roundLoading } = useQuery({
-//     queryKey: ['currentRound'],
-//     queryFn: fetchCurrentRound,
-//     refetchInterval: 6000,
-//     staleTime: 6000,
-//     onError: (err) => {
-//       const errorMessage = err.message.includes('Authentication required')
-//         ? 'Session expired. Please log in again.'
-//         : err.message;
-//       setError(errorMessage);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message.includes('Authentication required')) {
-//         handleAuthError(errorMessage);
-//       }
-//     },
-//     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-//   });
-
-//   const { data: allRoundsData, isLoading: roundsLoading } = useQuery({
-//     queryKey: ['allRounds'],
-//     queryFn: fetchAllRounds,
-//     onError: (err) => {
-//       const errorMessage = err.message.includes('Authentication required')
-//         ? 'Session expired. Please log in again.'
-//         : err.message;
-//       setError(errorMessage);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message.includes('Authentication required')) {
-//         handleAuthError(errorMessage);
-//       }
-//     },
-//     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-//   });
-
-//   // Update timeLeft every second
-//   useEffect(() => {
-//     if (roundData?.expiresAt) {
-//       const updateTimeLeft = () => {
-//         const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
-//         setTimeLeft(Math.floor(timeRemaining));
-//       };
-//       updateTimeLeft();
-//       const interval = setInterval(updateTimeLeft, 1000);
-//       return () => clearInterval(interval);
-//     }
-//   }, [roundData]);
-
-//   // Clear notification after 3 seconds
-//   useEffect(() => {
-//     if (notification) {
-//       const timeout = setTimeout(() => setNotification(null), 3000);
-//       return () => clearTimeout(timeout);
-//     }
-//   }, [notification]);
-
-//   // Fetch bet result with retry logic
-//   const fetchResult = useCallback(async (retryCount = 3) => {
-//     if (!pendingBet?.period) {
-//       console.warn('No pending bet period available');
-//       setError('No valid bet period available');
-//       setPendingBet(null);
-//       return;
-//     }
-//     if (!/^round-\d+$/.test(pendingBet.period)) {
-//       console.warn(`Invalid period format: ${pendingBet.period}`);
-//       setError('Invalid bet period format');
-//       setPendingBet(null);
-//       return;
-//     }
-//     try {
-//       console.log(`Attempting to fetch result for period: ${pendingBet.period}`);
-//       const data = await fetchBetResult(pendingBet.period);
-//       if (!data.bet || typeof data.bet.result === 'undefined') {
-//         console.warn(`Result not ready, retries left: ${retryCount}`);
-//         if (retryCount > 0) {
-//           setTimeout(() => fetchResult(retryCount - 1), 3000);
-//           return;
-//         }
-//         setError('Result not available');
-//         setPendingBet(null);
-//         return;
-//       }
-//       setLastResult({ ...data.bet, payout: data.bet.payout });
-//       if (typeof data.balance === 'number') {
-//         setBalance(data.balance);
-//       }
-//       queryClient.invalidateQueries(['bets']);
-//       queryClient.invalidateQueries(['stats']); // Invalidate stats to refresh Profile stats
-//       setPendingBet(null);
-//     } catch (err) {
-//       const errorMessage = err.message.includes('Authentication required')
-//         ? 'Session expired. Please log in again.'
-//         : err.message.includes('Round has expired')
-//         ? 'Round has ended. Please place a new bet.'
-//         : err.message;
-//       console.error(`Fetch result error: ${err.message}`);
-//       setError(errorMessage);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message.includes('Authentication required')) {
-//         handleAuthError(errorMessage);
-//       } else if (err.message.includes('Round has expired')) {
-//         setPendingBet(null);
-//       }
-//     }
-//   }, [pendingBet, queryClient, setBalance, handleAuthError]);
-
-//   // Trigger fetchResult at 15 seconds for 2-minute rounds
-//   useEffect(() => {
-//     if (timeLeft <= 15 && pendingBet && !lastResult) {
-//       const timer = setTimeout(() => {
-//         fetchResult();
-//       }, 1000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [timeLeft, pendingBet, fetchResult, lastResult]);
-
-//   const mutation = useMutation({
-//     mutationFn: placeBet,
-//     onSuccess: (data) => {
-//       console.log('Place bet response:', data);
-//       if (typeof data.balance === 'number') {
-//         setBalance(data.balance);
-//       }
-//       setPendingBet(data.bet);
-//       setError('');
-//     },
-//     onError: (err) => {
-//       const errorMessage = err.message.includes('Authentication required')
-//         ? 'Session expired. Please log in again.'
-//         : err.message;
-//       setError(errorMessage);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message.includes('Authentication required')) {
-//         handleAuthError(errorMessage);
-//       }
-//     },
-//   });
-
-//   const getResultColorClass = useCallback((result, type) => {
-//     if (!result) return '';
-//     if (type === 'color') {
-//       return result.toLowerCase();
-//     }
-//     return parseInt(result) % 2 === 0 ? 'green' : 'red';
-//   }, []);
-
-//   const handleBet = async (betData) => {
-//     if (betData.error) {
-//       setError(betData.error);
-//       setTimeout(() => setError(''), 5000);
-//       return;
-//     }
-//     if (betData.amount > (balance ?? 0)) {
-//       setError('Insufficient balance');
-//       setTimeout(() => setError(''), 5000);
-//       return;
-//     }
-//     try {
-//       await mutation.mutateAsync(betData);
-//     } catch (err) {
-//       const errorMessage = err.message.includes('Authentication required')
-//         ? 'Session expired. Please log in again.'
-//         : err.message;
-//       setError(errorMessage);
-//       setTimeout(() => setError(''), 5000);
-//       if (err.message.includes('Authentication required')) {
-//         handleAuthError(errorMessage);
-//       }
-//     }
-//   };
-
-//   // Render loading state
-//   if (balanceLoading || betsLoading || roundLoading || roundsLoading) {
-//     return (
-//       <ErrorBoundary>
-//         <div className="game-page container">
-//           <Header />
-//           <div className="loading-spinner" aria-live="polite">Loading...</div>
-//         </div>
-//       </ErrorBoundary>
-//     );
-//   }
-
-//   // Render main UI
-//   return (
-//     <ErrorBoundary>
-//       <div className="game-page container">
-//         <Header />
-//         {notification && (
-//           <div className={`result ${notification.type}`} role="alert" aria-live="polite">
-//             {notification.message}
-//           </div>
-//         )}
-//         {error && !notification && (
-//           <p className="game-error" role="alert" aria-live="polite">
-//             {error}
-//           </p>
-//         )}
-//         {(balanceError || betsError) && (
-//           <p className="game-error" role="alert" aria-live="polite">
-//             {balanceError?.message || betsError?.message}
-//           </p>
-//         )}
-//         <div className="game958">
-//           <div className="round-info">
-//             <p>Current Round: {roundData?.period || 'Loading...'}</p>
-//             <p>Time Left: {timeLeft} seconds</p>
-//             <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
-//             <button
-//               className="history-button"
-//               onClick={() => setIsHistoryModalOpen(true)}
-//               aria-label="View all rounds history"
-//             >
-//               View History
-//             </button>
-//           </div>
-//         </div>
-//         {mutation.isLoading && (
-//           <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
-//         )}
-//         {lastResult && (
-//           <div
-//             key={lastResult.period}
-//             className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
-//             role="alert"
-//             aria-live="polite"
-//           >
-//             <button
-//               className="result-close"
-//               onClick={() => setLastResult(null)}
-//               aria-label="Close bet result notification"
-//             >
-//               ×
-//             </button>
-//             <div className="result-header">
-//               {lastResult.won ? (
-//                 <span className="result-icon">🎉 You Won!</span>
-//               ) : (
-//                 <span className="result-icon">😔 You Lost</span>
-//               )}
-//             </div>
-//             <div className="result-detail">
-//               {lastResult.type === 'color' ? `Color: ${lastResult.result || 'Pending'}` : `Number: ${lastResult.result || 'Pending'}`}
-//             </div>
-//             <div className="result-payout">
-//               {lastResult.payout === 0
-//                 ? 'No Payout'
-//                 : lastResult.won
-//                 ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
-//                 : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
-//             </div>
-//           </div>
-//         )}
-//         {pendingBet && !lastResult && !mutation.isLoading && (
-//           <div className="no-result" role="alert" aria-live="polite">
-//             <p>Bet placed on {pendingBet.period}.</p>
-//             <p>Waiting for results... ⌛</p>
-//           </div>
-//         )}
-//         {!pendingBet && !lastResult && !mutation.isLoading && (
-//           <p className="no-result">Place a bet to see the result.</p>
-//         )}
-//         {isHistoryModalOpen && (
-//           <div className="modal-overlay" role="dialog" aria-labelledby="history-modal-title">
-//             <div className="modal-content">
-//               <div className="modal-header">
-//                 <h2 id="history-modal-title">All Rounds History</h2>
-//                 <button
-//                   className="modal-close"
-//                   onClick={() => setIsHistoryModalOpen(false)}
-//                   aria-label="Close modal"
-//                 >
-//                   ×
-//                 </button>
-//               </div>
-//               <div className="modal-body">
-//                 <table className="history-table">
-//                   <thead>
-//                     <tr>
-//                       <th>Period</th>
-//                       <th>Color</th>
-//                       <th>Number</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {allRoundsData?.length > 0 ? (
-//                       allRoundsData.map((round) => (
-//                         <tr key={round.period}>
-//                           <td>{round.period}</td>
-//                           <td className={`color-${round.result?.color?.toLowerCase()}`}>
-//                             {round.result?.color || 'N/A'}
-//                           </td>
-//                           <td>{round.result?.number || 'N/A'}</td>
-//                         </tr>
-//                       ))
-//                     ) : (
-//                       <tr>
-//                         <td colSpan="3">No rounds available</td>
-//                       </tr>
-//                     )}
-//                   </tbody>
-//                 </table>
-//               </div>
-//             </div>
-//           </div>
-//         )}
-//         <BetForm
-//           onSubmit={handleBet}
-//           isLoading={mutation.isLoading}
-//           balance={balance ?? 0}
-//           isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10}
-//           roundData={roundData}
-//           timeLeft={timeLeft}
-//         />
-//         <HistoryTable bets={betsData || []} />
-//       </div>
-//     </ErrorBoundary>
-//   );
-// }
-
-// export default memo(Game);
-
-
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -467,15 +5,7 @@ import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
 import Header from '../components/header';
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
 import '../styles/game.css';
-
-// Configure axios retries
-axiosRetry(axios, {
-  retries: 3,
-  retryDelay: (retryCount) => retryCount * 1000,
-});
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -497,90 +27,78 @@ const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel
 const fetchBets = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  try {
-    const response = await axios.get(`${API_URL}/api/bets/history`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(`[${new Date().toISOString()}] Fetched bets:`, response.data);
-    return response.data.filter(
-      (bet) => bet && bet.type && bet.value !== undefined && bet.amount !== undefined
-    );
-  } catch (err) {
-    console.error(`[${new Date().toISOString()}] Error fetching bets:`, err.message, err.response?.data);
-    if (err.response?.status === 401) throw new Error('Authentication required');
-    if (err.response?.status === 429) throw new Error('Too many requests, please try again later');
-    throw new Error(err.response?.data?.error || `Bets fetch failed: ${err.message}`);
+  const response = await fetch(`${API_URL}/api/bets/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Bets fetch failed: ${response.status}`);
   }
+  const bets = await response.json();
+  return bets.filter(bet => bet && bet.type && bet.value !== undefined && bet.amount !== undefined);
 };
 
 const fetchCurrentRound = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  try {
-    const response = await axios.get(`${API_URL}/api/bets/current`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(`[${new Date().toISOString()}] Fetched current round:`, response.data);
-    return response.data;
-  } catch (err) {
-    console.error(`[${new Date().toISOString()}] Error fetching current round:`, err.message, err.response?.data);
-    if (err.response?.status === 401) throw new Error('Authentication required');
-    if (err.response?.status === 429) throw new Error('Too many requests, please try again later');
-    throw new Error(err.response?.data?.error || `Round fetch failed: ${err.message}`);
+  const response = await fetch(`${API_URL}/api/bets/current`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    if (response.status === 429) throw new Error('Too many requests, please try again later');
+    throw new Error(errorData || `Round fetch failed: ${response.status}`);
   }
+  return response.json();
 };
 
 const placeBet = async (betData) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  try {
-    const response = await axios.post(`${API_URL}/api/bets`, betData, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(`[${new Date().toISOString()}] Placed bet:`, response.data);
-    return response.data;
-  } catch (err) {
-    console.error(`[${new Date().toISOString()}] Error placing bet:`, err.message, err.response?.data);
-    if (err.response?.status === 401) throw new Error('Authentication required');
-    throw new Error(err.response?.data?.error || `Bet placement failed: ${err.message}`);
+  const response = await fetch(`${API_URL}/api/bets`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(betData),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
   }
+  return response.json();
 };
 
 const fetchBetResult = async (period) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  console.log(`[${new Date().toISOString()}] Fetching result for period: ${period}`);
-  try {
-    const response = await axios.get(`${API_URL}/api/bets/result/${period}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(`[${new Date().toISOString()}] Bet result fetched:`, response.data);
-    return response.data;
-  } catch (err) {
-    console.error(`[${new Date().toISOString()}] Error fetching bet result:`, err.message, err.response?.data);
-    if (err.response?.status === 401) throw new Error('Authentication required');
-    throw new Error(err.response?.data?.error || `Bet result fetch failed: ${err.message}`);
+  console.log(`Fetching result for period: ${period}`);
+  const response = await fetch(`${API_URL}/api/bets/result/${period}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error(`Error response: ${JSON.stringify(errorData)}`);
+    throw new Error(errorData.error || `Bet result fetch failed: ${response.status}`);
   }
+  return response.json();
 };
 
 const fetchAllRounds = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
-  try {
-    const response = await axios.get(`${API_URL}/api/bets/rounds/history`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(`[${new Date().toISOString()}] Fetched all rounds:`, response.data);
-    return response.data;
-  } catch (err) {
-    console.error(`[${new Date().toISOString()}] Error fetching all rounds:`, err.message, err.response?.data);
-    if (err.response?.status === 401) throw new Error('Authentication required');
-    if (err.response?.status === 429) throw new Error('Too many requests, please try again later');
-    throw new Error(err.response?.data?.error || `Rounds fetch failed: ${err.message}`);
+  const response = await fetch(`${API_URL}/api/bets/rounds/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Rounds fetch failed: ${response.status}`);
   }
+  return response.json();
 };
 
 function Game() {
@@ -591,46 +109,17 @@ function Game() {
   const [notification, setNotification] = useState(null);
   const [lastResult, setLastResult] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
-  const [pendingBet, setPendingBet] = useState(() => {
-    const saved = localStorage.getItem('pendingBet');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [pendingBet, setPendingBet] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   // Handle authentication errors
-  const handleAuthError = useCallback(
-    (message) => {
-      setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
-      localStorage.removeItem('token');
-      localStorage.removeItem('pendingBet');
-      localStorage.removeItem('currentRound');
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    },
-    [navigate]
-  );
-
-  // Restore round data and check pending bet
-  useEffect(() => {
-    const savedRound = localStorage.getItem('currentRound');
-    if (savedRound && pendingBet) {
-      const roundData = JSON.parse(savedRound);
-      const expiresAt = new Date(roundData.expiresAt);
-      const now = new Date();
-      console.log(`[${new Date().toISOString()}] Restoring round:`, {
-        period: roundData.period,
-        expiresAt: roundData.expiresAt,
-        timeLeft: (expiresAt - now) / 1000,
-      });
-      if (expiresAt > now) {
-        setTimeLeft(Math.floor((expiresAt - now) / 1000));
-      } else {
-        console.log(`[${new Date().toISOString()}] Round expired, fetching result for:`, pendingBet.period);
-        fetchResult();
-      }
-    }
-  }, [pendingBet]);
+  const handleAuthError = useCallback((message) => {
+    setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
+    localStorage.removeItem('token');
+    setTimeout(() => {
+      navigate('/login');
+    }, 3000);
+  }, [navigate]);
 
   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
     queryKey: ['bets'],
@@ -639,7 +128,6 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
-      console.error(`[${new Date().toISOString()}] Bets query error:`, err.message);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -654,15 +142,10 @@ function Game() {
     queryFn: fetchCurrentRound,
     refetchInterval: 6000,
     staleTime: 6000,
-    onSuccess: (data) => {
-      console.log(`[${new Date().toISOString()}] Saving current round to localStorage:`, data);
-      localStorage.setItem('currentRound', JSON.stringify(data));
-    },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
-      console.error(`[${new Date().toISOString()}] Current round query error:`, err.message);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -679,7 +162,6 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
-      console.error(`[${new Date().toISOString()}] All rounds query error:`, err.message);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -693,15 +175,8 @@ function Game() {
   useEffect(() => {
     if (roundData?.expiresAt) {
       const updateTimeLeft = () => {
-        const now = new Date();
-        const expiresAt = new Date(roundData.expiresAt);
-        const timeRemaining = Math.max(0, (expiresAt - now) / 1000);
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
         setTimeLeft(Math.floor(timeRemaining));
-        console.log(`[${new Date().toISOString()}] Updated timeLeft:`, {
-          period: roundData.period,
-          timeLeft: timeRemaining,
-          expiresAt: roundData.expiresAt,
-        });
       };
       updateTimeLeft();
       const interval = setInterval(updateTimeLeft, 1000);
@@ -718,106 +193,80 @@ function Game() {
   }, [notification]);
 
   // Fetch bet result with retry logic
-  const fetchResult = useCallback(
-    async (retryCount = 10) => {
-      if (!pendingBet?.period) {
-        console.warn(`[${new Date().toISOString()}] No pending bet period available`);
-        setError('No valid bet period available');
-        setPendingBet(null);
-        localStorage.removeItem('pendingBet');
-        localStorage.removeItem('currentRound');
-        return;
-      }
-      if (!/^round-\d+$/.test(pendingBet.period)) {
-        console.warn(`[${new Date().toISOString()}] Invalid period format: ${pendingBet.period}`);
-        setError('Invalid bet period format');
-        setPendingBet(null);
-        localStorage.removeItem('pendingBet');
-        localStorage.removeItem('currentRound');
-        return;
-      }
-      try {
-        const data = await fetchBetResult(pendingBet.period);
-        if (!data.bet || typeof data.bet.result === 'undefined' || typeof data.bet.won === 'undefined') {
-          console.warn(`[${new Date().toISOString()}] Result not ready, retries left: ${retryCount}`);
-          if (retryCount > 0) {
-            setTimeout(() => fetchResult(retryCount - 1), 10000); // 10s delay
-            return;
-          }
-          setError('Unable to fetch bet result after multiple attempts');
-          setPendingBet(null);
-          localStorage.removeItem('pendingBet');
-          localStorage.removeItem('currentRound');
+  const fetchResult = useCallback(async (retryCount = 3) => {
+    if (!pendingBet?.period) {
+      console.warn('No pending bet period available');
+      setError('No valid bet period available');
+      setPendingBet(null);
+      return;
+    }
+    if (!/^round-\d+$/.test(pendingBet.period)) {
+      console.warn(`Invalid period format: ${pendingBet.period}`);
+      setError('Invalid bet period format');
+      setPendingBet(null);
+      return;
+    }
+    try {
+      console.log(`Attempting to fetch result for period: ${pendingBet.period}`);
+      const data = await fetchBetResult(pendingBet.period);
+      if (!data.bet || typeof data.bet.result === 'undefined') {
+        console.warn(`Result not ready, retries left: ${retryCount}`);
+        if (retryCount > 0) {
+          setTimeout(() => fetchResult(retryCount - 1), 3000);
           return;
         }
-        console.log(`[${new Date().toISOString()}] Bet result processed:`, {
-          period: data.bet.period,
-          won: data.bet.won,
-          result: data.bet.result,
-          payout: data.bet.payout,
-        });
-        setLastResult({ ...data.bet, payout: data.bet.payout });
-        if (typeof data.balance === 'number') {
-          setBalance(data.balance);
-        }
-        // Force refetch of bets
-        await queryClient.invalidateQueries(['bets']);
-        await queryClient.refetchQueries(['bets']);
-        queryClient.invalidateQueries(['stats']);
+        setError('Result not available');
         setPendingBet(null);
-        localStorage.removeItem('pendingBet');
-        localStorage.removeItem('currentRound');
-      } catch (err) {
-        console.error(`[${new Date().toISOString()}] Fetch result error:`, err.message, err.response?.data);
-        const errorMessage = err.message.includes('Authentication required')
-          ? 'Session expired. Please log in again.'
-          : err.message.includes('Round is still active')
-          ? 'Waiting for round to end...'
-          : err.message.includes('Round has expired')
-          ? 'Round has ended. Please place a new bet.'
-          : err.message;
-        setError(errorMessage);
-        setTimeout(() => setError(''), 5000);
-        if (err.message.includes('Authentication required')) {
-          handleAuthError(errorMessage);
-        } else if (retryCount > 0) {
-          console.log(`[${new Date().toISOString()}] Retrying fetchResult, retries left: ${retryCount}`);
-          setTimeout(() => fetchResult(retryCount - 1), 10000);
-        } else {
-          setError('Failed to fetch bet result');
-          setPendingBet(null);
-          localStorage.removeItem('pendingBet');
-          localStorage.removeItem('currentRound');
-        }
+        return;
       }
-    },
-    [pendingBet, queryClient, setBalance, handleAuthError]
-  );
-
-  // Trigger fetchResult when timeLeft <= 15
-  useEffect(() => {
-    if (pendingBet && !lastResult && timeLeft > 0 && timeLeft <= 15) {
-      console.log(`[${new Date().toISOString()}] timeLeft <= 15, triggering fetchResult:`, { timeLeft, period: pendingBet.period });
-      fetchResult();
+      setLastResult({ ...data.bet, payout: data.bet.payout });
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      queryClient.invalidateQueries(['bets']);
+      queryClient.invalidateQueries(['stats']); // Invalidate stats to refresh Profile stats
+      setPendingBet(null);
+    } catch (err) {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message.includes('Round has expired')
+        ? 'Round has ended. Please place a new bet.'
+        : err.message;
+      console.error(`Fetch result error: ${err.message}`);
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      } else if (err.message.includes('Round has expired')) {
+        setPendingBet(null);
+      }
     }
-  }, [timeLeft, pendingBet, lastResult, fetchResult]);
+  }, [pendingBet, queryClient, setBalance, handleAuthError]);
+
+  // Trigger fetchResult at 15 seconds for 2-minute rounds
+  useEffect(() => {
+    if (timeLeft <= 15 && pendingBet && !lastResult) {
+      const timer = setTimeout(() => {
+        fetchResult();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [timeLeft, pendingBet, fetchResult, lastResult]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
     onSuccess: (data) => {
-      console.log(`[${new Date().toISOString()}] Bet placed successfully:`, data);
+      console.log('Place bet response:', data);
       if (typeof data.balance === 'number') {
         setBalance(data.balance);
       }
       setPendingBet(data.bet);
-      localStorage.setItem('pendingBet', JSON.stringify(data.bet));
       setError('');
     },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
-      console.error(`[${new Date().toISOString()}] Error placing bet:`, err.message, err.response?.data);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -851,7 +300,6 @@ function Game() {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
-      console.error(`[${new Date().toISOString()}] Error in handleBet:`, err.message, err.response?.data);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
@@ -912,9 +360,7 @@ function Game() {
         {lastResult && (
           <div
             key={lastResult.period}
-            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${
-              lastResult.won ? 'won' : 'lost'
-            }`}
+            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
             role="alert"
             aria-live="polite"
           >
@@ -933,9 +379,7 @@ function Game() {
               )}
             </div>
             <div className="result-detail">
-              {lastResult.type === 'color'
-                ? `Color: ${lastResult.result || 'Pending'}`
-                : `Number: ${lastResult.result || 'Pending'}`}
+              {lastResult.type === 'color' ? `Color: ${lastResult.result || 'Pending'}` : `Number: ${lastResult.result || 'Pending'}`}
             </div>
             <div className="result-payout">
               {lastResult.payout === 0
@@ -1014,3 +458,5 @@ function Game() {
 }
 
 export default memo(Game);
+
+
