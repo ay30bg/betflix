@@ -704,6 +704,162 @@ body {
   background-color: #0056b3;
 }
 
+/* Round Info (Current Round and Time Left) */
+.round-info {
+  background: linear-gradient(145deg, #ffffff, #f1f5f9); /* Subtle gradient for depth */
+  padding: 1.5rem;
+  border-radius: 16px; /* Softer, modern radius */
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05); /* Layered shadow for elevation */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+}
+
+.round-info:hover {
+  transform: translateY(-4px); /* Slight lift on hover */
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1); /* Enhanced shadow on hover */
+}
+
+/* Background accent for modern flair */
+.round-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)); /* Subtle color overlay */
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* Typography for round info */
+.round-info p {
+  font-size: 1.25rem; /* Slightly larger for readability */
+  font-weight: 600;
+  color: #1e293b; /* Darker slate for contrast */
+  margin: 0.75rem 0;
+  letter-spacing: 0.02em; /* Subtle spacing for elegance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Space for icons or emphasis */
+}
+
+/* Highlight specific elements */
+.round-info p:first-child {
+  font-size: 1.5rem; /* Larger for current round */
+  font-weight: 700;
+  color: #1e40af; /* Vibrant blue for emphasis */
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Gradient text effect */
+}
+
+/* Timer styling */
+.round-info p:nth-child(2) {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #dc2626; /* Red for urgency */
+  animation: pulse 1.5s infinite; /* Pulsing effect for timer */
+}
+
+/* Expires At styling */
+.round-info p:nth-child(3) {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4b5563; /* Muted for secondary info */
+}
+
+/* History Button */
+.history-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient button */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-button:hover {
+  background: linear-gradient(90deg, #2563eb, #1e3a8a); /* Darker gradient on hover */
+  transform: translateY(-2px); /* Lift effect */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+.history-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* Focus ring */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .round-info {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .round-info p {
+    font-size: 1.1rem;
+  }
+
+  .round-info p:first-child {
+    font-size: 1.3rem;
+  }
+
+  .round-info p:nth-child(2) {
+    font-size: 1.2rem;
+  }
+
+  .round-info p:nth-child(3) {
+    font-size: 1rem;
+  }
+
+  .history-button {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .round-info {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .round-info p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .round-info p:first-child {
+    font-size: 1.2rem;
+  }
+
+  .round-info p:nth-child(2) {
+    font-size: 1.1rem;
+  }
+
+  .round-info p:nth-child(3) {
+    font-size: 0.9rem;
+  }
+
+  .history-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    width: 100%; /* Full-width button on small screens */
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
