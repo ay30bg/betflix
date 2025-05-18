@@ -391,7 +391,7 @@ function Game() {
           </div>
         )}
         {pendingBet && !lastResult && !mutation.isLoading && (
-          <div className="pending-bet-notification" role="alert" aria-live="polite">
+          <div className="no-result" role="alert" aria-live="polite">
             <p>Bet placed on round {pendingBet.period}.</p>
             <p>Waiting for results... ({timeLeft} seconds remaining)</p>
           </div>
