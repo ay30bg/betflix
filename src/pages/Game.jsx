@@ -497,7 +497,7 @@ const fetchBets = async () => {
     throw new Error(errorData || `Bets fetch failed: ${response.status}`);
   }
   const bets = await response.json();
-  return bets.filter(bet => bet && bet.type && bet.value !== undefined && bet.amount !== undefined);
+  return bets.filter(bet => bet && bet.type && bet.value !== undefined && bet.amount !== undefined) || [];
 };
 
 const fetchCurrentRound = async () => {
@@ -582,7 +582,7 @@ function Game() {
     }, 3000);
   }, [navigate]);
 
-  const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
+  const { data: betsData = [], isLoading: betsLoading, error: betsError } = useQuery({
     queryKey: ['bets'],
     queryFn: fetchBets,
     onError: (err) => {
@@ -619,7 +619,7 @@ function Game() {
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  const { data: allRoundsData, isLoading: roundsLoading } = useQuery({
+  const { data: allRoundsData = [], isLoading: roundsLoading } = useQuery({
     queryKey: ['allRounds'],
     queryFn: fetchAllRounds,
     onError: (err) => {
@@ -656,16 +656,6 @@ function Game() {
     }
   }, [notification]);
 
-  // Fetch results for pending bets on mount
-  useEffect(() => {
-    if (betsData && !lastResult) {
-      const pendingBets = betsData.filter(bet => bet.won === undefined && bet.period);
-      if (pendingBets.length > 0) {
-        pendingBets.forEach(bet => fetchResult(bet.period));
-      }
-    }
-  }, [betsData, fetchResult, lastResult]);
-
   // Fetch bet result with retry logic
   const fetchResult = useCallback(async (period, retryCount = 3) => {
     if (!period || !/^round-\d+$/.test(period)) {
@@ -691,24 +681,35 @@ function Game() {
       }
       queryClient.invalidateQueries(['bets']);
       queryClient.invalidateQueries(['stats']);
+      if (pendingBet?.period === period) {
+        setPendingBet(null);
+      }
     } catch (err) {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message.includes('Round has expired')
         ? 'Round has ended. Please place a new bet.'
         : err.message;
-      console.error(`Fetch result error: ${err.message}`);
+      console.error(`Fetch result error for period ${period}: ${err.message}`);
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
       if (err.message.includes('Authentication required')) {
         handleAuthError(errorMessage);
       }
     }
-  }, [queryClient, setBalance, handleAuthError]);
+  }, [queryClient, setBalance, handleAuthError, pendingBet]);
+
+  // Fetch results for pending bets on mount
+  useEffect(() => {
+    if (betsData.length > 0 && !lastResult && !betsLoading) {
+      const pendingBets = betsData.filter(bet => bet.won === undefined && bet.period).slice(0, 5);
+      pendingBets.forEach(bet => fetchResult(bet.period));
+    }
+  }, [betsData, betsLoading, fetchResult, lastResult]);
 
   // Trigger fetchResult at 15 seconds for 2-minute rounds
   useEffect(() => {
-    if (timeLeft <= 15 && pendingBet && !lastResult) {
+    if (timeLeft <= 15 && pendingBet && !lastResult && pendingBet.period) {
       const timer = setTimeout(() => {
         fetchResult(pendingBet.period);
       }, 1000);
@@ -856,7 +857,7 @@ function Game() {
         {pendingBet && !lastResult && !mutation.isLoading && (
           <div className="pending-bet-notification" role="alert" aria-live="polite">
             <p>Bet placed on round {pendingBet.period}.</p>
-            <p>Waiting for results... ({timeLeft} seconds remaining)</p>
+            <p>Waiting for results... <span className="spinner">⏳</span></p>
           </div>
         )}
         {!pendingBet && !lastResult && !mutation.isLoading && (
@@ -885,7 +886,7 @@ function Game() {
                     </tr>
                   </thead>
                   <tbody>
-                    {allRoundsData?.length > 0 ? (
+                    {allRoundsData.length > 0 ? (
                       allRoundsData.map((round) => (
                         <tr key={round.period}>
                           <td>{round.period}</td>
@@ -914,7 +915,7 @@ function Game() {
           roundData={roundData}
           timeLeft={timeLeft}
         />
-        <HistoryTable bets={betsData || []} isLoading={betsLoading} />
+        <HistoryTable bets={betsData} isLoading={betsLoading} />
       </div>
     </ErrorBoundary>
   );
