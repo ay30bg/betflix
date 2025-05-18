@@ -615,7 +615,7 @@ function Game() {
         : err.message;
       setError(errorMessage);
       setTimeout(() => setError(''), 5000);
-      if‌ده: {
+      if (err.message.includes('Authentication required')) {
         handleAuthError(errorMessage);
       }
     },
