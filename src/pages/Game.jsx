@@ -461,7 +461,7 @@
 
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
@@ -482,7 +482,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// API Functions (unchanged, as provided in the original code)
+// API Functions (unchanged)
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
 const fetchBets = async () => {
@@ -565,7 +565,6 @@ const fetchAllRounds = async () => {
 function Game() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const location = useLocation();
   const { balance, setBalance, isLoading: balanceLoading, error: balanceError } = useBalance();
   const [error, setError] = useState('');
   const [notification, setNotification] = useState(null);
@@ -654,7 +653,7 @@ function Game() {
     }
   }, [notification]);
 
-  // Block navigation during round with pending bet
+  // Block browser navigation during round with pending bet
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       if (pendingBet && timeLeft > 0) {
@@ -667,33 +666,16 @@ function Game() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [pendingBet, timeLeft]);
 
-  // Custom navigation guard for React Router
-  const blockNavigation = useCallback(
-    (to) => {
-      if (pendingBet && timeLeft > 0) {
-        const confirm = window.confirm(
-          'A bet is active for this round. Navigating away may cause issues. Are you sure you want to leave?'
-        );
-        if (!confirm) {
-          navigate(location.pathname, { replace: true }); // Stay on current page
-          return false;
-        }
-      }
-      return true;
-    },
-    [pendingBet, timeLeft, navigate, location.pathname]
-  );
-
-  // Intercept navigation attempts
-  useEffect(() => {
-    const unlisten = navigate((to, { action }) => {
-      if (action === 'PUSH' || action === 'POP') {
-        return blockNavigation(to);
-      }
-      return true;
-    });
-    return () => unlisten();
-  }, [navigate, blockNavigation]);
+  // Function to check if navigation is allowed
+  const canNavigate = useCallback(() => {
+    if (pendingBet && timeLeft > 0) {
+      const confirm = window.confirm(
+        'A bet is active for this round. Navigating away may cause issues. Are you sure you want to leave?'
+      );
+      return confirm;
+    }
+    return true;
+  }, [pendingBet, timeLeft]);
 
   // Fetch bet result with retry logic
   const fetchResult = useCallback(
@@ -819,7 +801,7 @@ function Game() {
     return (
       <ErrorBoundary>
         <div className="game-page container">
-          <Header />
+          <Header canNavigate={canNavigate} />
           <div className="loading-spinner" aria-live="polite">Loading...</div>
         </div>
       </ErrorBoundary>
@@ -830,7 +812,7 @@ function Game() {
   return (
     <ErrorBoundary>
       <div className="game-page container">
-        <Header />
+        <Header canNavigate={canNavigate} />
         {notification && (
           <div className={`result ${notification.type}`} role="alert" aria-live="polite">
             {notification.message}
@@ -855,7 +837,7 @@ function Game() {
               className="history-button"
               onClick={() => setIsHistoryModalOpen(true)}
               aria-label="View all rounds history"
-              disabled={pendingBet && timeLeft > 0} // Disable during active round with bet
+              disabled={pendingBet && timeLeft > 0}
             >
               View All Rounds
             </button>
@@ -915,7 +897,7 @@ function Game() {
                   className="modal-close"
                   onClick={() => setIsHistoryModalOpen(false)}
                   aria-label="Close modal"
-                  disabled={pendingBet && timeLeft > 0} // Disable during active round with bet
+                  disabled={pendingBet && timeLeft > 0}
                 >
                   ×
                 </button>
@@ -928,41 +910,41 @@ function Game() {
                       <th>Color</th>
                       <th>Number</th>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {allRoundsData?.length > 0 ? (
-                      allRoundsData.map((round) => (
-                        <tr key={round.period}>
-                          <td>{round.period}</td>
-                          <td className={`color-${round.result?.color?.toLowerCase()}`}>
-                            {round.result?.color || 'N/A'}
-                          </td>
-                          <td>{round.result?.number || 'N/A'}</td>
+                    </thead>
+                    <tbody>
+                      {allRoundsData?.length > 0 ? (
+                        allRoundsData.map((round) => (
+                          <tr key={round.period}>
+                            <td>{round.period}</td>
+                            <td className={`color-${round.result?.color?.toLowerCase()}`}>
+                              {round.result?.color || 'N/A'}
+                            </td>
+                            <td>{round.result?.number || 'N/A'}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="3">No rounds available</td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="3">No rounds available</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <BetForm
-          onSubmit={handleBet}
-          isLoading={mutation.isLoading}
-          balance={balance ?? 0}
-          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10}
-          roundData={roundData}
-          timeLeft={timeLeft}
-        />
-        <HistoryTable bets={betsData || []} />
-      </div>
-    </ErrorBoundary>
-  );
+          )}
+          <BetForm
+            onSubmit={handleBet}
+            isLoading={mutation.isLoading}
+            balance={balance ?? 0}
+            isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10}
+            roundData={roundData}
+            timeLeft={timeLeft}
+          />
+          <HistoryTable bets={betsData || []} />
+        </div>
+      </ErrorBoundary>
+    );
 }
 
 export default memo(Game);
