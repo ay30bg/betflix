@@ -13,7 +13,7 @@ const UserSupport = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const token = localStorage.getItem('userToken');
+        const token = localStorage.getItem('token');
         const res = await fetch('https://betflix-backend.vercel.app/api/support', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -39,7 +39,7 @@ const UserSupport = () => {
     if (!formData.subject.trim() || !formData.message.trim()) return;
 
     try {
-      const token = localStorage.getItem('userToken');
+      const token = localStorage.getItem('token');
       const res = await fetch('https://betflix-backend.vercel.app/api/support', {
         method: 'POST',
         headers: {
@@ -65,8 +65,8 @@ const UserSupport = () => {
     if (!replyText.trim()) return;
 
     try {
-      const token = localStorage.getItem('userToken');
-      const res = await fetch(`https://api.backend.com/api/support/${selectedMessage.id}/reply`, {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`https://betflix-backend.vercel.app/api/support/${selectedMessage.id}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
