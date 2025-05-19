@@ -41,20 +41,20 @@ function Home() {
           onClick={handleSignUp}
         />
       </div>
-      <a
-        href="/support" 
-        className="support-floating"
+      <button
+        className="telegram-floating"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat with support team"
+        aria-label="Join our Telegram community"
       >
-        <img
-          src={SupportLogo}
-          alt="support"
-          className="support-logo"
+      <img
+          src={TelegramLogo}
+          alt="Telegram Logo"
+          className="telegram-logo"
           loading="lazy"
         />
-      </a>
+      </button>
+      
       <a
         href="https://t.me/your-telegram-link" // Replace with your Telegram link
         className="telegram-floating"
