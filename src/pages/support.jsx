@@ -225,6 +225,7 @@
 
 // components/UserSupport/UserSupport.jsx
 import React, { useState } from 'react';
+import AuthHeader from '../components/AuthHeader';
 import '../styles/support.css';
 
 // Mock user messages data (filtered for the logged-in user)
@@ -348,6 +349,7 @@ const UserSupport = () => {
 
   return (
     <div className="support-container">
+      <AuthHeader />
       <h1>Support Center</h1>
 
       <div className="support-layout">
