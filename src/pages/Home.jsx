@@ -53,7 +53,7 @@ function Home() {
         aria-label="Join our Telegram community"
       >
       <img
-          src={TelegramLogo}
+          src={SupportLogo}
           alt="Support Logo"
           className="support-logo"
           loading="lazy"
