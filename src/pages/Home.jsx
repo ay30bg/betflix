@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import Banner from '../assets/betflix_banner.png';
 import TelegramLogo from '../assets/Telegram-logo.png'; 
+import SupportLogo from '../assets/Support-logo.png'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 
@@ -48,7 +49,7 @@ function Home() {
         aria-label="Chat with support team"
       >
         <img
-          src={TelegramLogo}
+          src={SupportLogo}
           alt="support"
           className="support-logo"
           loading="lazy"
