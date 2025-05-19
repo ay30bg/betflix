@@ -1,6 +1,6 @@
 // components/UserSupport/UserSupport.jsx
 import React, { useState, useEffect } from 'react';
-import AuthHeader from '../components/AuthHeader';
+import Header from '../components/header';
 import '../styles/support.css';
 
 const UserSupport = () => {
@@ -102,7 +102,7 @@ const UserSupport = () => {
 
   return (
     <div className="support-container">
-      <AuthHeader />
+      <Header />
       <h1>Support Center</h1>
 
       <div className="support-layout">
