@@ -176,6 +176,46 @@
   object-fit: contain;
 }
 
+/* Support floating button */
+.support-floating {
+  position: fixed;
+  bottom: 150px;
+  right: 15px;
+  width: 60px;
+  height: 60px;
+  background-color: #0088cc; 
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1000;
+}
+
+.support-floating:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.support-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* Optional: Responsive adjustments */
+@media (max-width: 768px) {
+  .telegram-floating {
+    width: 50px;
+    height: 50px;
+  }
+  .telegram-logo {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 /* Optional: Responsive adjustments */
 @media (max-width: 768px) {
   .telegram-floating {
