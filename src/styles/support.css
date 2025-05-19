@@ -318,6 +318,17 @@
     padding: 16px;
   }
 
+  .form-group input,
+.form-group textarea {
+ border-radius: 8px;
+}
+
+   .new-message,
+.messages-section {
+  border-radius: 8px;
+}
+
+
   .support-container h1 {
     font-size: 24px;
   }
@@ -329,5 +340,18 @@
 
   .message-item {
     padding: 12px;
+    border-radius: 8px;
   }
+
+  .message-status {
+   border-radius: 8px;
+}
+
+  .reply {
+ padding: 8px;
+}
+
+  .reply-form {
+  border-radius: 12px;
+}
 }
