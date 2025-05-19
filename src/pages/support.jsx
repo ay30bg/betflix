@@ -259,7 +259,8 @@
 
 // components/UserSupport/UserSupport.jsx
 import React, { useState, useEffect } from 'react';
-import './UserSupport.css';
+import AuthHeader from '../components/AuthHeader';
+import '../styles/support.css';
 
 const UserSupport = () => {
   const [messages, setMessages] = useState([]);
@@ -360,6 +361,7 @@ const UserSupport = () => {
 
   return (
     <div className="support-container">
+      <AuthHeader />
       <h1>Support Center</h1>
 
       <div className="support-layout">
