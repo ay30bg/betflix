@@ -13,6 +13,10 @@ function Home() {
     navigate('/sign-up');
   };
 
+  const handleSupport = () => {
+    navigate('/support');
+  };
+
   return (
     <div className="home-page">
       <Header />
@@ -42,15 +46,16 @@ function Home() {
         />
       </div>
       <button
-        className="telegram-floating"
+        onclick={handleSupport}
+        className="support-floating"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Join our Telegram community"
       >
       <img
           src={TelegramLogo}
-          alt="Telegram Logo"
-          className="telegram-logo"
+          alt="Support Logo"
+          className="support-logo"
           loading="lazy"
         />
       </button>
