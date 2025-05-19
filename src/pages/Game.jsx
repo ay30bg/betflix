@@ -726,14 +726,19 @@ const fetchRecentRounds = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
   const response = await fetch(`${API_URL}/api/bets/rounds/recent`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Cache-Control': 'no-cache',
+    },
   });
   if (!response.ok) {
     const errorData = await response.text().catch(() => 'Unknown error');
     if (response.status === 401) throw new Error('Authentication required');
     throw new Error(errorData || `Recent rounds fetch failed: ${response.status}`);
   }
-  return response.json();
+  const data = await response.json();
+  console.log('Fetched recent rounds:', data);
+  return data;
 };
 
 // Optional: Fetch profile to sync balance
@@ -915,6 +920,11 @@ function Game() {
   const { data: recentRoundsData, isLoading: roundsLoading } = useQuery({
     queryKey: ['recentRounds'],
     queryFn: fetchRecentRounds,
+    cacheTime: 0, // Disable caching to ensure fresh data
+    staleTime: 0,
+    onSuccess: (data) => {
+      console.log('Recent rounds data loaded:', data);
+    },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
@@ -1199,6 +1209,7 @@ function Game() {
                       <th>Period</th>
                       <th>Color</th>
                       <th>Number</th>
+                      <th>Expires At</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1210,11 +1221,12 @@ function Game() {
                             {round.result?.color || 'N/A'}
                           </td>
                           <td>{round.result?.number || 'N/A'}</td>
+                          <td>{new Date(round.expiresAt).toLocaleString()}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="3">No rounds available</td>
+                        <td colSpan="4">No rounds available</td>
                       </tr>
                     )}
                   </tbody>
