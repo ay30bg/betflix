@@ -46,7 +46,7 @@ function Home() {
         />
       </div>
       <button
-        onclick={handleSupport}
+        onClick={handleSupport}
         className="support-floating"
         target="_blank"
         rel="noopener noreferrer"
