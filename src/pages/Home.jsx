@@ -41,6 +41,20 @@ function Home() {
         />
       </div>
       <a
+        href="/support" 
+        className="support-floating"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with support team"
+      >
+        <img
+          src={TelegramLogo}
+          alt="support"
+          className="support-logo"
+          loading="lazy"
+        />
+      </a>
+      <a
         href="https://t.me/your-telegram-link" // Replace with your Telegram link
         className="telegram-floating"
         target="_blank"
