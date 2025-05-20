@@ -691,12 +691,12 @@
   transition: background-color 0.3s;
 }
 
-.view-referral-stats-button:hover:not(:disabled) {
+/* .view-referral-stats-button:hover:not(:disabled) {
   background-color: #0056b3;
-}
+} */
 
 .view-referral-stats-button:disabled {
-  background-color: #6c757d;
+  background-color: none;
   cursor: not-allowed;
 }
     
