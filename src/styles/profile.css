@@ -659,7 +659,7 @@
 /* Focus State */
 .view-referral-stats-button:focus {
     outline: none;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4); /* Blue focus ring for accessibility */
+    box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.4); /* Red focus ring for accessibility */
 }
 
 /* Disabled State */
