@@ -752,26 +752,37 @@ const fetchProfile = async () => {
 
 // Helper function to process rounds data
 const processRoundsData = (rounds, currentPeriod) => {
-  if (!rounds || !Array.isArray(rounds)) return [];
+  console.log('processRoundsData - allRoundsData:', rounds);
+  console.log('processRoundsData - currentPeriod:', currentPeriod);
+  if (!rounds || !Array.isArray(rounds)) {
+    console.log('processRoundsData - No rounds or invalid data, returning empty array');
+    return [];
+  }
 
   // Extract current round's timestamp for comparison
   const currentTimestamp = currentPeriod ? parseInt(currentPeriod.split('-')[1] || 0) : 0;
+  console.log('processRoundsData - currentTimestamp:', currentTimestamp);
 
   const playedRounds = rounds
     .filter((round) => {
-      // Ensure round has a valid result and is not in the future
       const roundTimestamp = parseInt(round.period.split('-')[1] || 0);
-      return (
-        round.result &&
-        (round.result.color || round.result.number) &&
-        roundTimestamp <= currentTimestamp
+      const isValidRound =
+        round.result && // Check if result exists
+        roundTimestamp <= currentTimestamp; // Exclude future rounds
+      console.log(
+        `processRoundsData - Round ${round.period}: result=${JSON.stringify(
+          round.result
+        )}, roundTimestamp=${roundTimestamp}, isValid=${isValidRound}`
       );
+      return isValidRound;
     })
     .sort((a, b) => {
       const periodA = parseInt(a.period.split('-')[1] || 0);
       const periodB = parseInt(b.period.split('-')[1] || 0);
       return periodB - periodA; // Descending order
     });
+
+  console.log('processRoundsData - Filtered and sorted rounds:', playedRounds);
   return playedRounds.slice(0, 10);
 };
 
