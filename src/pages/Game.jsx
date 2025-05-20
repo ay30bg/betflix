@@ -628,7 +628,6 @@ import HistoryTable from '../components/HistoryTable';
 import Header from '../components/header';
 import '../styles/game.css';
 
-// Error Boundary Component
 class ErrorBoundary extends React.Component {
   state = { error: null };
   static getDerivedStateFromError(error) {
@@ -644,7 +643,6 @@ class ErrorBoundary extends React.Component {
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// API Functions
 const fetchBets = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
@@ -736,7 +734,20 @@ const fetchAllRounds = async () => {
   return response.json();
 };
 
-// Optional: Fetch profile to sync balance
+const fetchRecentRounds = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/rounds/recent`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Recent rounds fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
 const fetchProfile = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
@@ -750,42 +761,6 @@ const fetchProfile = async () => {
   return response.json();
 };
 
-// Helper function to process rounds data
-const processRoundsData = (rounds, currentPeriod) => {
-  console.log('processRoundsData - allRoundsData:', rounds);
-  console.log('processRoundsData - currentPeriod:', currentPeriod);
-  if (!rounds || !Array.isArray(rounds)) {
-    console.log('processRoundsData - No rounds or invalid data, returning empty array');
-    return [];
-  }
-
-  // Extract current round's timestamp for comparison
-  const currentTimestamp = currentPeriod ? parseInt(currentPeriod.split('-')[1] || 0) : 0;
-  console.log('processRoundsData - currentTimestamp:', currentTimestamp);
-
-  const playedRounds = rounds
-    .filter((round) => {
-      const roundTimestamp = parseInt(round.period.split('-')[1] || 0);
-      const isValidRound =
-        round.result && // Check if result exists
-        roundTimestamp <= currentTimestamp; // Exclude future rounds
-      console.log(
-        `processRoundsData - Round ${round.period}: result=${JSON.stringify(
-          round.result
-        )}, roundTimestamp=${roundTimestamp}, isValid=${isValidRound}`
-      );
-      return isValidRound;
-    })
-    .sort((a, b) => {
-      const periodA = parseInt(a.period.split('-')[1] || 0);
-      const periodB = parseInt(b.period.split('-')[1] || 0);
-      return periodB - periodA; // Descending order
-    });
-
-  console.log('processRoundsData - Filtered and sorted rounds:', playedRounds);
-  return playedRounds.slice(0, 10);
-};
-
 function Game() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -797,7 +772,6 @@ function Game() {
   const [pendingBet, setPendingBet] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
-  // Handle authentication errors
   const handleAuthError = useCallback(
     (message) => {
       setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
@@ -809,7 +783,6 @@ function Game() {
     [navigate]
   );
 
-  // Optional: Fetch profile on mount to ensure latest balance
   useQuery({
     queryKey: ['profile'],
     queryFn: fetchProfile,
@@ -835,7 +808,6 @@ function Game() {
     queryKey: ['bets'],
     queryFn: fetchBets,
     onSuccess: (data) => {
-      // Update balance for finalized bets
       data.forEach((bet) => {
         if (bet.status === 'finalized' && typeof bet.newBalance === 'number') {
           setBalance(bet.newBalance);
@@ -869,7 +841,7 @@ function Game() {
   const { data: pendingBetsData, isLoading: pendingBetsLoading } = useQuery({
     queryKey: ['pendingBets'],
     queryFn: fetchPendingBets,
-    refetchInterval: 2000, // Poll every 2 seconds
+    refetchInterval: 2000,
     onSuccess: (data) => {
       const activeBet = data.find(
         (bet) => bet.status === 'pending' && bet.roundStatus === 'active'
@@ -881,7 +853,6 @@ function Game() {
           message: `Restored pending bet for round ${activeBet.period}`,
         });
       }
-      // Check for expired or unresolvable bets
       data.forEach((bet) => {
         if (bet.status === 'pending' && bet.roundExpiresAt && new Date(bet.roundExpiresAt) < new Date()) {
           fetchResult(bet.period);
@@ -948,9 +919,9 @@ function Game() {
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  const { data: allRoundsData, isLoading: roundsLoading } = useQuery({
-    queryKey: ['allRounds'],
-    queryFn: fetchAllRounds,
+  const { data: recentRoundsData, isLoading: roundsLoading } = useQuery({
+    queryKey: ['recentRounds'],
+    queryFn: fetchRecentRounds,
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
@@ -964,7 +935,6 @@ function Game() {
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  // Update timeLeft every second
   useEffect(() => {
     if (roundData?.expiresAt) {
       const updateTimeLeft = () => {
@@ -977,7 +947,6 @@ function Game() {
     }
   }, [roundData]);
 
-  // Clear notification after 5 seconds
   useEffect(() => {
     if (notification) {
       const timeout = setTimeout(() => setNotification(null), 5000);
@@ -985,7 +954,6 @@ function Game() {
     }
   }, [notification]);
 
-  // Fetch bet result with retry logic
   const fetchResult = useCallback(
     async (period, retryCount = 15) => {
       if (!period) {
@@ -1055,10 +1023,9 @@ function Game() {
         }
       }
     },
-    [queryClient, setBalance, handleAuthError]
+    [pendingBet, queryClient, setBalance, handleAuthError]
   );
 
-  // Trigger fetchResult at 20 seconds for 2-minute rounds
   useEffect(() => {
     if (timeLeft <= 20 && pendingBet && !lastResult) {
       const timer = setTimeout(() => {
@@ -1124,7 +1091,6 @@ function Game() {
     }
   };
 
-  // Render loading state
   if (balanceLoading || betsLoading || roundLoading || roundsLoading || pendingBetsLoading) {
     return (
       <ErrorBoundary>
@@ -1136,7 +1102,6 @@ function Game() {
     );
   }
 
-  // Render main UI
   return (
     <ErrorBoundary>
       <div className="game-page container">
@@ -1164,7 +1129,7 @@ function Game() {
             <button
               className="history-button"
               onClick={() => setIsHistoryModalOpen(true)}
-              aria-label="View past 10 rounds history"
+              aria-label="View recent rounds history"
             >
               View History
             </button>
@@ -1219,7 +1184,7 @@ function Game() {
           <div className="modal-overlay" role="dialog" aria-labelledby="history-modal-title">
             <div className="modal-content">
               <div className="modal-header">
-                <h2 id="history-modal-title">Past 10 Rounds History</h2>
+                <h2 id="history-modal-title">Recent Rounds History</h2>
                 <button
                   className="modal-close"
                   onClick={() => setIsHistoryModalOpen(false)}
@@ -1238,8 +1203,8 @@ function Game() {
                     </tr>
                   </thead>
                   <tbody>
-                    {processRoundsData(allRoundsData, roundData?.period).length > 0 ? (
-                      processRoundsData(allRoundsData, roundData?.period).map((round) => (
+                    {recentRoundsData?.length > 0 ? (
+                      recentRoundsData.map((round) => (
                         <tr key={round.period}>
                           <td>{round.period}</td>
                           <td className={`color-${round.result?.color?.toLowerCase()}`}>
@@ -1250,7 +1215,7 @@ function Game() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="3">No completed rounds available</td>
+                        <td colSpan="3">No rounds available</td>
                       </tr>
                     )}
                   </tbody>
