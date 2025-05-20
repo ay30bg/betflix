@@ -627,7 +627,6 @@
     font-family: 'Poppins', sans-serif; /* Consistent with other buttons */
     position: relative; /* For pseudo-element effects */
     overflow: hidden; /* Contain animations */
-    text-transform: uppercase; /* Matches other buttons */
     margin-top: 10px;
 }
 
