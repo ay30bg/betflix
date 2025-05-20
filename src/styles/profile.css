@@ -621,13 +621,14 @@
     width: 100%;
     max-width: 200px; /* Consistent with other buttons */
     height: 56px; /* Matches crypto buttons for uniformity */
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); /* Blue gradient for a modern look */
+    background: #ef4444;
     color: #fff; /* White text for contrast */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.2); /* Subtle 3D effect */
     font-family: 'Poppins', sans-serif; /* Consistent with other buttons */
     position: relative; /* For pseudo-element effects */
     overflow: hidden; /* Contain animations */
     text-transform: uppercase; /* Matches other buttons */
+    margin-top: 10px;
 }
 
 /* Hover State */
