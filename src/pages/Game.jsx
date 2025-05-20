@@ -751,10 +751,22 @@ const fetchProfile = async () => {
 };
 
 // Helper function to process rounds data
-const processRoundsData = (rounds) => {
+const processRoundsData = (rounds, currentPeriod) => {
   if (!rounds || !Array.isArray(rounds)) return [];
+
+  // Extract current round's timestamp for comparison
+  const currentTimestamp = currentPeriod ? parseInt(currentPeriod.split('-')[1] || 0) : 0;
+
   const playedRounds = rounds
-    .filter((round) => round.result && (round.result.color || round.result.number))
+    .filter((round) => {
+      // Ensure round has a valid result and is not in the future
+      const roundTimestamp = parseInt(round.period.split('-')[1] || 0);
+      return (
+        round.result &&
+        (round.result.color || round.result.number) &&
+        roundTimestamp <= currentTimestamp
+      );
+    })
     .sort((a, b) => {
       const periodA = parseInt(a.period.split('-')[1] || 0);
       const periodB = parseInt(b.period.split('-')[1] || 0);
@@ -1215,8 +1227,8 @@ function Game() {
                     </tr>
                   </thead>
                   <tbody>
-                    {processRoundsData(allRoundsData).length > 0 ? (
-                      processRoundsData(allRoundsData).map((round) => (
+                    {processRoundsData(allRoundsData, roundData?.period).length > 0 ? (
+                      processRoundsData(allRoundsData, roundData?.period).map((round) => (
                         <tr key={round.period}>
                           <td>{round.period}</td>
                           <td className={`color-${round.result?.color?.toLowerCase()}`}>
