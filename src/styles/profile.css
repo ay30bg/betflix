@@ -669,6 +669,197 @@
     opacity: 0.7;
 }
 
+/* Referral Stats Modal Content */
+.referral-stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-family: 'Inter', sans-serif; /* Consistent with modal content */
+    color: #1f2937; /* Dark gray for text */
+}
+
+.referral-stats-content h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e40af; /* Blue heading color */
+    margin: 0;
+    text-align: center;
+    font-family: 'Poppins', sans-serif; /* Poppins for headings */
+}
+
+/* Referral Stats Paragraphs */
+.referral-stats-content p {
+    font-size: 1.1rem;
+    margin: 0;
+    line-height: 1.5;
+    font-family: 'Inter', sans-serif; /* Inter for body text */
+}
+
+.referral-stats-content p strong {
+    font-weight: 600;
+    color: #4b5563; /* Medium gray for strong text */
+}
+
+/* Referral Table Container */
+.referral-table-container {
+    max-height: 300px; /* Limit table height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin: 1rem 0;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb; /* Light gray border */
+    background: #f9fafb; /* Light background for table */
+}
+
+/* Referral Table */
+.referral-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif; /* Inter for table text */
+}
+
+.referral-table thead {
+    background: #1e40af; /* Blue header background */
+    color: #fff; /* White text for header */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.referral-table th {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif; /* Poppins for table headers */
+}
+
+.referral-table tbody tr {
+    border-bottom: 1px solid #e5e7eb; /* Light gray row separator */
+    transition: background 0.2s ease; /* Smooth hover transition */
+}
+
+.referral-table tbody tr:hover {
+    background: #eff6ff; /* Light blue hover effect */
+}
+
+.referral-table td {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    color: #1f2937; /* Dark gray for cell text */
+}
+
+/* Withdraw Bonus Button */
+.withdraw-bonus-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover and disabled states */
+    background: #10b981; /* Green background */
+    color: #fff; /* White text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.2); /* Subtle 3D effect */
+    font-family: 'Poppins', sans-serif; /* Poppins for buttons */
+    position: relative; /* For pseudo-element effects */
+    overflow: hidden; /* Contain animations */
+    width: 100%;
+    max-width: 200px; /* Consistent with other buttons */
+    align-self: center; /* Center button */
+}
+
+/* Hover State for Withdraw Bonus Button */
+.withdraw-bonus-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Green gradient on hover */
+    transform: translateY(-2px); /* Slight lift */
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3); /* Enhanced shadow */
+}
+
+/* Pseudo-element for radial gradient effect on hover */
+.withdraw-bonus-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.withdraw-bonus-button:hover:not(:disabled)::before {
+    opacity: 1; /* Show radial gradient effect on hover */
+}
+
+/* Focus State for Withdraw Bonus Button */
+.withdraw-bonus-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.4); /* Green focus ring */
+}
+
+/* Disabled State for Withdraw Bonus Button */
+.withdraw-bonus-button:disabled {
+    background: #e5e7eb; /* Neutral gray for disabled state */
+    color: #9ca3af; /* Grayed-out text */
+    box-shadow: none; /* Remove shadow */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Loading Spinner for Referral Stats */
+.referral-stats-content .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    color: #1e40af; /* Blue spinner text */
+    margin: 1rem 0;
+    font-family: 'Inter', sans-serif; /* Inter for loading text */
+}
+
+/* Error Message in Referral Stats */
+.referral-stats-content .error {
+    color: #ef4444; /* Red error text */
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 1rem 0;
+    background: #fee2e2; /* Light red background */
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif; /* Inter for error messages */
+}
+
+/* Responsive Adjustments for Referral Stats Modal */
+@media (max-width: 600px) {
+    .referral-stats-content h3 {
+        font-size: 1.5rem; /* Smaller heading on mobile */
+    }
+
+    .referral-stats-content p {
+        font-size: 1rem; /* Smaller text on mobile */
+    }
+
+    .referral-table th,
+    .referral-table td {
+        font-size: 0.85rem; /* Smaller table text on mobile */
+        padding: 0.5rem; /* Reduced padding */
+    }
+
+    .withdraw-bonus-button {
+        max-width: 100%; /* Full-width button on mobile */
+        font-size: 0.9rem; /* Smaller text */
+        height: 48px; /* Shorter button */
+    }
+
+    .referral-table-container {
+        max-height: 200px; /* Shorter table height on mobile */
+    }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 600px) {
     .view-referral-stats-button {
