@@ -1619,14 +1619,6 @@ function Profile() {
             >
               Withdraw
             </button>
-            <button
-              onClick={() => setIsWithdrawalPasswordModalOpen(true)}
-              className="set-password-button"
-              aria-label="Set withdrawal password"
-              disabled={setWithdrawalPasswordMutation.isLoading}
-            >
-              Set Withdrawal Password
-            </button>
           </div>
         </div>
         <div className="referral-section">
@@ -1665,6 +1657,27 @@ function Profile() {
             disabled={referralStatsLoading}
           >
             View Referral Stats
+          </button>
+        </div>
+        <div className="withdrawal-password-section">
+          <h2>
+            Withdrawal Password
+            <span
+              data-tooltip-id="withdrawal-password-tooltip"
+              data-tooltip-content="Set a secure password to protect your withdrawals. Required for all withdrawal transactions."
+              className="help-icon"
+            >
+              ?
+            </span>
+          </h2>
+          <p>Set or update your withdrawal password to secure your transactions.</p>
+          <button
+            onClick={() => setIsWithdrawalPasswordModalOpen(true)}
+            className="set-password-button"
+            aria-label="Set or update withdrawal password"
+            disabled={setWithdrawalPasswordMutation.isLoading}
+          >
+            Set Withdrawal Password
           </button>
         </div>
         {renderBettingStats()}
@@ -2117,6 +2130,7 @@ function Profile() {
       <Tooltip id="network-tooltip" place="top" variant="dark" />
       <Tooltip id="pending-tooltip" place="top" variant="dark" />
       <Tooltip id="password-tooltip" place="top" variant="dark" />
+      <Tooltip id="withdrawal-password-tooltip" place="top" variant="dark" />
 
       <a
         href="https://t.me/your-telegram-link"
