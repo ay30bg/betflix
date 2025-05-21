@@ -874,12 +874,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #000000;
 }
 
 .withdrawal-password-section p {
   font-size: 1rem;
   margin-bottom: 1rem;
-  color: #cccccc;
+  color: #1e40af;
 }
 
 .set-password-button {
