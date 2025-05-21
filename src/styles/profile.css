@@ -925,6 +925,14 @@
         font-size: 0.9rem; /* Slightly smaller text for compact screens */
         height: 48px; /* Slightly shorter for mobile */
     }
+
+    .set-password-button{
+        max-width: 100%; /* Full-width on small screens for better touch targets */
+        font-size: 0.9rem; /* Slightly smaller text for compact screens */
+        height: 48px; /* Slightly shorter for mobile */
+    }
+
+    
 }
 
 /* Animations */
