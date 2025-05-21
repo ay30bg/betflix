@@ -632,8 +632,8 @@
 
 /* Hover State */
 .view-referral-stats-button:hover:not(:disabled) {
-      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
-      box-shadow: 0 3px 6px rgba(59, 130, 246, 0.3); 
+     background: linear-gradient(135deg, #16a34a 0%, #166534 100%);
+     box-shadow: 0 3px 6px rgba(59, 130, 246, 0.3); 
 }
 
 /* Pseudo-element for radial gradient effect on hover */
@@ -657,7 +657,7 @@
 /* Focus State */
 .view-referral-stats-button:focus {
     outline: none;
-    box-shadow: 0 0 0 4px rgba(255, 0, 0, 0.4); /* Red focus ring for accessibility */
+    box-shadow: 0 0 0 4px rgba(0, 255, 0, 0.4); /* Green focus ring for accessibility */
 }
 
 /* Disabled State */
