@@ -7,9 +7,31 @@ function About() {
       <Header />
       <h1>About BetFlix</h1>
       <section className="about-section">
-        <h2 className="section-title">How It Works</h2>
+        <h2 className="section-title">How To Play</h2>
         <p>
-          BetFlix is a thrilling color prediction game. Bet on Red and Green and see if your prediction matches the result. Each round is quick, exciting, and fair!
+         How to Play
+
+         Users may choose to bet on either Color (Red/Green) or a specific Number.
+
+         Only one color or number can be selected per round.
+
+         Maximum of 2 plays per round is allowed.
+
+        The game uses an in-game currency system:
+        $1 = 100 in-game currency units
+
+        Winning Rules
+
+Color Bet Win: Returns x1.9 of staked amount
+
+Number Bet Win: Returns x6.8 of staked amount
+
+
+Minimum Bet per Round:
+
+50 in-game currency units (equivalent to $0.50)
+
+  
         </p>
         <div className="section-visual">
           <div className="color-icon red"></div>
