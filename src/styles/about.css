@@ -1,4 +1,6 @@
 /* about.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* General Reset and Base Styles */
 * {
@@ -7,66 +9,55 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
-  color: #333;
-  line-height: 1.6;
-}
-
-/* Container Styling */
+/* About Page Container */
 .about-page.container {
+  padding: 2rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-}
-
-/* Header Styling (Assuming Header component has its own styles) */
-header {
-  background: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  padding: 1rem;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Inter', sans-serif; /* Consistent with Profile page */
 }
 
 /* Main Title */
-h1 {
-  font-size: 2.5rem;
+.about-page h1 {
+  font-size: 2.75rem;
   font-weight: 700;
-  color: #1a1a1a;
+  margin-bottom: 1.5rem;
   text-align: center;
-  margin-bottom: 2rem;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: fadeIn 1s ease-in;
+  color: #1e40af;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif; /* Poppins for headings */
+  animation: slideIn 0.3s ease;
 }
 
-/* Section Styling */
+/* About Section */
 .about-section {
   background: #ffffff;
-  border-radius: 15px;
   padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 2rem;
 }
 
 .about-section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Section Title */
 .section-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #2c3e50;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e40af;
   margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif; /* Poppins for section headings */
   position: relative;
 }
 
@@ -77,32 +68,37 @@ h1 {
   left: 0;
   width: 50px;
   height: 3px;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+  background: linear-gradient(90deg, #10b981, #059669);
   border-radius: 2px;
 }
 
 /* Paragraphs */
-p {
-  font-size: 1rem;
-  color: #555;
+.about-section p {
+  font-size: 1.1rem;
+  color: #1f2937;
+  line-height: 1.5;
   margin-bottom: 1rem;
+  font-family: 'Inter', sans-serif; /* Inter for body text */
 }
 
 /* Ordered List Styling */
 ol {
   padding-left: 1.5rem;
   margin-bottom: 1rem;
+  font-family: 'Inter', sans-serif; /* Inter for list items */
 }
 
 ol li {
   margin-bottom: 1.5rem;
-  font-size: 1rem;
-  color: #333;
+  font-size: 1.1rem;
+  color: #1f2937;
+  line-height: 1.5;
 }
 
 ol li strong {
-  color: #2c3e50;
   font-weight: 600;
+  color: #4b5563;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Nested Unordered Lists */
@@ -114,7 +110,9 @@ ul {
 
 ul li {
   margin-bottom: 0.5rem;
-  color: #555;
+  font-size: 1.1rem;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Nested Lists (Second Level) */
@@ -126,39 +124,68 @@ ul ul {
 /* Last Updated Text */
 p:last-child em {
   font-size: 0.9rem;
-  color: #777;
+  color: #4b5563;
   display: block;
   text-align: center;
   margin-top: 2rem;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Start Game Button */
 .about-button {
-  display: inline-block;
-  text-align: center;
-  padding: 0.75rem 2rem;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
   font-size: 1.1rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  font-family: 'Poppins', sans-serif; /* Poppins for buttons */
+  text-transform: uppercase;
   text-decoration: none;
-  border-radius: 50px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  align-self: center;
-  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 200px;
+  height: 56px;
+  position: relative;
+  overflow: hidden;
 }
 
 .about-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #16a34a 0%, #166534 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
 }
 
-.about-button:active {
-  transform: scale(0.95);
+.about-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.about-button:hover::before {
+  opacity: 1;
+}
+
+.about-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.4);
 }
 
 /* Animations */
-@keyframes fadeIn {
+@keyframes slideIn {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -169,40 +196,67 @@ p:last-child em {
   }
 }
 
-/* Responsive Design */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .about-page.container {
-    padding: 1rem;
+    padding: 1.5rem 0.75rem;
   }
 
-  h1 {
+  .about-page h1 {
     font-size: 2rem;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
   }
 
   .about-section {
     padding: 1.5rem;
   }
 
-  .about-button {
-    padding: 0.6rem 1.5rem;
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .about-section p,
+  ol li,
+  ul li {
     font-size: 1rem;
+  }
+
+  .about-button {
+    max-width: 100%;
+    font-size: 0.9rem;
+    height: 48px;
   }
 }
 
-@media (max-width: 480px) {
-  h1 {
+@media (max-width: 600px) {
+  .about-page h1 {
     font-size: 1.8rem;
+  }
+
+  .about-section {
+    padding: 1rem;
   }
 
   .section-title {
     font-size: 1.3rem;
   }
 
-  p, ol li, ul li {
-    font-size: 0.9rem;
+  .about-section p,
+  ol li,
+  ul li {
+    font-size: 0.95rem;
+  }
+
+  .about-button {
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
   }
 }
