@@ -149,6 +149,25 @@ const withdrawReferralBonus = async () => {
   return response.json();
 };
 
+// const setWithdrawalPassword = async ({ password, confirmPassword }) => {
+//   const token = localStorage.getItem('token');
+//   if (!token) throw new Error('Authentication required. Please log in.');
+//   if (password !== confirmPassword) throw new Error('Passwords do not match');
+//   const response = await fetch(`${API_URL}/api/user/set-withdrawal-password`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${token}`,
+//     },
+//     body: JSON.stringify({ withdrawalPassword: password }),
+//   });
+//   if (!response.ok) {
+//     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+//     throw new Error(errorData.error || `Setting withdrawal password failed: ${response.status}`);
+//   }
+//   return response.json();
+// };
+
 const setWithdrawalPassword = async ({ password, confirmPassword }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -159,7 +178,7 @@ const setWithdrawalPassword = async ({ password, confirmPassword }) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ withdrawalPassword: password }),
+    body: JSON.stringify({ withdrawalPassword: password, confirmPassword }), // Include both fields
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
