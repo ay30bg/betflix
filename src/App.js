@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
 // Component to conditionally render Navbar
 function Layout() {
   const location = useLocation();
-  const hideNavbarPaths = ['/login', '/sign-up', '/forgot-password', '/reset-password'];
+  const hideNavbarPaths = ['/login', '/sign-up', '/forgot-password', '/reset-password', '/verify-email'];
 
   return (
     <>
