@@ -102,6 +102,61 @@
   margin: -3px 0;
 }
 
+/* header.css */
+
+/* General button styling */
+.auth-telegram-button {
+    background-color: #0088cc; /* Telegram's brand blue color */
+    color: #ffffff; /* White text */
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 20px; /* Vertical and horizontal padding */
+    font-size: 16px; /* Font size */
+    font-weight: 500; /* Medium font weight */
+    cursor: pointer; /* Pointer cursor on hover */
+    display: flex; /* Flexbox for centering content */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+/* Hover effect */
+.auth-telegram-button:hover {
+    background-color: #006da3; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Active effect (when clicked) */
+.auth-telegram-button:active {
+    transform: translateY(0); /* Reset lift on click */
+}
+
+/* Optional: Style the <p> tag inside the button */
+.auth-telegram-button p {
+    margin: 0; /* Remove default margin */
+    font-size: 14px; /* Adjust font size for the text */
+}
+
+/* Ensure button aligns well in the header-container */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space out logo and button */
+    padding: 10px 20px; /* Add padding to container */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .auth-telegram-button {
+        padding: 8px 16px; /* Smaller padding */
+        font-size: 14px; /* Smaller font size */
+    }
+
+    .auth-telegram-button p {
+        font-size: 12px; /* Smaller text */
+    }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .header-container {
