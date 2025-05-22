@@ -177,7 +177,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
-    margin: -12px 0;
+    margin: -12px 0 5000px 0;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
