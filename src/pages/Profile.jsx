@@ -110,27 +110,71 @@ const initiateDeposit = async ({ amount, cryptoCurrency, network }) => {
   return response.json();
 };
 
+// const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network, withdrawalPassword }) => {
+//   const token = localStorage.getItem('token');
+//   console.log('JWT Token:', token); // Debug token
+//   if (!token) throw new Error('Authentication required. Please log in.');
+//   const payload = { amount, cryptoCurrency, walletAddress, withdrawalPassword };
+//   if (cryptoCurrency === 'USDT') {
+//     payload.network = network;
+//   }
+//   const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${token}`,
+//     },
+//     body: JSON.stringify(payload),
+//   });
+//   if (!response.ok) {
+//     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+//     throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
+//   }
+//   return response.json();
+// };
+
 const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network, withdrawalPassword }) => {
   const token = localStorage.getItem('token');
-  console.log('JWT Token:', token); // Debug token
-  if (!token) throw new Error('Authentication required. Please log in.');
+  console.log('JWT Token:', token); // Already present
+  if (!token) {
+    console.error('No token found in localStorage');
+    throw new Error('Authentication required. Please log in.');
+  }
+
   const payload = { amount, cryptoCurrency, walletAddress, withdrawalPassword };
   if (cryptoCurrency === 'USDT') {
     payload.network = network;
   }
-  const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-    throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  console.log('Request Headers:', headers); // Log headers
+  console.log('Request Payload:', payload); // Log payload for completeness
+  console.log('API URL:', `${API_URL}/api/transactions/crypto-withdrawal`); // Log URL
+
+  try {
+    const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    });
+
+    console.log('Response Status:', response.status); // Log response status
+    console.log('Response Headers:', Object.fromEntries(response.headers)); // Log response headers
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('Withdrawal Error Response:', errorData);
+      throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Fetch Error:', error.message); // Log fetch errors (e.g., network issues)
+    throw error;
   }
-  return response.json();
 };
 
 const withdrawReferralBonus = async () => {
@@ -149,25 +193,6 @@ const withdrawReferralBonus = async () => {
   }
   return response.json();
 };
-
-// const setWithdrawalPassword = async ({ password, confirmPassword }) => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required. Please log in.');
-//   if (password !== confirmPassword) throw new Error('Passwords do not match');
-//   const response = await fetch(`${API_URL}/api/user/set-withdrawal-password`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: JSON.stringify({ withdrawalPassword: password }),
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-//     throw new Error(errorData.error || `Setting withdrawal password failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
 
 const setWithdrawalPassword = async ({ password, confirmPassword }) => {
   const token = localStorage.getItem('token');
