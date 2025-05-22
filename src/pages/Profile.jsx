@@ -112,6 +112,7 @@ const initiateDeposit = async ({ amount, cryptoCurrency, network }) => {
 
 const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network, withdrawalPassword }) => {
   const token = localStorage.getItem('token');
+  console.log('JWT Token:', token); // Debug token
   if (!token) throw new Error('Authentication required. Please log in.');
   const payload = { amount, cryptoCurrency, walletAddress, withdrawalPassword };
   if (cryptoCurrency === 'USDT') {
