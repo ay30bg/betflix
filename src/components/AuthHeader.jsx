@@ -19,6 +19,7 @@
 
 // export default AuthHeader;
 
+import { Link } from 'react-router-dom';
 import { FaUsers } from 'react-icons/fa';
 import '../styles/header.css';
 
