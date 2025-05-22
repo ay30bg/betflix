@@ -141,9 +141,9 @@ p:last-child em {
 }
 
 .about-button:hover {
-  background: linear-gradient(135deg, #16a34a 0%, #166534 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .about-button::before {
