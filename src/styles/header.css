@@ -150,6 +150,7 @@
     .auth-telegram-button {
         padding: 8px 16px; /* Smaller padding */
         font-size: 14px; /* Smaller font size */
+        border-radius: 5px;
     }
 
     .auth-telegram-button p {
