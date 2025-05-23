@@ -25,7 +25,8 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
   const firstFocusableElementRef = useRef(null);
   const lastFocusableElementRef = useRef(null);
 
-  const suggestedAmounts = [10, 50, 100, 500];
+  // const suggestedAmounts = [10, 50, 100, 500];
+  const suggestedAmounts = [1, 5, 10, 50];
   const EXACT_NUMBER_MULTIPLIER = 10;
 
   const balls = [
