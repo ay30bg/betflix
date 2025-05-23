@@ -2395,7 +2395,7 @@ function Profile() {
       <Tooltip id="withdrawal-password-tooltip" place="top" variant="dark" />
 
       <a
-        href="https://t.me/your-telegram-link"
+        href="https://t.me/+gqAMTbDYX6cxOGY0"
         className="telegram-floating"
         target="_blank"
         rel="noopener noreferrer"
