@@ -3,7 +3,7 @@ import '../styles/header.css';
 
 function AuthHeader() {
     const openCommunity = () => {
-        window.open('https://discord.gg/your-community', '_blank'); // Example: Open Discord
+        window.open('https://t.me/betflix_vip', '_blank'); // Example: Open Discord
     };
 
     return (
