@@ -61,7 +61,7 @@ function Home() {
       </button>
       
       <a
-        href="https://t.me/your-telegram-link" // Replace with your Telegram link
+        href="https://t.me/+gqAMTbDYX6cxOGY0" 
         className="telegram-floating"
         target="_blank"
         rel="noopener noreferrer"
