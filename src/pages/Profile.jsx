@@ -1203,6 +1203,7 @@ import { useBalance } from '../context/BalanceContext';
 import Header from '../components/header';
 import '../styles/profile.css';
 import { FaUser, FaCopy } from 'react-icons/fa';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { QRCodeCanvas } from 'qrcode.react';
 import TelegramLogo from '../assets/Telegram-logo.png';
 import { Tooltip } from 'react-tooltip';
@@ -2407,39 +2408,85 @@ function Profile() {
               ?
             </span>
           </label>
-          <input
-            id="withdrawal-password"
-            type="password"
-            value={withdrawalPasswordData.password}
-            onChange={(e) =>
-              setWithdrawalPasswordData({
-                ...withdrawalPasswordData,
-                password: e.target.value,
-              })
-            }
-            className="modal-input"
-            placeholder="Enter withdrawal password"
-            disabled={setWithdrawalPasswordMutation.isLoading}
-          />
+          <div className="password-wrapper">
+            <input
+              id="withdrawal-password"
+              type={withdrawalPasswordData.showPassword ? 'text' : 'password'}
+              value={withdrawalPasswordData.password}
+              onChange={(e) =>
+                setWithdrawalPasswordData({
+                  ...withdrawalPasswordData,
+                  password: e.target.value,
+                })
+              }
+              className="modal-input password-input"
+              placeholder="Enter withdrawal password"
+              disabled={setWithdrawalPasswordMutation.isLoading}
+            />
+            <span
+              className="eye-icon"
+              onClick={() =>
+                setWithdrawalPasswordData({
+                  ...withdrawalPasswordData,
+                  showPassword: !withdrawalPasswordData.showPassword,
+                })
+              }
+              aria-label={withdrawalPasswordData.showPassword ? 'Hide password' : 'Show password'}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) =>
+                e.key === 'Enter' &&
+                setWithdrawalPasswordData({
+                  ...withdrawalPasswordData,
+                  showPassword: !withdrawalPasswordData.showPassword,
+                })
+              }
+            >
+              {withdrawalPasswordData.showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </span>
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="confirm-withdrawal-password" className="modal-label">
             Confirm Password
           </label>
-          <input
-            id="confirm-withdrawal-password"
-            type="password"
-            value={withdrawalPasswordData.confirmPassword}
-            onChange={(e) =>
-              setWithdrawalPasswordData({
-                ...withdrawalPasswordData,
-                confirmPassword: e.target.value,
-              })
-            }
-            className="modal-input"
-            placeholder="Confirm withdrawal password"
-            disabled={setWithdrawalPasswordMutation.isLoading}
-          />
+          <div className="password-wrapper">
+            <input
+              id="confirm-withdrawal-password"
+              type={withdrawalPasswordData.showConfirmPassword ? 'text' : 'password'}
+              value={withdrawalPasswordData.confirmPassword}
+              onChange={(e) =>
+                setWithdrawalPasswordData({
+                  ...withdrawalPasswordData,
+                  confirmPassword: e.target.value,
+                })
+              }
+              className="modal-input password-input"
+              placeholder="Confirm withdrawal password"
+              disabled={setWithdrawalPasswordMutation.isLoading}
+            />
+            <span
+              className="eye-icon"
+              onClick={() =>
+                setWithdrawalPasswordData({
+                  ...withdrawalPasswordData,
+                  showConfirmPassword: !withdrawalPasswordData.showConfirmPassword,
+                })
+              }
+              aria-label={withdrawalPasswordData.showConfirmPassword ? 'Hide password' : 'Show password'}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) =>
+                e.key === 'Enter' &&
+                setWithdrawalPasswordData({
+                  ...withdrawalPasswordData,
+                  showConfirmPassword: !withdrawalPasswordData.showConfirmPassword,
+                })
+              }
+            >
+              {withdrawalPasswordData.showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </span>
+          </div>
         </div>
         {errors.withdrawalPassword && (
           <p className="modal-error">{errors.withdrawalPassword}</p>
