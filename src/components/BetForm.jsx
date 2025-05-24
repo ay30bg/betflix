@@ -223,14 +223,14 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
           </div>
         </div>
 
-        <div className="period-timer-container">
+{/*         <div className="period-timer-container">
           <span className="period-text" aria-label="Round ID">
            {roundData?.period || 'Loading...'}
           </span>
           <span className="timer-text" aria-live="polite">
             Time Left: {timeLeft} seconds
           </span>
-        </div>
+        </div> */}
       </form>
 
       {isModalOpen && (
