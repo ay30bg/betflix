@@ -2137,7 +2137,7 @@ function Profile() {
       )}
 
       {/* Withdraw Crypto Modal */}
-      {isWithdrawModalOpen && (
+{/*       {isWithdrawModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <button
@@ -2269,100 +2269,172 @@ function Profile() {
           </div>
         </div>
       )}
-
-      {/* Withdrawal Password Modal (unchanged) */}
-{/*       {isWithdrawalPasswordModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button
-              onClick={() => {
-                setIsWithdrawalPasswordModalOpen(false);
-                setErrors((prev) => ({ ...prev, withdrawalPassword: '' }));
-                setWithdrawalPasswordData({ password: '', confirmPassword: '' });
-              }}
-              className="modal-close"
-              aria-label="Close withdrawal password modal"
-            >
-              ×
-            </button>
-            <h2>Set Withdrawal Password</h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!withdrawalPasswordData.password || withdrawalPasswordData.password.length < 6) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    withdrawalPassword: 'Password must be at least 6 characters long',
-                  }));
-                  return;
-                }
-                setWithdrawalPasswordMutation.mutate({
-                  password: withdrawalPasswordData.password,
-                  confirmPassword: withdrawalPasswordData.confirmPassword,
-                });
-              }}
-            >
-              <div className="form-group">
-                <label htmlFor="withdrawal-password" className="modal-label">
-                  Password
-                  <span
-                    data-tooltip-id="password-tooltip"
-                    data-tooltip-content="Password must be at least 6 characters long."
-                    className="help-icon"
-                  >
-                    ?
-                  </span>
-                </label>
-                <input
-                  id="withdrawal-password"
-                  type="password"
-                  value={withdrawalPasswordData.password}
-                  onChange={(e) =>
-                    setWithdrawalPasswordData({
-                      ...withdrawalPasswordData,
-                      password: e.target.value,
-                    })
-                  }
-                  className="modal-input"
-                  placeholder="Enter withdrawal password"
-                  disabled={setWithdrawalPasswordMutation.isLoading}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="confirm-withdrawal-password" className="modal-label">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirm-withdrawal-password"
-                  type="password"
-                  value={withdrawalPasswordData.confirmPassword}
-                  onChange={(e) =>
-                    setWithdrawalPasswordData({
-                      ...withdrawalPasswordData,
-                      confirmPassword: e.target.value,
-                    })
-                  }
-                  className="modal-input"
-                  placeholder="Confirm withdrawal password"
-                  disabled={setWithdrawalPasswordMutation.isLoading}
-                />
-              </div>
-              {errors.withdrawalPassword && (
-                <p className="modal-error">{errors.withdrawalPassword}</p>
-              )}
-              <button
-                type="submit"
-                className="modal-submit"
-                disabled={setWithdrawalPasswordMutation.isLoading}
-              >
-                Set Password
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
  */}
 
+{isWithdrawModalOpen && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <button
+        onClick={() => {
+          setIsWithdrawModalOpen(false);
+          setErrors((prev) => ({ ...prev, withdraw: '' }));
+          setWithdrawData({
+            amount: '',
+            cryptoCurrency: 'BTC',
+            walletAddress: '',
+            network: 'BEP20',
+            withdrawalPassword: '',
+            showWithdrawalPassword: false, // Reset visibility on close
+          });
+        }}
+        className="modal-close"
+        aria-label="Close withdrawal modal"
+      >
+        ×
+      </button>
+      <h2>Withdraw Crypto</h2>
+      <p className="modal-note">
+        Note: Your withdrawal request will be reviewed by an admin before processing.
+      </p>
+      <form onSubmit={handleWithdraw}>
+        <div className="form-group">
+          <label htmlFor="withdraw-amount" className="modal-label">
+            Amount (USD)
+          </label>
+          <input
+            id="withdraw-amount"
+            type="number"
+            step="0.01"
+            min="0.01"
+            value={withdrawData.amount}
+            onChange={(e) =>
+              setWithdrawData({ ...withdrawData, amount: e.target.value })
+            }
+            className="modal-input"
+            placeholder="Enter withdrawal amount"
+            disabled={withdrawMutation.isLoading}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="crypto-currency" className="modal-label">
+            Cryptocurrency
+          </label>
+          <select
+            id="crypto-currency"
+            name="cryptoCurrency"
+            value={withdrawData.cryptoCurrency}
+            onChange={(e) =>
+              setWithdrawData({
+                ...withdrawData,
+                cryptoCurrency: e.target.value,
+                network: e.target.value === 'USDT' ? 'BEP20' : 'BEP20',
+              })
+            }
+            className="modal-input"
+            disabled={withdrawMutation.isLoading}
+          >
+            <option value="BTC">Bitcoin (BTC)</option>
+            <option value="ETH">Ethereum (ETH)</option>
+            <option value="USDT">Tether (USDT)</option>
+          </select>
+        </div>
+        {withdrawData.cryptoCurrency === 'USDT' && (
+          <div className="form-group">
+            <label htmlFor="withdraw-network" className="modal-label">
+              Network
+              <span
+                data-tooltip-id="network-tooltip"
+                data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
+                className="help-icon"
+              >
+                ?
+              </span>
+            </label>
+            <select
+              id="withdraw-network"
+              name="network"
+              value={withdrawData.network}
+              onChange={(e) =>
+                setWithdrawData({ ...withdrawData, network: e.target.value })
+              }
+              className="modal-input"
+              disabled={withdrawMutation.isLoading}
+            >
+              <option value="BEP20">BEP20 (Binance Smart Chain)</option>
+              <option value="ARBITRUM">ARBITRUM (Arbitrum)</option>
+              <option value="TON">TON (The Open Network)</option>
+            </select>
+          </div>
+        )}
+        <div className="form-group">
+          <label htmlFor="wallet-address" className="modal-label">
+            Wallet Address
+          </label>
+          <input
+            id="wallet-address"
+            type="text"
+            value={withdrawData.walletAddress}
+            onChange={(e) =>
+              setWithdrawData({ ...withdrawData, walletAddress: e.target.value })
+            }
+            className="modal-input"
+            placeholder="Enter your wallet address"
+            disabled={withdrawMutation.isLoading}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="withdrawal-password" className="modal-label">
+            Withdrawal Password
+          </label>
+          <div className="password-wrapper">
+            <input
+              id="withdrawal-password"
+              type={withdrawData.showWithdrawalPassword ? 'text' : 'password'}
+              value={withdrawData.withdrawalPassword}
+              onChange={(e) =>
+                setWithdrawData({ ...withdrawData, withdrawalPassword: e.target.value })
+              }
+              className="modal-input password-input"
+              placeholder="Enter withdrawal password"
+              disabled={withdrawMutation.isLoading}
+            />
+            <span
+              className="eye-icon"
+              onClick={() =>
+                setWithdrawData({
+                  ...withdrawData,
+                  showWithdrawalPassword: !withdrawData.showWithdrawalPassword,
+                })
+              }
+              aria-label={withdrawData.showWithdrawalPassword ? 'Hide password' : 'Show password'}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) =>
+                e.key === 'Enter' &&
+                setWithdrawData({
+                  ...withdrawData,
+                  showWithdrawalPassword: !withdrawData.showWithdrawalPassword,
+                })
+              }
+            >
+              {withdrawData.showWithdrawalPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </span>
+          </div>
+        </div>
+        {errors.withdraw && <p className="modal-error">{errors.withdraw}</p>}
+        <button
+          type="submit"
+          className="modal-submit"
+          disabled={withdrawMutation.isLoading}
+        >
+          Withdraw
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+      
+      {/* Withdrawal Password Modal (unchanged) */}
 {isWithdrawalPasswordModalOpen && (
   <div className="modal-overlay">
     <div className="modal-content">
