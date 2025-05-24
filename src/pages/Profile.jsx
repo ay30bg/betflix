@@ -110,32 +110,9 @@
 //   return response.json();
 // };
 
-// // const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network, withdrawalPassword }) => {
-// //   const token = localStorage.getItem('token');
-// //   console.log('JWT Token:', token); // Debug token
-// //   if (!token) throw new Error('Authentication required. Please log in.');
-// //   const payload = { amount, cryptoCurrency, walletAddress, withdrawalPassword };
-// //   if (cryptoCurrency === 'USDT') {
-// //     payload.network = network;
-// //   }
-// //   const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
-// //     method: 'POST',
-// //     headers: {
-// //       'Content-Type': 'application/json',
-// //       Authorization: `Bearer ${token}`,
-// //     },
-// //     body: JSON.stringify(payload),
-// //   });
-// //   if (!response.ok) {
-// //     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-// //     throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
-// //   }
-// //   return response.json();
-// // };
-
 // const initiateWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network, withdrawalPassword }) => {
 //   const token = localStorage.getItem('token');
-//   console.log('JWT Token:', token); // Already present
+//   console.log('JWT Token:', token);
 //   if (!token) {
 //     console.error('No token found in localStorage');
 //     throw new Error('Authentication required. Please log in.');
@@ -150,9 +127,9 @@
 //     'Content-Type': 'application/json',
 //     Authorization: `Bearer ${token}`,
 //   };
-//   console.log('Request Headers:', headers); // Log headers
-//   console.log('Request Payload:', payload); // Log payload for completeness
-//   console.log('API URL:', `${API_URL}/api/transactions/crypto-withdrawal`); // Log URL
+//   console.log('Request Headers:', headers);
+//   console.log('Request Payload:', payload);
+//   console.log('API URL:', `${API_URL}/api/transactions/crypto-withdrawal`);
 
 //   try {
 //     const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
@@ -161,8 +138,8 @@
 //       body: JSON.stringify(payload),
 //     });
 
-//     console.log('Response Status:', response.status); // Log response status
-//     console.log('Response Headers:', Object.fromEntries(response.headers)); // Log response headers
+//     console.log('Response Status:', response.status);
+//     console.log('Response Headers:', Object.fromEntries(response.headers));
 
 //     if (!response.ok) {
 //       const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
@@ -172,7 +149,7 @@
 
 //     return response.json();
 //   } catch (error) {
-//     console.error('Fetch Error:', error.message); // Log fetch errors (e.g., network issues)
+//     console.error('Fetch Error:', error.message);
 //     throw error;
 //   }
 // };
@@ -204,7 +181,7 @@
 //       'Content-Type': 'application/json',
 //       Authorization: `Bearer ${token}`,
 //     },
-//     body: JSON.stringify({ withdrawalPassword: password, confirmPassword }), // Include both fields
+//     body: JSON.stringify({ withdrawalPassword: password, confirmPassword }),
 //   });
 //   if (!response.ok) {
 //     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
@@ -496,7 +473,7 @@
 //       setIsWithdrawModalOpen(false);
 //       setWithdrawData({ amount: '', cryptoCurrency: 'BTC', walletAddress: '', network: 'BEP20', withdrawalPassword: '' });
 //       setErrors((prev) => ({ ...prev, withdraw: '' }));
-//       setNotification({ type: 'success', message: data.message || 'Withdrawal initiated!' });
+//       setNotification({ type: 'success', message: data.message || 'Withdrawal request submitted for admin review!' });
 //     },
 //     onError: (err) => {
 //       const errorMessage = err.message.includes('Authentication required')
@@ -963,6 +940,9 @@
 //               ×
 //             </button>
 //             <h2>Withdraw Crypto</h2>
+//             <p className="modal-note">
+//               Note: Your withdrawal request will be reviewed by an admin before processing.
+//             </p>
 //             <form onSubmit={handleWithdraw}>
 //               <div className="form-group">
 //                 <label htmlFor="withdraw-amount" className="modal-label">
@@ -1197,7 +1177,7 @@
 //       <Tooltip id="withdrawal-password-tooltip" place="top" variant="dark" />
 
 //       <a
-//         href="https://t.me/your-telegram-link"
+//         href="https://t.me/+gqAMTbDYX6cxOGY0"
 //         className="telegram-floating"
 //         target="_blank"
 //         rel="noopener noreferrer"
@@ -1229,7 +1209,7 @@ import { Tooltip } from 'react-tooltip';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// API Functions
+// API Functions (unchanged)
 const fetchUserProfile = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -1583,8 +1563,8 @@ function Profile() {
       setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
       return;
     }
-    if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'TRC20', 'TON'].includes(depositData.network)) {
-      setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, TRC20, or TON)' }));
+    if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
+      setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
       return;
     }
     depositMutation.mutate({
@@ -1605,12 +1585,25 @@ function Profile() {
       setErrors((prev) => ({ ...prev, withdraw: 'Insufficient balance for withdrawal' }));
       return;
     }
-    if (!withdrawData.walletAddress || !/^[a-zA-Z0-9]{26,42}$/.test(withdrawData.walletAddress)) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid wallet address' }));
+    if (amount < 10) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Minimum withdrawal amount is 10 USD' }));
       return;
     }
-    if (withdrawData.cryptoCurrency === 'USDT' && !['BEP20', 'TRC20', 'TON'].includes(withdrawData.network)) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, TRC20, or TON)' }));
+    if (!withdrawData.walletAddress) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a wallet address' }));
+      return;
+    }
+    if (withdrawData.cryptoCurrency === 'USDT' && withdrawData.network === 'ARBITRUM') {
+      if (!/^0x[a-fA-F0-9]{40}$/.test(withdrawData.walletAddress)) {
+        setErrors((prev) => ({ ...prev, withdraw: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)' }));
+        return;
+      }
+    } else if (!/^[a-zA-Z0-9]{26,48}$/.test(withdrawData.walletAddress)) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Invalid wallet address (26-48 characters)' }));
+      return;
+    }
+    if (withdrawData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(withdrawData.network)) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
       return;
     }
     if (!withdrawData.withdrawalPassword) {
@@ -1641,7 +1634,7 @@ function Profile() {
     }
   };
 
-  // Mutations
+  // Mutations (unchanged)
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile,
     onSuccess: (data) => {
@@ -1746,7 +1739,7 @@ function Profile() {
     },
   });
 
-  // Render betting stats
+  // Render betting stats (unchanged)
   const renderBettingStats = () => {
     if (statsLoading) return <div className="loading-spinner" aria-live="polite">Loading stats...</div>;
     if (statsError) return <p className="error" role="alert">{statsError.message}</p>;
@@ -1788,7 +1781,7 @@ function Profile() {
     );
   };
 
-  // Render referral stats modal content
+  // Render referral stats modal content (unchanged)
   const renderReferralStats = () => {
     if (referralStatsLoading) return <div className="loading-spinner" aria-live="polite">Loading referral stats...</div>;
     if (referralStatsError) return <p className="error" role="alert">{errors.referralStats}</p>;
@@ -1949,7 +1942,7 @@ function Profile() {
         Log Out
       </button>
 
-      {/* Update Profile Modal */}
+      {/* Update Profile Modal (unchanged) */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -2060,7 +2053,7 @@ function Profile() {
                       Network
                       <span
                         data-tooltip-id="network-tooltip"
-                        data-tooltip-content="Select the blockchain network for USDT deposits (BEP20 for Binance Smart Chain, TRC20 for TRON, TON for The Open Network)."
+                        data-tooltip-content="Select the blockchain network for USDT deposits (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
                         className="help-icon"
                       >
                         ?
@@ -2077,7 +2070,7 @@ function Profile() {
                       disabled={depositMutation.isLoading}
                     >
                       <option value="BEP20">BEP20 (Binance Smart Chain)</option>
-                      <option value="TRC20">TRC20 (TRON)</option>
+                      <option value="ARBITRUM">ARBITRUM (Arbitrum)</option>
                       <option value="TON">TON (The Open Network)</option>
                     </select>
                   </div>
@@ -2209,7 +2202,7 @@ function Profile() {
                     Network
                     <span
                       data-tooltip-id="network-tooltip"
-                      data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, TRC20 for TRON, TON for The Open Network)."
+                      data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
                       className="help-icon"
                     >
                       ?
@@ -2226,7 +2219,7 @@ function Profile() {
                     disabled={withdrawMutation.isLoading}
                   >
                     <option value="BEP20">BEP20 (Binance Smart Chain)</option>
-                    <option value="TRC20">TRC20 (TRON)</option>
+                    <option value="ARBITRUM">ARBITRUM (Arbitrum)</option>
                     <option value="TON">TON (The Open Network)</option>
                   </select>
                 </div>
@@ -2276,7 +2269,7 @@ function Profile() {
         </div>
       )}
 
-      {/* Withdrawal Password Modal */}
+      {/* Withdrawal Password Modal (unchanged) */}
       {isWithdrawalPasswordModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -2368,7 +2361,7 @@ function Profile() {
         </div>
       )}
 
-      {/* Referral Stats Modal */}
+      {/* Referral Stats Modal (unchanged) */}
       {isReferralStatsModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
