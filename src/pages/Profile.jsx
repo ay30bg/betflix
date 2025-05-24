@@ -2270,7 +2270,7 @@ function Profile() {
       )}
 
       {/* Withdrawal Password Modal (unchanged) */}
-      {isWithdrawalPasswordModalOpen && (
+{/*       {isWithdrawalPasswordModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <button
@@ -2360,7 +2360,102 @@ function Profile() {
           </div>
         </div>
       )}
+ */}
 
+{isWithdrawalPasswordModalOpen && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <button
+        onClick={() => {
+          setIsWithdrawalPasswordModalOpen(false);
+          setErrors((prev) => ({ ...prev, withdrawalPassword: '' }));
+          setWithdrawalPasswordData({ password: '', confirmPassword: '' });
+        }}
+        className="modal-close"
+        aria-label="Close withdrawal password modal"
+      >
+        ×
+      </button>
+      <h2>Set Withdrawal Password</h2>
+      <p className="modal-note">
+        Keep your withdrawal password in a safe place to avoid forgetting it.
+      </p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!withdrawalPasswordData.password || withdrawalPasswordData.password.length < 6) {
+            setErrors((prev) => ({
+              ...prev,
+              withdrawalPassword: 'Password must be at least 6 characters long',
+            }));
+            return;
+          }
+          setWithdrawalPasswordMutation.mutate({
+            password: withdrawalPasswordData.password,
+            confirmPassword: withdrawalPasswordData.confirmPassword,
+          });
+        }}
+      >
+        <div className="form-group">
+          <label htmlFor="withdrawal-password" className="modal-label">
+            Password
+            <span
+              data-tooltip-id="password-tooltip"
+              data-tooltip-content="Password must be at least 6 characters long."
+              className="help-icon"
+            >
+              ?
+            </span>
+          </label>
+          <input
+            id="withdrawal-password"
+            type="password"
+            value={withdrawalPasswordData.password}
+            onChange={(e) =>
+              setWithdrawalPasswordData({
+                ...withdrawalPasswordData,
+                password: e.target.value,
+              })
+            }
+            className="modal-input"
+            placeholder="Enter withdrawal password"
+            disabled={setWithdrawalPasswordMutation.isLoading}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="confirm-withdrawal-password" className="modal-label">
+            Confirm Password
+          </label>
+          <input
+            id="confirm-withdrawal-password"
+            type="password"
+            value={withdrawalPasswordData.confirmPassword}
+            onChange={(e) =>
+              setWithdrawalPasswordData({
+                ...withdrawalPasswordData,
+                confirmPassword: e.target.value,
+              })
+            }
+            className="modal-input"
+            placeholder="Confirm withdrawal password"
+            disabled={setWithdrawalPasswordMutation.isLoading}
+          />
+        </div>
+        {errors.withdrawalPassword && (
+          <p className="modal-error">{errors.withdrawalPassword}</p>
+        )}
+        <button
+          type="submit"
+          className="modal-submit"
+          disabled={setWithdrawalPasswordMutation.isLoading}
+        >
+          Set Password
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+      
       {/* Referral Stats Modal (unchanged) */}
       {isReferralStatsModalOpen && (
         <div className="modal-overlay">
