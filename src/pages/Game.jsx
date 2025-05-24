@@ -626,7 +626,7 @@ import { useBalance } from '../context/BalanceContext';
 import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
 import Header from '../components/header';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import '../styles/game.css';
 
 class ErrorBoundary extends React.Component {
