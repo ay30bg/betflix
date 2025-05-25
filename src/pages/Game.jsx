@@ -1263,7 +1263,7 @@ function Game() {
           onSubmit={handleBet}
           isLoading={mutation.isLoading}
           balance={balance ?? 0}
-          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
           roundData={roundData}
           timeLeft={timeLeft}
         />
