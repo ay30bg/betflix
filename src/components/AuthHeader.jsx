@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import '../styles/header.css';
 
 function AuthHeader() {
@@ -9,9 +9,9 @@ function AuthHeader() {
     return (
         <header className="header">
             <div className="header-container">
-                <Link to="/" className="header-logo" aria-label="BetFlix Home">
+                <a href="" className="header-logo" aria-label="BetFlix Home">
                     BetFlix
-                </Link>
+                </a>
                 <button
                     onClick={openCommunity}
                     className="auth-telegram-button"
