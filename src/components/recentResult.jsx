@@ -119,7 +119,7 @@ function RecentResults({ balls }) {
     const fetchRecentRounds = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/rounds/last-five', {
+        const response = await fetch('/api/bets/rounds/last-five', {
           headers: {
             'Content-Type': 'application/json',
             // Uncomment and add token if authentication is required
