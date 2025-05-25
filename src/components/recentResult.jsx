@@ -119,10 +119,12 @@ function RecentResults({ balls }) {
     const fetchRecentRounds = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/bets/rounds/last-five', {
+        const token = localStorage.getItem('authToken'); // Adjust based on your auth method
+        const apiUrl = process.env.REACT_APP_API_URL || '/api'; // Use env var or fallback
+        const response = await fetch(`${apiUrl}/rounds/last-five`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            ...(token && { 'Authorization': `Bearer ${token}` }),
           },
         });
 
@@ -175,29 +177,32 @@ function RecentResults({ balls }) {
       {error && <p className="error">{error}</p>}
       {!isLoading && !error && recentRounds.length === 0 && <p>No results available.</p>}
       {!isLoading && !error && recentRounds.length > 0 && (
-        <div className="results-balls">
-          {recentRounds.map((round, index) => {
-            const ballImage = getBallImage(round.result.number);
-            return (
-              <div
-                key={index} // Use index as key since period is not returned
-                className={`result-ball ball-${round.result.color.toLowerCase()}`}
-                title={`Number ${round.result.number} (${round.result.color})`}
-              >
-                {ballImage ? (
-                  <img
-                    src={ballImage}
-                    alt={`Ball with number ${round.result.number}`}
-                    width="40"
-                    height="40"
-                  />
-                ) : (
-                  <span>{round.result.number}</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <>
+          <p>{recentRounds.length} recent {recentRounds.length === 1 ? 'result' : 'results'} available.</p>
+          <div className="results-balls">
+            {recentRounds.map((round, index) => {
+              const ballImage = getBallImage(round.result.number);
+              return (
+                <div
+                  key={index}
+                  className={`result-ball ball-${round.result.color.toLowerCase()}`}
+                  title={`Number ${round.result.number} (${round.result.color})`}
+                >
+                  {ballImage ? (
+                    <img
+                      src={ballImage}
+                      alt={`Ball with number ${round.result.number}`}
+                      width="40"
+                      height="40"
+                    />
+                  ) : (
+                    <span>{round.result.number}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );
