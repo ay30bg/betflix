@@ -105,7 +105,7 @@
 
 // export default RecentResults;
 
-// RecentResults.jsx
+// src/components/RecentResults.jsx
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/game.css';
@@ -119,20 +119,20 @@ function RecentResults({ balls }) {
     const fetchRecentRounds = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/rounds/recent', {
+        const response = await fetch('/api/rounds/last-five', {
           headers: {
             'Content-Type': 'application/json',
-            // Uncomment and add your token if authentication is required
-            // 'Authorization': `Bearer ${yourAuthToken}`,
+            // Uncomment and add token if authentication is required
+            // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
 
         if (!response.ok) {
-          const errorText = await response.text(); // Get response body for debugging
+          const errorText = await response.text();
           console.error(`[${new Date().toISOString()}] Fetch error:`, {
             status: response.status,
             statusText: response.statusText,
-            responseText: errorText.slice(0, 100), // Log first 100 chars of response
+            responseText: errorText.slice(0, 100),
           });
           throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
         }
@@ -148,7 +148,7 @@ function RecentResults({ balls }) {
         }
 
         const data = await response.json();
-        setRecentRounds(data.slice(0, 5)); // Limit to last 5 rounds
+        setRecentRounds(data.slice(0, 5)); // Ensure max 5 rounds
         setError(null);
       } catch (err) {
         console.error(`[${new Date().toISOString()}] Error fetching recent rounds:`, {
@@ -181,9 +181,9 @@ function RecentResults({ balls }) {
             const ballImage = getBallImage(round.result.number);
             return (
               <div
-                key={round.period}
+                key={index} // Use index as key since period is not returned
                 className={`result-ball ball-${round.result.color.toLowerCase()}`}
-                title={`Round ${round.period}: ${round.result.number} (${round.result.color})`}
+                title={`Number ${round.result.number} (${round.result.color})`}
               >
                 {ballImage ? (
                   <img
