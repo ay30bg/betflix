@@ -120,8 +120,8 @@ function RecentResults({ balls }) {
       try {
         setIsLoading(true);
         const token = localStorage.getItem('authToken'); // Adjust based on your auth method
-        const apiUrl = process.env.REACT_APP_API_URL || '/api'; // Use env var or fallback
-        const response = await fetch(`${apiUrl}/rounds/last-five`, {
+        const apiUrl = process.env.REACT_APP_API_URL || '/api/bets'; // Use env var or fallback
+        const response = await fetch(`${apiUrl}/bets/rounds/last-five`, {
           headers: {
             'Content-Type': 'application/json',
             ...(token && { 'Authorization': `Bearer ${token}` }),
