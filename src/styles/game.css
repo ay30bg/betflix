@@ -800,6 +800,63 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* Focus ring */
 }
 
+/* Recent Result */
+.recent-results-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.recent-results-container h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.results-balls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.result-ball {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.result-ball img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.result-ball span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.ball-green {
+  background-color: #28a745; /* Fallback background color */
+}
+
+.ball-red {
+  background-color: #dc3545; /* Fallback background color */
+}
+
+.error {
+  color: #dc3545;
+  font-weight: bold;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .round-info {
