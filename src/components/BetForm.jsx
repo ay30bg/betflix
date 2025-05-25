@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import crypto from 'crypto-js';
+import RecentResults from './recentResult';
 import '../styles/game.css';
 import ball0 from '../assets/ball-0.svg';
 import ball1 from '../assets/ball1.svg';
@@ -160,6 +161,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
 
   return (
     <div className="bet-form-container">
+     <RecentResults balls={balls} />
       <form className="bet-form" onSubmit={(e) => e.preventDefault()}>
         <div className="button-balls-container">
           <div className="form-group color-buttons">
