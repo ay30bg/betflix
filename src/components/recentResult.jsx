@@ -192,8 +192,8 @@ function RecentResults({ balls }) {
                     <img
                       src={ballImage}
                       alt={`Ball with number ${round.result.number}`}
-                      width="40"
-                      height="40"
+                      width="20"
+                      height="20"
                     />
                   ) : (
                     <span>{round.result.number}</span>
