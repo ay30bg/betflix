@@ -122,8 +122,7 @@ function RecentResults({ balls }) {
         const response = await fetch('/api/bets/rounds/last-five', {
           headers: {
             'Content-Type': 'application/json',
-            // Uncomment and add token if authentication is required
-            // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         });
 
