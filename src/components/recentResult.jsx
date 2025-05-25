@@ -119,7 +119,7 @@ function RecentResults({ balls }) {
     const fetchRecentRounds = async () => {
       try {
         setIsLoading(true);
-        const token = localStorage.getItem('authToken'); // Adjust based on your auth method
+        const token = localStorage.getItem('token'); // Adjust based on your auth method
         const apiUrl = process.env.REACT_APP_API_URL || '/api/bets'; // Use env var or fallback
         const response = await fetch(`${apiUrl}/api/bets/rounds/last-five`, {
           headers: {
