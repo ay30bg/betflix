@@ -14,7 +14,7 @@ const UserSupport = () => {
     const fetchMessages = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('https://betflix-backend.vercel.app/api/support', {
+        const res = await fetch('https://betflix-backend.vercel.app/api/support/messages', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error('Failed to fetch messages');
@@ -40,7 +40,7 @@ const UserSupport = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('https://betflix-backend.vercel.app/api/support', {
+      const res = await fetch('https://betflix-backend.vercel.app/api/support/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ const UserSupport = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`https://betflix-backend.vercel.app/api/support/${selectedMessage.id}/reply`, {
+      const res = await fetch(`https://betflix-backend.vercel.app/api/support/messages/${selectedMessage.id}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
