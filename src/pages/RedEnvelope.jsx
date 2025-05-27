@@ -48,7 +48,7 @@ const RedEnvelope = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Please log in to claim the red envelope');
       const response = await axios.post(
-        `https://betflix-backend.vercel.app/api/red-envelope/${linkId}`,
+        `https://betflix-backend.vercel.app/api/claim/${linkId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
