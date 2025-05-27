@@ -36,7 +36,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode'; // Import jwt-decode
+import { jwtDecode } from 'jwt-decode'; // Import jwt-decode
 import '../styles/red-envelope.css';
 
 const RedEnvelope = () => {
