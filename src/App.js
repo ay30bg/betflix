@@ -70,7 +70,7 @@
 // src/App.js (modified)
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BalanceProvider } from './context/BalanceContext';
+import { BalanceProvider } from '../context/BalanceContext';
 import Navbar from './components/navbar';
 import Home from './pages/Home';
 import About from './pages/About';
