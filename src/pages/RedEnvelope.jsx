@@ -38,7 +38,7 @@ import React, { useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { BalanceContext } from '../context/BalanceContext';
+import { useBalance } from '../context/BalanceContext';
 
 const RedEnvelope = () => {
   const { linkId } = useParams();
