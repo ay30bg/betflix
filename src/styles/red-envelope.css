@@ -1,99 +1,117 @@
-/* betflix/src/styles/RedEnvelope.css */
-/* body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+/* RedEnvelope.css */
+.red-envelope-container {
+  text-align: center;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
-} */
-
-.red-envelope-container {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
+  background: linear-gradient(135deg, #f5f7fa, #e4e7eb);
+  font-family: 'Arial', sans-serif;
 }
 
-h2 {
-  color: #1a1a1a;
-  font-size: 1.8rem;
+.red-envelope-container h1 {
+  font-size: 2.5rem;
+  color: #c0392b; /* Red color to match red envelope theme */
   margin-bottom: 1.5rem;
-  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.claim-button {
-  background: linear-gradient(90deg, #ff4b4b, #ff6b6b);
-  color: #ffffff;
-  border: none;
+.red-envelope-container p {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.red-envelope-container .loading {
+  font-size: 1.3rem;
+  color: #7f8c8d;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.red-envelope-container .error {
+  color: #e74c3c;
+  background-color: #ffe6e6;
+  padding: 10px;
   border-radius: 8px;
-  padding: 0.8rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: bold;
   margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.claim-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 75, 75, 0.4);
-}
-
-.claim-button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.message {
+.red-envelope-container .success-container {
+  background-color: #e8f5e9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 1rem;
-  font-size: 1rem;
-  color: #333;
-  padding: 0.8rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.red-envelope-container .success {
+  color: #2ecc71;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.red-envelope-container .amount {
+  font-size: 1.5rem;
+  color: #27ae60;
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.red-envelope-container button {
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.1rem;
   border-radius: 8px;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.message.success {
-  background: #e6ffed;
-  color: #2e7d32;
+.red-envelope-container button:hover {
+  background-color: #a93226;
+  transform: translateY(-2px);
 }
 
-.message.error {
-  background: #ffebee;
-  color: #d32f2f;
+.red-envelope-container button:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 480px) {
   .red-envelope-container {
-    padding: 1.5rem;
-    margin: 1rem;
+    padding: 15px;
   }
 
-  h2 {
-    font-size: 1.5rem;
+  .red-envelope-container h1 {
+    font-size: 2rem;
   }
 
-  .claim-button {
-    padding: 0.7rem 1.5rem;
+  .red-envelope-container p {
+    font-size: 1rem;
+  }
+
+  .red-envelope-container button {
+    padding: 10px 20px;
     font-size: 1rem;
   }
 }
