@@ -33,17 +33,16 @@
 
 // export default RedEnvelope;
 
-// src/pages/RedEnvelope.js
 import React, { useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { useBalance } from '../context/BalanceContext';
+import { useBalance } from '../context/BalanceContext'; // Import useBalance instead
 
 const RedEnvelope = () => {
   const { linkId } = useParams();
   const navigate = useNavigate();
-  const { updateBalance } = useContext(BalanceContext); // Assuming BalanceContext provides updateBalance
+  const { setBalance } = useBalance(); // Use useBalance hook to get setBalance
   const { mutate, isPending, error, data } = useMutation({
     mutationFn: async () => {
       const token = localStorage.getItem('token');
@@ -59,7 +58,7 @@ const RedEnvelope = () => {
     },
     onSuccess: (data) => {
       // Update balance in context
-      updateBalance((prev) => prev + data.amount);
+      setBalance((prev) => prev + data.amount); // Use setBalance from useBalance
     },
     onError: (err) => {
       if (err.message === 'Please log in to claim the red envelope') {
