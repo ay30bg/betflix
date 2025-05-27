@@ -13,7 +13,7 @@ const RedEnvelope = () => {
       const token = localStorage.getItem('token'); // Adjust based on your auth
       const response = await axios.post(
         `https://betflix-backend.vercel.app/api/red-envelope/claim/${linkId}`,
-        { email: 'user@example.com' }, // Get email from auth context
+        { email: 'yekeenolalekan123@gmail.com' }, // Get email from auth context
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMessage(`Claimed $${response.data.amount}!`);
