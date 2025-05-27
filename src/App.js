@@ -68,7 +68,7 @@
 // export default App;
 
 // src/App.js (modified)
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BalanceProvider } from './context/BalanceContext';
 import Navbar from './components/navbar';
