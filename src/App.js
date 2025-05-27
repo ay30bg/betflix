@@ -46,8 +46,8 @@ function Layout() {
         <Route path="/support" element={<UserSupport />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        // <Route path="/red-envelope/:linkId" element={<RedEnvelope />} />
-         <Route path="/red-envelope" element={<RedEnvelope />} />
+        <Route path="/red-envelope/:linkId" element={<RedEnvelope />} />
+        
       </Routes>
     </>
   );
