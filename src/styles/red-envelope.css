@@ -63,6 +63,10 @@
   font-weight: bold;
 }
 
+button{
+  height: 5px;
+}
+
 envelope-btn {
   background-color: #c0392b;
   color: white;
