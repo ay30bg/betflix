@@ -36,14 +36,15 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; // Import jwt-decode
+import jwtDecode from 'jwt-decode'; // Import jwt-decode
 import '../styles/red-envelope.css';
 
 const RedEnvelope = () => {
-  const { linkId } = useParams(); // Get linkId from URL
-  const navigate = useNavigate(); // For redirecting to login
+  const { linkId } = useParams();
+  const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   const handleClaim = async () => {
     // Get token from localStorage
@@ -54,17 +55,17 @@ const RedEnvelope = () => {
       return;
     }
 
-    // Decode token to get user email
+    // Decode token to get email
     let email;
     try {
-      const decoded = jwtDecode(token); // Decode JWT token
-      email = decoded.email; // Adjust based on your token's payload
+      const decoded = jwtDecode(token);
+      email = decoded.email || decoded.sub; // Adjust based on your token's payload
       if (!email) {
         throw new Error('No email found in token');
       }
     } catch (error) {
       setMessage('Invalid login token. Please log in again.');
-      localStorage.removeItem('token'); // Clear invalid token
+      localStorage.removeItem('token');
       navigate('/login', { state: { from: `/red-envelope/${linkId}` } });
       return;
     }
@@ -72,11 +73,10 @@ const RedEnvelope = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `https://betflix-backend.vercel.app/api/red-envelope/claim/${linkId}`,
-        { email }, // Send decoded email
+        `${API_URL}/api/red-envelope/claim/${linkId}`,
+        { email },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setMessage(`Claimed $${response.data.amount}!`);
     } catch (error) {
       setMessage(error.response?.data?.error || 'Failed to claim. Try again.');
