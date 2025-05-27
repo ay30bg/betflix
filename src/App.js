@@ -68,7 +68,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BalanceProvider } from './context/BalanceContext';
-import { AuthContext } from './context/AuthContext'; // Adjust path to your AuthContext
+import { AuthContext, AuthProvider } from './context/AuthContext'; // Import AuthContext and AuthProvider
 import { useContext } from 'react';
 import Navbar from './components/navbar';
 import Home from './pages/Home';
@@ -96,7 +96,7 @@ const queryClient = new QueryClient({
 
 // ProtectedRoute component to ensure authentication
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, token } = useContext(AuthContext); // Use your AuthContext
+  const { isAuthenticated, token } = useContext(AuthContext);
 
   // Check if token exists and is not expired
   if (!isAuthenticated || !token) {
@@ -120,10 +120,11 @@ const ProtectedRoute = ({ children }) => {
 function Layout() {
   const location = useLocation();
   const hideNavbarPaths = ['/login', '/sign-up', '/forgot-password', '/reset-password', '/verify-email'];
+  const isRedEnvelopePath = location.pathname.startsWith('/red-envelope/'); // Hide Navbar for red envelope
 
   return (
     <>
-      {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
+      {!(hideNavbarPaths.includes(location.pathname) || isRedEnvelopePath) && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -189,7 +190,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BalanceProvider>
-        <AuthProvider> {/* Wrap with AuthProvider */}
+        <AuthProvider>
           <Router>
             <Layout />
           </Router>
