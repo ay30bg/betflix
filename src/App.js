@@ -105,7 +105,7 @@ function ProtectedRoute({ children }) {
 
 function Layout() {
   const location = useLocation();
-  const hideNavbarPaths = ['/login', '/sign-up', '/forgot-password', '/reset-password', '/verify-email'];
+  const hideNavbarPaths = ['/login', '/sign-up', '/forgot-password', '/reset-password', '/verify-email', '/red-envelope'];
 
   return (
     <>
