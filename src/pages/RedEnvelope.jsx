@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import '..styles/red-envelope.css'
+import '../styles/red-envelope.css';
 
 const RedEnvelope = () => {
   const { linkId } = useParams();
