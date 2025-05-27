@@ -63,7 +63,7 @@
   font-weight: bold;
 }
 
-.red-envelope-container button {
+envelope-btn {
   background-color: #c0392b;
   color: white;
   border: none;
@@ -75,7 +75,7 @@
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.red-envelope-container button:hover {
+envelope-btn:hover {
   background-color: #a93226;
   transform: translateY(-2px);
 }
@@ -110,7 +110,7 @@
     font-size: 1rem;
   }
 
-  .red-envelope-container button {
+ envelope-btn {
     padding: 10px 20px;
     font-size: 1rem;
   }
