@@ -47,7 +47,11 @@ const RedEnvelope = () => {
         <div className="success-container">
           <p className="success">{data.message}</p>
           <p className="amount">You claimed ${data.amount.toFixed(2)}!</p>
-          <button onClick={() => navigate('/profile')}>
+          <button 
+            onClick={() => navigate('/profile')}
+            className="envelope-btn"
+            >
+    
             View Profile
           </button>
         </div>
