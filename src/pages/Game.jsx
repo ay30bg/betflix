@@ -5,6 +5,7 @@
 // import BetForm from '../components/BetForm';
 // import HistoryTable from '../components/HistoryTable';
 // import Header from '../components/header';
+// import { jwtDecode } from 'jwt-decode';
 // import '../styles/game.css';
 
 // class ErrorBoundary extends React.Component {
@@ -21,6 +22,19 @@
 // }
 
 // const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
+
+// // Utility to check if token is expired
+// const isTokenExpired = (token) => {
+//   if (!token) return true;
+//   try {
+//     const decoded = jwtDecode(token);
+//     const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+//     return decoded.exp < currentTime;
+//   } catch (err) {
+//     console.error('Error decoding token:', err);
+//     return true; // Treat invalid tokens as expired
+//   }
+// };
 
 // const fetchBets = async () => {
 //   const token = localStorage.getItem('token');
@@ -155,12 +169,33 @@
 //     (message) => {
 //       setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
 //       localStorage.removeItem('token');
+//       queryClient.clear();
+//       setBalance(0);
+//       setPendingBet(null);
+//       setLastResult(null);
 //       setTimeout(() => {
 //         navigate('/login');
 //       }, 3000);
 //     },
-//     [navigate]
+//     [navigate, queryClient, setBalance]
 //   );
+
+//   // Proactive token expiration check
+//   useEffect(() => {
+//     const token = localStorage.getItem('token');
+//     if (token && isTokenExpired(token)) {
+//       handleAuthError('Token expired');
+//     }
+
+//     const interval = setInterval(() => {
+//       const currentToken = localStorage.getItem('token');
+//       if (currentToken && isTokenExpired(currentToken)) {
+//         handleAuthError('Token expired');
+//       }
+//     }, 60000);
+
+//     return () => clearInterval(interval);
+//   }, [handleAuthError]);
 
 //   useQuery({
 //     queryKey: ['profile'],
@@ -402,7 +437,7 @@
 //         }
 //       }
 //     },
-//     [pendingBet, queryClient, setBalance, handleAuthError]
+//     [queryClient, setBalance, handleAuthError]
 //   );
 
 //   useEffect(() => {
@@ -607,7 +642,7 @@
 //           onSubmit={handleBet}
 //           isLoading={mutation.isLoading}
 //           balance={balance ?? 0}
-//           isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 10}
+//           isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
 //           roundData={roundData}
 //           timeLeft={timeLeft}
 //         />
@@ -618,6 +653,7 @@
 // }
 
 // export default memo(Game);
+
 
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -644,16 +680,15 @@ class ErrorBoundary extends React.Component {
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// Utility to check if token is expired
 const isTokenExpired = (token) => {
   if (!token) return true;
   try {
     const decoded = jwtDecode(token);
-    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+    const currentTime = Math.floor(Date.now() / 1000);
     return decoded.exp < currentTime;
   } catch (err) {
     console.error('Error decoding token:', err);
-    return true; // Treat invalid tokens as expired
+    return true;
   }
 };
 
@@ -734,20 +769,6 @@ const fetchBetResult = async (period) => {
   return response.json();
 };
 
-const fetchAllRounds = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('Authentication required');
-  const response = await fetch(`${API_URL}/api/bets/rounds/history`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
-    if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData || `Rounds fetch failed: ${response.status}`);
-  }
-  return response.json();
-};
-
 const fetchRecentRounds = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required');
@@ -801,7 +822,6 @@ function Game() {
     [navigate, queryClient, setBalance]
   );
 
-  // Proactive token expiration check
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && isTokenExpired(token)) {
@@ -837,6 +857,7 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+    staleTime: 1000,
   });
 
   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
@@ -871,12 +892,13 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+    staleTime: 1000,
   });
 
   const { data: pendingBetsData, isLoading: pendingBetsLoading } = useQuery({
     queryKey: ['pendingBets'],
     queryFn: fetchPendingBets,
-    refetchInterval: 2000,
+    refetchInterval: 5000, // Increased from 2000ms
     onSuccess: (data) => {
       const activeBet = data.find(
         (bet) => bet.status === 'pending' && bet.roundStatus === 'active'
@@ -890,7 +912,7 @@ function Game() {
       }
       data.forEach((bet) => {
         if (bet.status === 'pending' && bet.roundExpiresAt && new Date(bet.roundExpiresAt) < new Date()) {
-          fetchResult(bet.period);
+          debouncedFetchResult(bet.period);
         } else if (bet.status === 'invalid' || bet.roundStatus === 'not_found') {
           if (typeof bet.newBalance === 'number') {
             setBalance(bet.newBalance);
@@ -934,6 +956,7 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+    staleTime: 1000,
   });
 
   const { data: roundData, isLoading: roundLoading } = useQuery({
@@ -968,6 +991,7 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+    staleTime: 1000,
   });
 
   useEffect(() => {
@@ -989,6 +1013,14 @@ function Game() {
     }
   }, [notification]);
 
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
   const fetchResult = useCallback(
     async (period, retryCount = 15) => {
       if (!period) {
@@ -1009,7 +1041,7 @@ function Game() {
         if (data.bet.status === 'pending') {
           console.warn(`Result not ready, retries left: ${retryCount}`);
           if (retryCount > 0) {
-            setTimeout(() => fetchResult(period, retryCount - 1), 2000);
+            setTimeout(() => debouncedFetchResult(period, retryCount - 1), 2000);
             return;
           }
           setError('Result not available yet. Please refresh.');
@@ -1038,6 +1070,7 @@ function Game() {
         }
         queryClient.invalidateQueries(['bets']);
         queryClient.invalidateQueries(['stats']);
+        queryClient.invalidateQueries(['profile']);
         setPendingBet(null);
       } catch (err) {
         const errorMessage = err.message.includes('Authentication required')
@@ -1055,20 +1088,23 @@ function Game() {
         } else {
           queryClient.invalidateQueries(['bets']);
           queryClient.invalidateQueries(['pendingBets']);
+          queryClient.invalidateQueries(['profile']);
         }
       }
     },
     [queryClient, setBalance, handleAuthError]
   );
 
+  const debouncedFetchResult = useCallback(debounce(fetchResult, 1000), [fetchResult]);
+
   useEffect(() => {
     if (timeLeft <= 20 && pendingBet && !lastResult) {
       const timer = setTimeout(() => {
-        fetchResult(pendingBet.period);
+        debouncedFetchResult(pendingBet.period);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [timeLeft, pendingBet, fetchResult, lastResult]);
+  }, [timeLeft, pendingBet, debouncedFetchResult, lastResult]);
 
   const mutation = useMutation({
     mutationFn: placeBet,
@@ -1080,6 +1116,9 @@ function Game() {
       setPendingBet(data.bet);
       setError('');
       setNotification({ type: 'success', message: 'Bet placed successfully!' });
+      queryClient.invalidateQueries(['profile']);
+      queryClient.invalidateQueries(['bets']);
+      queryClient.invalidateQueries(['pendingBets']);
     },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
@@ -1263,7 +1302,7 @@ function Game() {
           onSubmit={handleBet}
           isLoading={mutation.isLoading}
           balance={balance ?? 0}
-          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15 || !!pendingBet}
           roundData={roundData}
           timeLeft={timeLeft}
         />
