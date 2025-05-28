@@ -1537,7 +1537,6 @@ function Game() {
               message: `Bet lost for round ${bet.period}. No payout.`,
             });
           }
-        });
       });
     },
     onError: (err) => {
