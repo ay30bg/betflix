@@ -17,7 +17,7 @@ function Home() {
     if (!token) return true;
     try {
       const decoded = jwtDecode(token);
-      const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+      const currentTime = Math.floor(Date.now() / 1000); 
       return decoded.exp < currentTime;
     } catch (err) {
       console.error('Error decoding token:', err);
@@ -113,7 +113,7 @@ function Home() {
         />
       </button>
       <a
-        href="https://t.me/+gqAMTbDYX6cxOGY0"
+        href="https://t.me/+xtsG3E8obfllM2M0"
         className="telegram-floating"
         target="_blank"
         rel="noopener noreferrer"
