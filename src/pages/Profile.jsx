@@ -1071,7 +1071,7 @@ function Profile() {
                     Network
                     <span
                       data-tooltip-id="network-tooltip"
-                      data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
+                      data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain & ARBITRUM for Arbitrum)."
                       className="help-icon"
                     >
                       ?
@@ -1089,7 +1089,6 @@ function Profile() {
                   >
                     <option value="BEP20">BEP20 (Binance Smart Chain)</option>
                     <option value="ARBITRUM">ARBITRUM (Arbitrum)</option>
-                    <option value="TON">TON (The Open Network)</option>
                   </select>
                 </div>
               )}
