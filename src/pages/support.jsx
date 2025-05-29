@@ -66,7 +66,7 @@ const UserSupport = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`https://betflix-backend.vercel.app/api/support/messages/${selectedMessage.id}/reply`, {
+      const res = await fetch(`https://betflix-backend.vercel.app/api/support/messages/${selectedMessage._id}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
