@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BalanceProvider } from './context/BalanceContext';
+import { Analytics } from '@vercel/analytics/react'; // Import Analytics
 import Navbar from './components/navbar';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -66,6 +67,7 @@ function App() {
       <BalanceProvider>
         <Router>
           <Layout />
+          <Analytics />
         </Router>
       </BalanceProvider>
     </QueryClientProvider>
