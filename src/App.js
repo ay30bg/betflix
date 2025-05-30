@@ -67,7 +67,6 @@ function App() {
       <BalanceProvider>
         <Router>
           <Layout />
-          // <Analytics />
         </Router>
       </BalanceProvider>
     </QueryClientProvider>
