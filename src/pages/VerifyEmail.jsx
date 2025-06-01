@@ -303,7 +303,6 @@ function VerifyEmail() {
       <div className="verify-email-container">
         <div className="verify-email-form">
           <p>A verification code has been sent to {email}</p>
-          <p className="spam-note">Please check your spam or junk folder if you don't see the email in your inbox.</p>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="verificationCode" className="verify-label">
@@ -348,6 +347,7 @@ function VerifyEmail() {
                 Resend Code
               </button>
             </p>
+             <p className="spam-note">Please check your spam or junk folder if you don't see the email in your inbox.</p>
           </form>
         </div>
       </div>
