@@ -861,6 +861,59 @@
   object-fit: contain;
 }
 
+.transaction-table-container {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 1rem 0;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1c2526;
+  color: #fff;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #4a5759;
+}
+
+.transaction-table th {
+  background: #2a3435;
+  font-weight: 600;
+}
+
+.transaction-table td {
+  font-size: 0.9rem;
+}
+
+.transaction-table tr:hover {
+  background: #2a3435;
+}
+
+.refresh-transactions-button {
+  background: #00c4b4;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.3s;
+}
+
+.refresh-transactions-button:hover {
+  background: #00a89a;
+}
+
+.refresh-transactions-button:disabled {
+  background: #4a5759;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .support-floating {
     width: 50px;
