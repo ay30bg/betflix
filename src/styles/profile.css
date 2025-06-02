@@ -833,85 +833,93 @@
     font-family: 'Inter', sans-serif; /* Inter for error messages */
 }
 
-/* Transaction floating button */
-.transaction-floating {
-  position: fixed;
-  bottom: 150px;
-  right: 15px;
-  width: 60px;
-  height: 60px;
-  background-color: #fff; 
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  z-index: 1000;
-}
-
-.transaction-floating:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.transaction-logo {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-}
-
+/* Transaction Table Container */
 .transaction-table-container {
-  max-height: 300px;
-  overflow-y: auto;
-  margin: 1rem 0;
+    max-height: 300px; /* Consistent with referral-table-container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin: 1rem 0; /* Same margin as referral-table-container */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #e5e7eb; /* Light gray border, matching referral-table-container */
+    background: #f9fafb; /* Light background, matching referral-table-container */
 }
 
+/* Transaction Table */
 .transaction-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #1c2526;
-  color: #fff;
+    width: 100%;
+    border-collapse: collapse; /* Consistent with referral-table */
+    font-family: 'Inter', sans-serif; /* Inter for table text, matching referral-table */
 }
 
-.transaction-table th,
-.transaction-table td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #4a5759;
+.transaction-table thead {
+    background: #1e40af; /* Blue header background, matching referral-table */
+    color: #fff; /* White text for header, matching referral-table */
+    position: sticky; /* Sticky header, matching referral-table */
+    top: 0;
+    z-index: 1;
 }
 
 .transaction-table th {
-  background: #2a3435;
-  font-weight: 600;
+    padding: 0.75rem; /* Consistent padding with referral-table */
+    font-size: 0.9rem; /* Same font size as referral-table */
+    font-weight: 600; /* Bold headers, matching referral-table */
+    text-align: left; /* Left-aligned text, matching referral-table */
+    text-transform: uppercase; /* Uppercase headers, matching referral-table */
+    font-family: 'Poppins', sans-serif; /* Poppins for table headers, matching referral-table */
+}
+
+.transaction-table tbody tr {
+    border-bottom: 1px solid #e5e7eb; /* Light gray row separator, matching referral-table */
+    transition: background 0.2s ease; /* Smooth hover transition, matching referral-table */
+}
+
+.transaction-table tbody tr:hover {
+    background: #eff6ff; /* Light blue hover effect, matching referral-table */
 }
 
 .transaction-table td {
-  font-size: 0.9rem;
+    padding: 0.75rem; /* Consistent padding with referral-table */
+    font-size: 0.95rem; /* Slightly larger than referral-table for readability */
+    color: #1f2937; /* Dark gray for cell text, matching referral-table */
 }
 
-.transaction-table tr:hover {
-  background: #2a3435;
-}
-
+/* Refresh Transactions Button (unchanged, but included for context) */
 .refresh-transactions-button {
-  background: #00c4b4;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background 0.3s;
+    background: #00c4b4; /* Keep existing teal color */
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.3s;
+    font-family: 'Poppins', sans-serif; /* Align with other buttons */
 }
 
 .refresh-transactions-button:hover {
-  background: #00a89a;
+    background: #00a89a; /* Keep existing hover color */
 }
 
 .refresh-transactions-button:disabled {
-  background: #4a5759;
-  cursor: not-allowed;
+    background: #4a5759; /* Keep existing disabled color */
+    cursor: not-allowed;
+}
+
+/* Responsive Adjustments for Transaction Table */
+@media (max-width: 600px) {
+    .transaction-table-container {
+        max-height: 200px; /* Shorter table height on mobile, matching referral-table-container */
+    }
+
+    .transaction-table th,
+    .transaction-table td {
+        font-size: 0.85rem; /* Smaller table text on mobile, matching referral-table */
+        padding: 0.5rem; /* Reduced padding, matching referral-table */
+    }
+
+    .refresh-transactions-button {
+        font-size: 0.9rem; /* Smaller text on mobile */
+        padding: 0.4rem 0.8rem; /* Slightly smaller padding */
+    }
 }
 
 @media (max-width: 768px) {
