@@ -23,16 +23,15 @@
 
 // const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
-// // Utility to check if token is expired
 // const isTokenExpired = (token) => {
 //   if (!token) return true;
 //   try {
 //     const decoded = jwtDecode(token);
-//     const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+//     const currentTime = Math.floor(Date.now() / 1000);
 //     return decoded.exp < currentTime;
 //   } catch (err) {
 //     console.error('Error decoding token:', err);
-//     return true; // Treat invalid tokens as expired
+//     return true;
 //   }
 // };
 
@@ -113,20 +112,6 @@
 //   return response.json();
 // };
 
-// const fetchAllRounds = async () => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required');
-//   const response = await fetch(`${API_URL}/api/bets/rounds/history`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.text().catch(() => 'Unknown error');
-//     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(errorData || `Rounds fetch failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
 // const fetchRecentRounds = async () => {
 //   const token = localStorage.getItem('token');
 //   if (!token) throw new Error('Authentication required');
@@ -180,7 +165,6 @@
 //     [navigate, queryClient, setBalance]
 //   );
 
-//   // Proactive token expiration check
 //   useEffect(() => {
 //     const token = localStorage.getItem('token');
 //     if (token && isTokenExpired(token)) {
@@ -216,6 +200,7 @@
 //       }
 //     },
 //     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+//     staleTime: 1000,
 //   });
 
 //   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
@@ -250,12 +235,13 @@
 //       }
 //     },
 //     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+//     staleTime: 1000,
 //   });
 
 //   const { data: pendingBetsData, isLoading: pendingBetsLoading } = useQuery({
 //     queryKey: ['pendingBets'],
 //     queryFn: fetchPendingBets,
-//     refetchInterval: 2000,
+//     refetchInterval: 5000, // Increased from 2000ms
 //     onSuccess: (data) => {
 //       const activeBet = data.find(
 //         (bet) => bet.status === 'pending' && bet.roundStatus === 'active'
@@ -269,7 +255,7 @@
 //       }
 //       data.forEach((bet) => {
 //         if (bet.status === 'pending' && bet.roundExpiresAt && new Date(bet.roundExpiresAt) < new Date()) {
-//           fetchResult(bet.period);
+//           debouncedFetchResult(bet.period);
 //         } else if (bet.status === 'invalid' || bet.roundStatus === 'not_found') {
 //           if (typeof bet.newBalance === 'number') {
 //             setBalance(bet.newBalance);
@@ -313,6 +299,7 @@
 //       }
 //     },
 //     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+//     staleTime: 1000,
 //   });
 
 //   const { data: roundData, isLoading: roundLoading } = useQuery({
@@ -347,6 +334,7 @@
 //       }
 //     },
 //     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+//     staleTime: 1000,
 //   });
 
 //   useEffect(() => {
@@ -368,6 +356,14 @@
 //     }
 //   }, [notification]);
 
+//   const debounce = (func, wait) => {
+//     let timeout;
+//     return (...args) => {
+//       clearTimeout(timeout);
+//       timeout = setTimeout(() => func(...args), wait);
+//     };
+//   };
+
 //   const fetchResult = useCallback(
 //     async (period, retryCount = 15) => {
 //       if (!period) {
@@ -388,7 +384,7 @@
 //         if (data.bet.status === 'pending') {
 //           console.warn(`Result not ready, retries left: ${retryCount}`);
 //           if (retryCount > 0) {
-//             setTimeout(() => fetchResult(period, retryCount - 1), 2000);
+//             setTimeout(() => debouncedFetchResult(period, retryCount - 1), 2000);
 //             return;
 //           }
 //           setError('Result not available yet. Please refresh.');
@@ -417,6 +413,7 @@
 //         }
 //         queryClient.invalidateQueries(['bets']);
 //         queryClient.invalidateQueries(['stats']);
+//         queryClient.invalidateQueries(['profile']);
 //         setPendingBet(null);
 //       } catch (err) {
 //         const errorMessage = err.message.includes('Authentication required')
@@ -434,20 +431,23 @@
 //         } else {
 //           queryClient.invalidateQueries(['bets']);
 //           queryClient.invalidateQueries(['pendingBets']);
+//           queryClient.invalidateQueries(['profile']);
 //         }
 //       }
 //     },
 //     [queryClient, setBalance, handleAuthError]
 //   );
 
+//   const debouncedFetchResult = useCallback(debounce(fetchResult, 1000), [fetchResult]);
+
 //   useEffect(() => {
 //     if (timeLeft <= 20 && pendingBet && !lastResult) {
 //       const timer = setTimeout(() => {
-//         fetchResult(pendingBet.period);
+//         debouncedFetchResult(pendingBet.period);
 //       }, 1000);
 //       return () => clearTimeout(timer);
 //     }
-//   }, [timeLeft, pendingBet, fetchResult, lastResult]);
+//   }, [timeLeft, pendingBet, debouncedFetchResult, lastResult]);
 
 //   const mutation = useMutation({
 //     mutationFn: placeBet,
@@ -459,6 +459,9 @@
 //       setPendingBet(data.bet);
 //       setError('');
 //       setNotification({ type: 'success', message: 'Bet placed successfully!' });
+//       queryClient.invalidateQueries(['profile']);
+//       queryClient.invalidateQueries(['bets']);
+//       queryClient.invalidateQueries(['pendingBets']);
 //     },
 //     onError: (err) => {
 //       const errorMessage = err.message.includes('Authentication required')
@@ -672,7 +675,7 @@ class ErrorBoundary extends React.Component {
   }
   render() {
     if (this.state.error) {
-      return <div>Error: {this.state.error.message}</div>;
+      return <div className="error-message" role="alert">Error: {this.state.error.message}</div>;
     }
     return this.props.children;
   }
@@ -699,9 +702,9 @@ const fetchBets = async () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData || `Bets fetch failed: ${response.status}`);
+    throw new Error(errorData.error || `Bets fetch failed: ${response.status}`);
   }
   const bets = await response.json();
   return bets.filter((bet) => bet && bet.status !== 'invalid');
@@ -714,9 +717,9 @@ const fetchPendingBets = async () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData || `Pending bets fetch failed: ${response.status}`);
+    throw new Error(errorData.error || `Pending bets fetch failed: ${response.status}`);
   }
   return response.json();
 };
@@ -728,10 +731,10 @@ const fetchCurrentRound = async () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     if (response.status === 401) throw new Error('Authentication required');
     if (response.status === 429) throw new Error('Too many requests, please try again later');
-    throw new Error(errorData || `Round fetch failed: ${response.status}`);
+    throw new Error(errorData.error || `Round fetch failed: ${response.status}`);
   }
   return response.json();
 };
@@ -748,7 +751,7 @@ const placeBet = async (betData) => {
     body: JSON.stringify(betData),
   });
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
   }
   return response.json();
@@ -762,7 +765,7 @@ const fetchBetResult = async (period) => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     console.error(`Error response: ${JSON.stringify(errorData)}`);
     throw new Error(errorData.error || `Bet result fetch failed: ${response.status}`);
   }
@@ -776,9 +779,23 @@ const fetchRecentRounds = async () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData || `Recent rounds fetch failed: ${response.status}`);
+    throw new Error(errorData.error || `Recent rounds fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const fetchLastFiveRounds = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/rounds/last-five`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData.error || `Last five rounds fetch failed: ${response.status}`);
   }
   return response.json();
 };
@@ -790,8 +807,9 @@ const fetchProfile = async () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
-    throw new Error(errorData || `Profile fetch failed: ${response.status}`);
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData.error || `Profile fetch failed: ${response.status}`);
   }
   return response.json();
 };
@@ -815,9 +833,7 @@ function Game() {
       setBalance(0);
       setPendingBet(null);
       setLastResult(null);
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
+      setTimeout(() => navigate('/login'), 3000);
     },
     [navigate, queryClient, setBalance]
   );
@@ -857,7 +873,7 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-    staleTime: 1000,
+    staleTime: 30000, // Increased to reduce frequent fetches
   });
 
   const { data: betsData, isLoading: betsLoading, error: betsError } = useQuery({
@@ -870,12 +886,12 @@ function Game() {
           if (bet.won && bet.payout > 0) {
             setNotification({
               type: 'success',
-              message: `You won $${bet.payout.toFixed(2)} for round ${bet.period}! Balance updated.`,
+              message: `You won $${bet.payout.toFixed(2)} for round ${bet.period}!`,
             });
           } else if (!bet.won) {
             setNotification({
               type: 'info',
-              message: `Bet lost for round ${bet.period}. No payout.`,
+              message: `Bet lost for round ${bet.period}.`,
             });
           }
         }
@@ -892,55 +908,51 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-    staleTime: 1000,
+    staleTime: 5000, // Adjusted for dynamic updates
   });
 
   const { data: pendingBetsData, isLoading: pendingBetsLoading } = useQuery({
     queryKey: ['pendingBets'],
     queryFn: fetchPendingBets,
-    refetchInterval: 5000, // Increased from 2000ms
+    refetchInterval: 10000, // Increased to reduce backend load
     onSuccess: (data) => {
-      const activeBet = data.find(
-        (bet) => bet.status === 'pending' && bet.roundStatus === 'active'
-      );
+      const activeBet = data.find((bet) => bet.status === 'pending' && bet.roundStatus === 'active');
       if (activeBet && !pendingBet) {
         setPendingBet(activeBet);
         setNotification({
           type: 'info',
-          message: `Restored pending bet for round ${activeBet.period}`,
+          message: `Pending bet restored for round ${activeBet.period}`,
         });
       }
       data.forEach((bet) => {
         if (bet.status === 'pending' && bet.roundExpiresAt && new Date(bet.roundExpiresAt) < new Date()) {
-          debouncedFetchResult(bet.period);
+          fetchResult(bet.period); // Simplified to direct call
         } else if (bet.status === 'invalid' || bet.roundStatus === 'not_found') {
           if (typeof bet.newBalance === 'number') {
             setBalance(bet.newBalance);
           }
           setNotification({
             type: 'warning',
-            message: `Bet for round ${bet.period} could not be settled: ${bet.error || 'Unknown error'}.`,
+            message: `Bet for ${bet.period} failed: ${bet.error || 'Unknown error'}.`,
           });
           if (bet === pendingBet) {
             setPendingBet(null);
           }
-        } else if (bet.status === 'pending' && bet.createdAt && new Date(bet.createdAt) < new Date(Date.now() - 5 * 60 * 1000)) {
-          setNotification({
-            type: 'warning',
-            message: `Bet for round ${bet.period} is still pending. Please refresh or contact support.`,
-          });
         } else if (bet.status === 'finalized' && typeof bet.newBalance === 'number') {
           setBalance(bet.newBalance);
           if (bet.won && bet.payout > 0) {
             setNotification({
               type: 'success',
-              message: `You won $${bet.payout.toFixed(2)} for round ${bet.period}! Balance updated.`,
+              message: `You won $${bet.payout.toFixed(2)} for ${bet.period}!`,
             });
           } else if (!bet.won) {
             setNotification({
               type: 'info',
-              message: `Bet lost for round ${bet.period}. No payout.`,
+              message: `Bet lost for ${bet.period}.`,
             });
+          }
+          if (bet === pendingBet) {
+            setPendingBet(null);
           }
         }
       });
@@ -956,14 +968,14 @@ function Game() {
       }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-    staleTime: 1000,
+    staleTime: 5000,
   });
 
   const { data: roundData, isLoading: roundLoading } = useQuery({
     queryKey: ['currentRound'],
     queryFn: fetchCurrentRound,
-    refetchInterval: 6000,
-    staleTime: 6000,
+    refetchInterval: 10000, // Increased to reduce backend load
+    staleTime: 10000,
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
@@ -980,6 +992,7 @@ function Game() {
   const { data: recentRoundsData, isLoading: roundsLoading } = useQuery({
     queryKey: ['recentRounds'],
     queryFn: fetchRecentRounds,
+    staleTime: 30000,
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
@@ -990,14 +1003,30 @@ function Game() {
         handleAuthError(errorMessage);
       }
     },
-    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
-    staleTime: 1000,
+    retry: (failureCount, error) => failureCount < 1 && !error.message.includes('Authentication'),
+  });
+
+  const { data: lastFiveRoundsData, isLoading: lastFiveRoundsLoading } = useQuery({
+    queryKey: ['lastFiveRounds'],
+    queryFn: fetchLastFiveRounds,
+    staleTime: 30000,
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication required')) {
+        handleAuthError(errorMessage);
+      }
+    },
+    retry: (failureCount, error) => failureCount < 1 && !error.message.includes('Authentication'),
   });
 
   useEffect(() => {
     if (roundData?.expiresAt) {
       const updateTimeLeft = () => {
-        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - new Date.now()) / 1000);
         setTimeLeft(Math.floor(timeRemaining));
       };
       updateTimeLeft();
@@ -1008,43 +1037,26 @@ function Game() {
 
   useEffect(() => {
     if (notification) {
-      const timeout = setTimeout(() => setNotification(null), 5000);
-      return () => clearTimeout(timeout);
+      const timer = setTimeout(() => setNotification(null), 5000);
+      return () => clearTimeout(timer);
     }
   }, [notification]);
 
-  const debounce = (func, wait) => {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  };
-
   const fetchResult = useCallback(
-    async (period, retryCount = 15) => {
-      if (!period) {
-        console.warn('No period provided for fetchResult');
-        setError('No valid bet period available');
+    async (period) => {
+      if (!period || !/if(/^round-\d+$/.test(period)) {
+      {
+        console.error('Invalid period:', period);
+        setError('Invalid bet period');
         setPendingBet(null);
         return;
       }
-      if (!/^round-\d+$/.test(period)) {
-        console.warn(`Invalid period format: ${period}`);
-        setError('Invalid bet period format');
-        setPendingBet(null);
-        return;
-      }
+
       try {
-        console.log(`Attempting to fetch result for period: ${period}`);
         const data = await fetchBetResult(period);
         if (data.bet.status === 'pending') {
-          console.warn(`Result not ready, retries left: ${retryCount}`);
-          if (retryCount > 0) {
-            setTimeout(() => debouncedFetchResult(period, retryCount - 1), 2000);
-            return;
-          }
-          setError('Result not available yet. Please refresh.');
+          console.log(`Result pending for ${period}, will retry shortly`);
+          setTimeout(() => fetchResult(period), 5000); // Reduced retries
           return;
         }
         setLastResult({ ...data.bet, payout: data.bet.payout });
@@ -1053,41 +1065,40 @@ function Game() {
           if (data.bet.won && data.bet.payout > 0) {
             setNotification({
               type: 'success',
-              message: `You won $${data.bet.payout.toFixed(2)}! Balance updated.`,
+              message: `You won $${data.bet.payout.toFixed(2)}!`,
             });
-          } else if (!data.bet.won) {
+          } else {
             setNotification({
               type: 'info',
-              message: `Bet lost. No payout.`,
+              message: 'Bet lost.',
             });
           }
         } else {
-          console.warn('Balance not returned in fetchResult response:', data);
+          console.warn('Missing balance in result:', data);
           setNotification({
             type: 'warning',
-            message: 'Balance update failed. Please refresh.',
-          });
+            message: 'Balance update. Please try again.');
         }
         queryClient.invalidateQueries(['bets']);
-        queryClient.invalidateQueries(['stats']);
+        queryClient.invalidateQueries(['pendingBets']);
         queryClient.invalidateQueries(['profile']);
         setPendingBet(null);
       } catch (err) {
         const errorMessage = err.message.includes('Authentication required')
           ? 'Session expired. Please log in again.'
-          : err.message.includes('Round data missing')
-          ? 'Bet could not be settled, amount refunded'
+          : err.message.includes('Round not yet finalized')
+          ? 'Result not yet available, please wait.'
           : err.message.includes('Bet not found')
-          ? 'No bet found for this round'
-          : 'Error fetching bet result';
-        console.error(`Fetch result error: ${err.message}`);
+          ? 'No bet found for this round.'
+          : 'Error fetching result.';
+        console.error(errorMessage);
         setError(errorMessage);
         setTimeout(() => setError(''), 5000);
         if (err.message.includes('Authentication required')) {
           handleAuthError(errorMessage);
         } else {
           queryClient.invalidateQueries(['bets']);
-          queryClient.invalidateQueries(['pendingBets']);
+          queryClient.invalidateQueries(['pendingBet']);
           queryClient.invalidateQueries(['profile']);
         }
       }
@@ -1095,56 +1106,14 @@ function Game() {
     [queryClient, setBalance, handleAuthError]
   );
 
-  const debouncedFetchResult = useCallback(debounce(fetchResult, 1000), [fetchResult]);
-
-  useEffect(() => {
-    if (timeLeft <= 20 && pendingBet && !lastResult) {
-      const timer = setTimeout(() => {
-        debouncedFetchResult(pendingBet.period);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [timeLeft, pendingBet, debouncedFetchResult, lastResult]);
-
-  const mutation = useMutation({
-    mutationFn: placeBet,
-    onSuccess: (data) => {
-      console.log('Place bet response:', data);
-      if (typeof data.balance === 'number') {
-        setBalance(data.balance);
-      }
-      setPendingBet(data.bet);
-      setError('');
-      setNotification({ type: 'success', message: 'Bet placed successfully!' });
-      queryClient.invalidateQueries(['profile']);
-      queryClient.invalidateQueries(['bets']);
-      queryClient.invalidateQueries(['pendingBets']);
-    },
-    onError: (err) => {
-      const errorMessage = err.message.includes('Authentication required')
-        ? 'Session expired. Please log in again.'
-        : err.message;
-      setError(errorMessage);
-      setTimeout(() => setError(''), 5000);
-      if (err.message.includes('Authentication required')) {
-        handleAuthError(errorMessage);
-      }
-    },
-  });
-
-  const getResultColorClass = useCallback((result, type) => {
-    if (!result) return '';
-    if (type === 'color') {
-      return result.toLowerCase();
-    }
-    return parseInt(result) % 2 === 0 ? 'green' : 'red';
-  }, []);
-
   const handleBet = async (betData) => {
     if (betData.error) {
       setError(betData.error);
       setTimeout(() => setError(''), 5000);
       return;
+    }
+    if (betData.clientSeed) {
+      betData.clientSeed = Math.random().toString(36).substring(2); // Backend doesn't use it
     }
     if (betData.amount > (balance ?? 0)) {
       setError('Insufficient balance');
@@ -1163,9 +1132,28 @@ function Game() {
         handleAuthError(errorMessage);
       }
     }
-  };
+  );
 
-  if (balanceLoading || betsLoading || roundLoading || roundsLoading || pendingBetsLoading) {
+  const getResultColorClass = useCallback(
+    (result, type) => {
+      if (!result) return '';
+      if (type === 'color') {
+        return result.toLowerCase();
+      }
+      const num = parseInt(result);
+      return num % 2 === 0 ? 'green' : 'red';
+    },
+    []
+  );
+
+  if (
+    balanceLoading ||
+    betsLoading ||
+    || roundLoading ||
+    roundsLoading ||
+    pendingBetsLoading ||
+    lastFiveRoundsLoading
+  ) {
     return (
       <ErrorBoundary>
         <div className="game-page container">
@@ -1181,136 +1169,147 @@ function Game() {
       <div className="game-page container">
         <Header />
         {notification && (
-          <div className={`result ${notification.type}`} role="alert" aria-live="polite">
+          <div className={`notification ${notification.type}`} role="alert" aria-live="assertive">
             {notification.message}
           </div>
         )}
-        {error && !notification && (
-          <p className="game-error" role="alert" aria-live="polite">
+        {error && (
+          <div className="game-error" role="alert" aria-live="assertive">
             {error}
-          </p>
+          </div>
         )}
         {(balanceError || betsError) && (
-          <p className="game-error" role="alert" aria-live="polite">
+          <div className="game-error" role="alert" aria-live="assertive">
             {balanceError?.message || betsError?.message}
-          </p>
+          </div>
         )}
-        <div className="game958">
+        <div className="game-container">
           <div className="round-info">
-            <p>Current Round: {roundData?.period || 'Loading...'}</p>
+            <h2>Round: {roundData?.period || 'Loading...'}</h2>
             <p>Time Left: {timeLeft} seconds</p>
-            <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
+            <p>Expires: {roundData?.expiresAt ? new Date(roundData.expiresAt).toLocaleString('en-US', { timeZone: 'UTC' }) : 'N/A'}</p>
             <button
               className="history-button"
               onClick={() => setIsHistoryModalOpen(true)}
-              aria-label="View recent rounds history"
+              aria-label="View round history"
             >
-              View History
+              History
             </button>
           </div>
-        </div>
-        {mutation.isLoading && (
-          <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
-        )}
-        {lastResult && (
-          <div
-            key={lastResult.period}
-            className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.won ? 'won' : 'lost'}`}
-            role="alert"
-            aria-live="polite"
-          >
-            <button
-              className="result-close"
-              onClick={() => setLastResult(null)}
-              aria-label="Close bet result notification"
+          <div className="last-five-results">
+            <h3>Last Five Rounds</h3>
+            {lastFiveRoundsData && lastFiveRoundsData.length > 0 ? (
+              <ul>
+                {lastFiveRoundsData.map((round) => (
+                  <li key={round.round}>
+                    <span className={`result-${round.result.color?.toLowerCase() || 'n/a'}`}>
+                      {round.result.color || 'N/A'} ({round.result.number || 'N/A'})
+                    </span>
+                  </li>))
+                ))}
+              </ul>
+            ) : (
+              <p>No recent rounds available.</p>
+            )}
+          </div>
+          {mutation.isLoading && (
+            <div className="loading-spinner" aria-live="assertive">Placing Bet...</div>
+          )}
+          {lastResult && (
+            <div
+              key={lastResult.period}
+              className={`result ${getResultColorClass(lastResult.result, lastResult.type)} ${lastResult.status === 'won' ? 'won' : 'lost'}`}
+              role="alerting"
+              aria-live="polite"
             >
-              ×
-            </button>
-            <div className="result-header">
-              {lastResult.won ? (
-                <span className="result-icon">🎉 You Won!</span>
-              ) : (
-                <span className="result-icon">😔 You Lost</span>
-              )}
+              <button
+                className="result-close"
+                onClick={() => setLastResult(null)}
+                aria-label="Close result"
+              >
+                ×
+              </button>
+              <h3>
+                {lastResult.won ? '🎉 Won!' : '😔 Lost'}
+              </h3>
+              <p>
+                {lastResult.type === 'color' ? `Color: ${lastResult.result}` : `Number: ${lastResult.result}`}
+              </p>
+              <p>
+                {lastResult.payout === 0
+                  ? 'No payout'
+                  : lastResult.won
+                  ? `+$${lastResult.payout.toFixed(2)}`
+                  : '-$${Math.abs(lastResult.payout).toFixed(2)}'}
+              </p>
             </div>
-            <div className="result-detail">
-              {lastResult.type === 'color' ? `Color: ${lastResult.result || 'N/A'}` : `Number: ${lastResult.result || 'N/A'}`}
+          )}
+          {pendingBet && !lastResult && !mutation.isPending && (
+            <div className="pending-bet" role="alert" aria-live="polite">
+              <p>Bet on {pendingBet.period}: ${pendingBet.amount.toFixed(2)}</p>
+              <p>Waiting for results... ⌛️</p>
             </div>
-            <div className="result-payout">
-              {lastResult.payout === 0
-                ? 'No Payout'
-                : lastResult.won
-                ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
-                : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
-            </div>
-          </div>
-        )}
-        {pendingBet && !lastResult && !mutation.isLoading && (
-          <div className="no-result" role="alert" aria-live="polite">
-            <p>Bet placed on {pendingBet.period}.</p>
-            <p>Waiting for results... ⌛</p>
-          </div>
-        )}
-        {!pendingBet && !lastResult && !mutation.isLoading && (
-          <p className="no-result">Place a bet to see the result.</p>
-        )}
-        {isHistoryModalOpen && (
-          <div className="modal-overlay" role="dialog" aria-labelledby="history-modal-title">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 id="history-modal-title">Recent Rounds History</h2>
-                <button
-                  className="modal-close"
-                  onClick={() => setIsHistoryModalOpen(false)}
-                  aria-label="Close modal"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="modal-body">
-                <table className="history-table">
-                  <thead>
-                    <tr>
-                      <th>Period</th>
-                      <th>Color</th>
-                      <th>Number</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentRoundsData?.length > 0 ? (
-                      recentRoundsData.map((round) => (
-                        <tr key={round.period}>
-                          <td>{round.period}</td>
-                          <td className={`color-${round.result?.color?.toLowerCase()}`}>
-                            {round.result?.color || 'N/A'}
-                          </td>
-                          <td>{round.result?.number || 'N/A'}</td>
-                        </tr>
-                      ))
-                    ) : (
+          )}
+          {!pendingBet && !lastResult && !mutation.isPending && (
+            <p className="no-result-message">Place a bet to see results.</p>
+          )}
+          {isHistoryModalOpen && (
+            <div className="modal-overlay" role="dialog" aria-labelledby="history-modal-title">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h2 id="history-modal-title">Round history</h2>
+                  <button
+                    className="modal-close"
+                    modalonClick={() => setIsHistoryModalOpen(false)}
+                    aria-label="Close">
+                    ×
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <table className="history-table">
+                    <thead>
                       <tr>
-                        <td colSpan="3">No rounds available</td>
+                        <th>Period</th>
+                        <th>Color</th>
+                        <th>Number</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    </trthead>
+                    <tbody>
+                      {recentRoundsData?.length && > 0 ? (
+                        recentRoundsData.map((round) => (
+                          <tr key={round.period}>
+                            <td>{round.period}</td>
+                            <td className={`color-${round.result?.color?.toLowerCase() || ''}`}>
+                              {round.result?.color || 'N/A'}
+                            </td>
+                            <td>{round.result?.number || 'N/A'}</td>
+                          </tr>
+                        ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3">No rounds</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </tbody>
+                  </table>
+                </div>
+              ))}
             </div>
-          </div>
-        )}
-        <BetForm
-          onSubmit={handleBet}
-          isLoading={mutation.isLoading}
-          balance={balance ?? 0}
-          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
-          roundData={roundData}
-          timeLeft={timeLeft}
-        />
-        <HistoryTable bets={betsData || []} />
-      </div>
+          )}
+          <BetForm
+            onSubmit={handleBet}
+            isLoading={mutation.isPending}
+            balance={balance || 0}
+            isDisabled={balance === 0 || mutation.isPending || timeLeft < 15}
+            roundData={roundData}
+            timeLeft={timeLeft}
+          />
+          <HistoryTable bets={betsData || []} />
+        </div>
+      ))}
     </ErrorBoundary>
   );
 }
 
 export default memo(Game);
-
