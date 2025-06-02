@@ -9,7 +9,8 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { QRCodeCanvas } from 'qrcode.react';
 import TelegramLogo from '../assets/Telegram-logo.png';
 import { Tooltip } from 'react-tooltip';
-import { jwtDecode } from 'jwt-decode'; // Corrected named import
+import { jwtDecode } from 'jwt-decode'; 
+import TransactionLogo from '../assets/Transaction-logo.png';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
@@ -1332,6 +1333,18 @@ function Profile() {
       <Tooltip id="password-tooltip" place="top" variant="dark" />
       <Tooltip id="withdrawal-password-tooltip" place="top" variant="dark" />
 
+     <button
+        className="transaction-floating"
+        aria-label="Contact support"
+      >
+        <img
+          src={TransactionLogo}
+          alt="Transaction Logo"
+          className="transaction-logo"
+          loading="lazy"
+        />
+      </button>
+      
       <a
         href="https://t.me/+xtsG3E8obfllM2M0"
         className="telegram-floating"
