@@ -421,8 +421,8 @@ function Game() {
           : err.message.includes('Round data missing')
           ? 'Bet could not be settled, amount refunded'
           : err.message.includes('Bet not found')
-          ? 'No bet found for this round'
-          : 'Error fetching bet result';
+          // ? 'No bet found for this round'
+          // : 'Error fetching bet result';
         console.error(`Fetch result error: ${err.message}`);
         setError(errorMessage);
         setTimeout(() => setError(''), 5000);
