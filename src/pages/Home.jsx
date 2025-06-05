@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Header from '../components/header';
-import Banner from '../assets/betflix_banner.png';
+import Banner from '../assets/betflix_new_banner.png';
 import TelegramLogo from '../assets/Telegram-logo.png';
 import SupportLogo from '../assets/Support-logo.png';
 import { jwtDecode } from 'jwt-decode'; // Named import for jwt-decode
