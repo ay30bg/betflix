@@ -3,7 +3,7 @@ import '../styles/header.css';
 
 function AuthHeader() {
     const openCommunity = () => {
-        window.open('https://t.me/+xtsG3E8obfllM2M0', '_blank'); // Example: Open Discord
+        window.open('https://t.me/+UvOuNd3fzNRjOTk0', '_blank'); // Example: Open Discord
     };
 
     return (
