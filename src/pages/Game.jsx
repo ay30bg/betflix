@@ -365,7 +365,7 @@ function Game() {
   };
 
   const fetchResult = useCallback(
-    async (period, retryCount = 15) => {
+    async (period, retryCount = 40) => {
       if (!period) {
         console.warn('No period provided for fetchResult');
         setError('No valid bet period available');
