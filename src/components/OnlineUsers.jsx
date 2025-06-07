@@ -54,14 +54,27 @@ import { useState, useEffect } from 'react';
 import '../styles/game.css'; // Ensure this is imported if styles are in game.css
 
 function OnlineUsers() {
-  const [userCount, setUserCount] = useState(50); // Start with a base number
-  const [targetCount, setTargetCount] = useState(50); // Target number to animate towards
+  const [userCount, setUserCount] = useState(50); // Current displayed count
+  const [targetCount, setTargetCount] = useState(50); // Target count to animate towards
 
   useEffect(() => {
+    // Deterministic random number generator based on time
+    const getSeededRandom = (seed) => {
+      // Simple seeded random number generator (e.g., Linear Congruential Generator)
+      let state = seed;
+      return () => {
+        state = (1664525 * state + 1013904223) % 4294967296; // LCG parameters
+        return (state / 4294967296); // Normalize to [0,1)
+      };
+    };
+
     // Function to determine target user count based on time
     const getTargetUserCount = () => {
       const now = new Date();
       const watHours = (now.getUTCHours() + 1) % 24; // Adjust for WAT (UTC+1)
+      // Use time-based seed (e.g., minutes since epoch floored to nearest 30 seconds)
+      const seed = Math.floor(now.getTime() / 30000); // New seed every 30 seconds
+      const seededRandom = getSeededRandom(seed);
 
       let minUsers, maxUsers;
       if (watHours >= 0 && watHours < 12) {
@@ -78,8 +91,8 @@ function OnlineUsers() {
         maxUsers = 200;
       }
 
-      // Generate random target number within the range
-      return Math.floor(Math.random() * (maxUsers - minUsers + 1)) + minUsers;
+      // Generate deterministic target count within the range
+      return Math.floor(seededRandom() * (maxUsers - minUsers + 1)) + minUsers;
     };
 
     // Function to update user count gradually
