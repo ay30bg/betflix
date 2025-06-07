@@ -857,6 +857,77 @@ body {
   font-weight: bold;
 }
 
+/* Online Users */
+.online-users {
+  background: linear-gradient(145deg, #ffffff, #f1f5f9); /* Matches round-info gradient */
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  max-width: 300px; /* Compact size for user count */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Consistent shadow */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+  margin: 1rem auto; /* Centered with spacing */
+}
+
+.online-users:hover {
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+.online-users span {
+  font-size: 1.1rem; /* Readable font size */
+  font-weight: 600; /* Matches round-info typography */
+  color: #1e293b; /* Dark slate for contrast */
+  background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient text effect */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Space for potential icons */
+}
+
+.online-users::before {
+  content: '🌐'; /* Globe emoji for visual flair */
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  opacity: 0.3; /* Subtle icon */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .online-users {
+    padding: 0.6rem 1.25rem;
+    max-width: 250px;
+  }
+
+  .online-users span {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .online-users {
+    padding: 0.5rem 1rem;
+    max-width: 200px;
+  }
+
+  .online-users span {
+    font-size: 0.9rem;
+  }
+
+  .online-users::before {
+    font-size: 1rem; /* Smaller icon on mobile */
+  }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .round-info {
