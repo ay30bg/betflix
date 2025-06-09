@@ -17,7 +17,7 @@
 
 // function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft }) {
 //   const [selection, setSelection] = useState({ type: null, value: null });
-//   const [amount, setAmount] = useState(''); // Keep as string to handle decimal input
+//   const [amount, setAmount] = useState(''); // String to handle decimal input
 //   const [clientSeed, setClientSeed] = useState(
 //     `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`
 //   );
@@ -27,9 +27,10 @@
 //   const firstFocusableElementRef = useRef(null);
 //   const lastFocusableElementRef = useRef(null);
 
-//   // Updated suggested amounts to include decimals (optional)
-//   const suggestedAmounts = [1, 5, 10, 50]; // You can add decimals like [0.1, 0.5, 1, 5]
-//   const EXACT_NUMBER_MULTIPLIER = 10;
+//   // Payout multipliers from backend
+//   const COLOR_MULTIPLIER = 2.7;
+//   const NUMBER_MULTIPLIER = 6.8;
+//   const suggestedAmounts = [0.5, 1, 5, 10]; // Decimal-friendly suggested amounts
 
 //   const balls = [
 //     { number: 0, src: ball0, color: 'Green' },
@@ -37,14 +38,17 @@
 //     { number: 2, src: ball2, color: 'Green' },
 //     { number: 3, src: ball3, color: 'Red' },
 //     { number: 4, src: ball4, color: 'Green' },
-//     { number: 5, src: ball5, color: 'Red' },
+//     { number: 5, src: ball5, color: 'Violet' }, // Violet for number 5
 //     { number: 6, src: ball6, color: 'Green' },
 //     { number: 7, src: ball7, color: 'Red' },
 //     { number: 8, src: ball8, color: 'Green' },
 //     { number: 9, src: ball9, color: 'Red' },
 //   ];
 
-//   const getNumberColor = (number) => (number % 2 === 0 ? 'Green' : 'Red');
+//   const getNumberColor = (number) => {
+//     if (number === 5) return 'Violet';
+//     return number % 2 === 0 ? 'Green' : 'Red';
+//   };
 
 //   const handleColorSelect = (color) => {
 //     setSelection({ type: 'color', value: color });
@@ -52,7 +56,7 @@
 //   };
 
 //   const handleNumberSelect = (number) => {
-//     setSelection({ type: 'number', value: number });
+//     setSelection({ type: 'number', value: number.toString() });
 //     setIsModalOpen(true);
 //   };
 
@@ -67,28 +71,26 @@
 //       return;
 //     }
 
-//     // Parse amount as a float to support decimals
 //     const betAmount = parseFloat(amount);
-//     if (!betAmount || betAmount <= 0 || Number.isNaN(betAmount)) {
-//       onSubmit({ error: 'Please enter a valid bet amount' });
+//     if (!betAmount || betAmount < 0.01 || Number.isNaN(betAmount)) {
+//       onSubmit({ error: 'Please enter a valid bet amount (minimum $0.01)' });
 //       setIsSubmitting(false);
 //       return;
 //     }
 
-//     // Check balance with decimal precision
 //     if (betAmount > balance) {
 //       onSubmit({ error: 'Insufficient balance' });
 //       setIsSubmitting(false);
 //       return;
 //     }
 
-//     if (selection.type === 'color' && !['Green', 'Red'].includes(selection.value)) {
+//     if (selection.type === 'color' && !['Red', 'Green', 'Violet'].includes(selection.value)) {
 //       onSubmit({ error: 'Invalid color selected' });
 //       setIsSubmitting(false);
 //       return;
 //     }
 
-//     if (selection.type === 'number' && !/^\d$/.test(selection.value.toString())) {
+//     if (selection.type === 'number' && !/^\d$/.test(selection.value)) {
 //       onSubmit({ error: 'Invalid number selected' });
 //       setIsSubmitting(false);
 //       return;
@@ -97,13 +99,12 @@
 //     const newClientSeed = `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`;
 //     const bet = {
 //       type: selection.type,
-//       value: selection.value.toString(),
-//       amount: betAmount, // Use parsed float value
+//       value: selection.value,
+//       amount: betAmount,
 //       clientSeed: newClientSeed,
 //     };
 //     if (selection.type === 'number') {
-//       bet.color = getNumberColor(selection.value);
-//       bet.exactMultiplier = EXACT_NUMBER_MULTIPLIER;
+//       bet.color = getNumberColor(parseInt(selection.value));
 //     }
 //     console.log('Submitting bet:', bet);
 //     try {
@@ -120,7 +121,6 @@
 //   };
 
 //   const handleSuggestedAmount = (suggestedAmount) => {
-//     // Format suggested amount to 2 decimal places for consistency
 //     setAmount(suggestedAmount.toFixed(2));
 //   };
 
@@ -158,11 +158,11 @@
 //     }
 //   }, [isModalOpen]);
 
-//   const isBettingDisabled = isDisabled || timeLeft < 5;
+//   const isBettingDisabled = isDisabled || timeLeft < 15;
 
 //   return (
 //     <div className="bet-form-container">
-//      <RecentResults balls={balls} />
+//       <RecentResults balls={balls} />
 //       <form className="bet-form" onSubmit={(e) => e.preventDefault()}>
 //         <div className="button-balls-container">
 //           <div className="form-group color-buttons">
@@ -187,6 +187,16 @@
 //               >
 //                 Green
 //               </button>
+//               <button
+//                 type="button"
+//                 className={`color-button violet ${selection.type === 'color' && selection.value === 'Violet' ? 'selected' : ''}`}
+//                 onClick={() => handleColorSelect('Violet')}
+//                 aria-pressed={selection.type === 'color' && selection.value === 'Violet'}
+//                 aria-label="Bet on Violet"
+//                 disabled={isBettingDisabled}
+//               >
+//                 Violet
+//               </button>
 //             </div>
 //           </div>
 //           <div className="pick-balls">
@@ -194,7 +204,7 @@
 //               <button
 //                 key={ball.number}
 //                 type="button"
-//                 className={`ball-button ${selection.type === 'number' && selection.value === ball.number ? 'selected' : ''} ball-${ball.color.toLowerCase()}`}
+//                 className={`ball-button ${selection.type === 'number' && selection.value === ball.number.toString() ? 'selected' : ''} ball-${ball.color.toLowerCase()}`}
 //                 onClick={() => handleNumberSelect(ball.number)}
 //                 aria-label={`Bet on number ${ball.number} (${ball.color})`}
 //                 disabled={isBettingDisabled}
@@ -213,7 +223,7 @@
 //               <button
 //                 key={ball.number}
 //                 type="button"
-//                 className={`ball-button ${selection.type === 'number' && selection.value === ball.number ? 'selected' : ''} ball-${ball.color.toLowerCase()}`}
+//                 className={`ball-button ${selection.type === 'number' && selection.value === ball.number.toString() ? 'selected' : ''} ball-${ball.color.toLowerCase()}`}
 //                 onClick={() => handleNumberSelect(ball.number)}
 //                 aria-label={`Bet on number ${ball.number} (${ball.color})`}
 //                 disabled={isBettingDisabled}
@@ -228,6 +238,22 @@
 //             ))}
 //           </div>
 //         </div>
+// {/*         <div className="payout-info">
+//           <p>
+//             Payout Multiplier:{' '}
+//             {selection.type === 'color'
+//               ? `${COLOR_MULTIPLIER}x`
+//               : selection.type === 'number'
+//               ? `${NUMBER_MULTIPLIER}x`
+//               : 'N/A'}
+//           </p>
+//           <p>
+//             Potential Win: $
+//             {(amount && selection.type
+//               ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
+//               : 0).toFixed(2)}
+//           </p>
+//         </div> */}
 //       </form>
 //       <OnlineUsers />
 //       {isModalOpen && (
@@ -236,7 +262,7 @@
 //             <h2 id="modal-title">
 //               {selection.type === 'color'
 //                 ? `Bet on ${selection.value}`
-//                 : `Bet on Number ${selection.value} (${getNumberColor(selection.value)})`}
+//                 : `Bet on Number ${selection.value} (${getNumberColor(parseInt(selection.value))})`}
 //             </h2>
 //             <button
 //               className="modal-close"
@@ -248,16 +274,16 @@
 //             <form onSubmit={handleModalSubmit}>
 //               <div className="form-group">
 //                 <label htmlFor="bet-amount" className="modal-label">
-//                   Bet Amount
+//                   Bet Amount ($)
 //                 </label>
 //                 <input
 //                   id="bet-amount"
 //                   type="number"
-//                   step="0.01" // Allow decimals with 2 places
+//                   step="0.01"
 //                   value={amount}
 //                   onChange={(e) => setAmount(e.target.value)}
 //                   placeholder="Enter amount (e.g., 0.50)"
-//                   min="0.01" // Minimum bet amount
+//                   min="0.01"
 //                   required
 //                   disabled={isBettingDisabled || isSubmitting}
 //                   className="modal-input"
@@ -272,9 +298,21 @@
 //                     onClick={() => handleSuggestedAmount(suggestedAmount)}
 //                     disabled={isBettingDisabled || isSubmitting}
 //                   >
-//                     {suggestedAmount.toFixed(2)} {/* Display with 2 decimals */}
+//                     {suggestedAmount.toFixed(2)}
 //                   </button>
 //                 ))}
+//               </div>
+//               <div className="modal-payout-info">
+//                 <p>
+//                   Payout Multiplier:{' '}
+//                   {selection.type === 'color' ? `${COLOR_MULTIPLIER}x` : `${NUMBER_MULTIPLIER}x`}
+//                 </p>
+//                 <p>
+//                   Potential Win: $
+//                   {(amount && selection.type
+//                     ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
+//                     : 0).toFixed(2)}
+//                 </p>
 //               </div>
 //               <button
 //                 type="submit"
@@ -306,6 +344,7 @@
 
 // export default BetForm;
 
+
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import crypto from 'crypto-js';
@@ -335,18 +374,22 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
   const firstFocusableElementRef = useRef(null);
   const lastFocusableElementRef = useRef(null);
 
-  // Payout multipliers from backend
-  const COLOR_MULTIPLIER = 2.7;
+  // Payout multipliers
+  const COLOR_MULTIPLIERS = {
+    Red: 1.85,
+    Green: 1.85,
+    Violet: 2.5,
+  };
   const NUMBER_MULTIPLIER = 6.8;
   const suggestedAmounts = [0.5, 1, 5, 10]; // Decimal-friendly suggested amounts
 
   const balls = [
-    { number: 0, src: ball0, color: 'Green' },
+    { number: 0, src: ball0, color: 'Violet' }, // Updated to Violet
     { number: 1, src: ball1, color: 'Red' },
     { number: 2, src: ball2, color: 'Green' },
     { number: 3, src: ball3, color: 'Red' },
     { number: 4, src: ball4, color: 'Green' },
-    { number: 5, src: ball5, color: 'Violet' }, // Violet for number 5
+    { number: 5, src: ball5, color: 'Violet' }, // Already Violet
     { number: 6, src: ball6, color: 'Green' },
     { number: 7, src: ball7, color: 'Red' },
     { number: 8, src: ball8, color: 'Green' },
@@ -354,8 +397,15 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
   ];
 
   const getNumberColor = (number) => {
-    if (number === 5) return 'Violet';
+    if (number === 0 || number === 5) return 'Violet';
     return number % 2 === 0 ? 'Green' : 'Red';
+  };
+
+  const getPayoutMultiplier = () => {
+    if (selection.type === 'color') {
+      return COLOR_MULTIPLIERS[selection.value] || 1;
+    }
+    return NUMBER_MULTIPLIER;
   };
 
   const handleColorSelect = (color) => {
@@ -423,6 +473,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
       setClientSeed(newClientSeed);
     } catch (err) {
       onSubmit({ error: `Failed to place bet: ${err.message}` });
+      setIsSubmitting(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -546,22 +597,6 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
             ))}
           </div>
         </div>
-{/*         <div className="payout-info">
-          <p>
-            Payout Multiplier:{' '}
-            {selection.type === 'color'
-              ? `${COLOR_MULTIPLIER}x`
-              : selection.type === 'number'
-              ? `${NUMBER_MULTIPLIER}x`
-              : 'N/A'}
-          </p>
-          <p>
-            Potential Win: $
-            {(amount && selection.type
-              ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
-              : 0).toFixed(2)}
-          </p>
-        </div> */}
       </form>
       <OnlineUsers />
       {isModalOpen && (
@@ -612,13 +647,12 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
               </div>
               <div className="modal-payout-info">
                 <p>
-                  Payout Multiplier:{' '}
-                  {selection.type === 'color' ? `${COLOR_MULTIPLIER}x` : `${NUMBER_MULTIPLIER}x`}
+                  Payout Multiplier: {getPayoutMultiplier().toFixed(2)}x
                 </p>
                 <p>
                   Potential Win: $
                   {(amount && selection.type
-                    ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
+                    ? parseFloat(amount) * getPayoutMultiplier()
                     : 0).toFixed(2)}
                 </p>
               </div>
