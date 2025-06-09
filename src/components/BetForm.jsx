@@ -546,7 +546,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
             ))}
           </div>
         </div>
-        <div className="payout-info">
+{/*         <div className="payout-info">
           <p>
             Payout Multiplier:{' '}
             {selection.type === 'color'
@@ -561,7 +561,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
               ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
               : 0).toFixed(2)}
           </p>
-        </div>
+        </div> */}
       </form>
       <OnlineUsers />
       {isModalOpen && (
@@ -610,7 +610,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   </button>
                 ))}
               </div>
-{/*               <div className="modal-payout-info">
+              <div className="modal-payout-info">
                 <p>
                   Payout Multiplier:{' '}
                   {selection.type === 'color' ? `${COLOR_MULTIPLIER}x` : `${NUMBER_MULTIPLIER}x`}
@@ -621,7 +621,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                     ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
                     : 0).toFixed(2)}
                 </p>
-              </div> */}
+              </div>
               <button
                 type="submit"
                 disabled={isLoading || isBettingDisabled || isSubmitting}
