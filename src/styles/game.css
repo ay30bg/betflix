@@ -173,6 +173,12 @@ body {
   width: 140px;
 }
 
+.color-button.violet {
+  background: #8F00FF;
+  color: #fff;
+  width: 140px;
+}
+
 .color-button.selected,
 .color-button:hover:not(:disabled),
 .color-button:focus-visible {
@@ -428,7 +434,7 @@ body {
 }
 
 .color-green {
-  color: #10b981;
+  color: #8F00FF;
   font-weight: 600;
 }
 
@@ -1065,7 +1071,7 @@ body {
   }
 
   .color-button {
-    width: 120px;
+    width: 100px;
     font-size: 1rem;
   }
 
