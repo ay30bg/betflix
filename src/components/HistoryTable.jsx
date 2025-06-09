@@ -4,7 +4,7 @@
 // function HistoryTable({ bets }) {
 //   const getNumberColor = (value) => {
 //     if (value === undefined || value === null) return '';
-//     return value % 2 === 0 ? 'Green' : 'Red';
+//     return parseInt(value) % 2 === 0 ? 'Green' : 'Red';
 //   };
 
 //   const getBetDisplay = (bet) => {
@@ -15,10 +15,13 @@
 //   };
 
 //   const getResultDisplay = (bet) => {
-//     if (bet.type === 'color') {
-//       return { text: bet.result || 'Pending', color: bet.result || '' };
+//     if (bet.status === 'pending') {
+//       return { text: 'Pending', color: '' };
 //     }
-//     return { text: `Number ${bet.result ?? 'Pending'}`, color: getNumberColor(bet.result) };
+//     if (bet.type === 'color') {
+//       return { text: bet.result || 'Unknown', color: bet.result || '' };
+//     }
+//     return { text: `Number ${bet.result ?? 'Unknown'}`, color: getNumberColor(bet.result) };
 //   };
 
 //   return (
@@ -38,11 +41,14 @@
 //           </thead>
 //           <tbody>
 //             {bets.map((bet, index) => {
-//               if (!bet || !bet.type || bet.value === undefined || bet.result === undefined) {
+//               // Handle invalid bets
+//               if (bet.status === 'invalid') {
 //                 return (
-//                   <tr key={index}>
-//                     <td data-label="Period">{bet?.period || 'Unknown'}</td>
-//                     <td data-label="Error" colSpan="4">Invalid bet data</td>
+//                   <tr key={`${bet.period || index}-${index}`}>
+//                     <td data-label="Period">{bet.period || 'Unknown'}</td>
+//                     <td data-label="Error" colSpan="4">
+//                       Invalid bet data
+//                     </td>
 //                   </tr>
 //                 );
 //               }
@@ -53,15 +59,44 @@
 //               return (
 //                 <tr key={`${bet.period}-${index}`}>
 //                   <td data-label="Period">{bet.period}</td>
-//                   <td data-label="Bet" className={betDisplay.color ? `color-${betDisplay.color.toLowerCase()}` : ''}>
+//                   <td
+//                     data-label="Bet"
+//                     className={
+//                       betDisplay.color ? `color-${betDisplay.color.toLowerCase()}` : ''
+//                     }
+//                   >
 //                     {betDisplay.text}
 //                   </td>
 //                   <td data-label="Amount">${bet.amount.toFixed(2)}</td>
-//                   <td data-label="Result" className={resultDisplay.color ? `color-${resultDisplay.color.toLowerCase()}` : ''}>
+//                   <td
+//                     data-label="Result"
+//                     className={
+//                       resultDisplay.color
+//                         ? `color-${resultDisplay.color.toLowerCase()}`
+//                         : bet.status === 'pending'
+//                         ? 'pending'
+//                         : ''
+//                     }
+//                   >
 //                     {resultDisplay.text}
+//                     {bet.status === 'pending' && bet.roundExpiresAt && (
+//                       <span>
+//                         {' '}
+//                         (Ends at {new Date(bet.roundExpiresAt).toLocaleTimeString()})
+//                       </span>
+//                     )}
 //                   </td>
-//                   <td data-label="Win/Loss" className={bet.won ? 'won' : 'lost'}>
-//                     {bet.won ? 'Won' : 'Lost'}
+//                   <td
+//                     data-label="Win/Loss"
+//                     className={
+//                       bet.status === 'pending'
+//                         ? 'pending'
+//                         : bet.won
+//                         ? 'won'
+//                         : 'lost'
+//                     }
+//                   >
+//                     {bet.status === 'pending' ? 'Pending' : bet.won ? 'Won' : 'Lost'}
 //                   </td>
 //                 </tr>
 //               );
@@ -77,16 +112,20 @@
 //   bets: PropTypes.arrayOf(
 //     PropTypes.shape({
 //       period: PropTypes.string.isRequired,
-//       type: PropTypes.oneOf(['color', 'number']).isRequired,
-//       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+//       type: PropTypes.oneOf(['color', 'number']),
+//       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 //       amount: PropTypes.number.isRequired,
 //       result: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 //       won: PropTypes.bool,
+//       status: PropTypes.oneOf(['pending', 'finalized', 'invalid']).isRequired,
+//       roundStatus: PropTypes.string,
+//       roundExpiresAt: PropTypes.string,
 //     })
 //   ).isRequired,
 // };
 
 // export default HistoryTable;
+
 
 import PropTypes from 'prop-types';
 import '../styles/game.css';
@@ -94,7 +133,9 @@ import '../styles/game.css';
 function HistoryTable({ bets }) {
   const getNumberColor = (value) => {
     if (value === undefined || value === null) return '';
-    return parseInt(value) % 2 === 0 ? 'Green' : 'Red';
+    const num = parseInt(value);
+    if (num === 0 || num === 5) return 'Violet';
+    return num % 2 === 0 ? 'Green' : 'Red';
   };
 
   const getBetDisplay = (bet) => {
