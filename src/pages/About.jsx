@@ -327,7 +327,6 @@ function About() {
                   <li>Players should review these details carefully to understand how to unlock the bonus for withdrawal.</li>
                   <li>Users can contact the BetFlix support team via live chat, email, or Telegram for questions.</li>
                   <li>Referral bonuses are promotional and subject to the general Terms and Conditions.</li>
-                  <li>BetF......
                   <li>BetFlix reserves the right to modify or cancel the referral program at any time.</li>
                   <li>All bonuses must comply with applicable local laws and regulations.</li>
                 </ul>
