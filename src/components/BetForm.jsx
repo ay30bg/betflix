@@ -83,8 +83,8 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     }
 
     const betAmount = parseFloat(amount);
-    if (!betAmount || betAmount < 0.01 || Number.isNaN(betAmount)) {
-      onSubmit({ error: 'Please enter a valid bet amount (minimum $0.01)' });
+    if (!betAmount || betAmount < 0.50 || Number.isNaN(betAmount)) {
+      onSubmit({ error: 'Please enter a valid bet amount (minimum $0.50)' });
       setIsSubmitting(false);
       return;
     }
