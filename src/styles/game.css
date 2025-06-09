@@ -434,6 +434,11 @@ body {
 }
 
 .color-green {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.color-violet {
   color: #8F00FF;
   font-weight: 600;
 }
