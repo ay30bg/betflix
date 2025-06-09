@@ -298,7 +298,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   </button>
                 ))}
               </div>
-              <div className="modal-payout-info">
+{/*               <div className="modal-payout-info">
                 <p>
                   Payout Multiplier: {getPayoutMultiplier().toFixed(2)}x
                 </p>
@@ -308,7 +308,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                     ? parseFloat(amount) * getPayoutMultiplier()
                     : 0).toFixed(2)}
                 </p>
-              </div>
+              </div> */}
               <button
                 type="submit"
                 disabled={isLoading || isBettingDisabled || isSubmitting}
