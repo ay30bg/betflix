@@ -111,10 +111,19 @@
 //               <li>Players are expected to engage in responsible gaming and understand the inherent risks of gambling.</li>
 //             </ul>
 //           </li>
+//           <li><strong>Responsible Gambling</strong>
+//             <ul>
+//               <li>BetFlix encourages responsible gambling and provides resources for players to manage their gaming habits.</li>
+//               <li>Users may request self-exclusion or set betting limits through their account settings.</li>
+//               <li>For support with gambling-related issues, users can contact the National Problem Gambling Helpline at 1-800-522-4700 or visit [Insert Responsible Gambling Resource URL].</li>
+//             </ul>
+//           </li>
 //           <li><strong>Fair Play and Account Integrity</strong>
 //             <ul>
 //               <li>A maximum of two bets per round per user is strictly enforced.</li>
 //               <li>Any attempt to manipulate game outcomes or exploit the platform will result in immediate account suspension and forfeiture of all funds.</li>
+//               <li>Engaging in malicious activities, such as hacking, fraud, or any attempt to disrupt platform operations, will result in immediate account banning and forfeiture of all funds.</li>
+//               <li>Prohibited activities include, but are not limited to, creating multiple accounts, using automated systems or bots, colluding with other players, or engaging in any form of cheating.</li>
 //             </ul>
 //           </li>
 //           <li><strong>Support and Inquiries</strong>
@@ -217,6 +226,17 @@ function About() {
               <li>All deposits and withdrawals are final and non-refundable.</li>
             </ul>
           </li>
+          <li><strong>Withdrawal Policy – Turnover Requirement</strong>
+            <ul>
+              <li>To make a withdrawal, players must place bets equal to the amount of their most recent deposit.</li>
+              <li><strong>Example:</strong> If you deposit $10, you must play $10 worth of games (on settled results) before you can withdraw.</li>
+              <li>Only games with a final result (win or lose) count toward the playthrough requirement.</li>
+              <li>This requirement helps maintain a fair, safe, and enjoyable platform for all users.</li>
+              <li>Players can track their progress toward meeting the turnover requirement in their bet history.</li>
+              <li>Once the turnover requirement is met, withdrawals will be available automatically.</li>
+              <li>For assistance, contact the BetFlix support team via the profile dashboard or the official BetFlix helpdesk.</li>
+            </ul>
+          </li>
           <li><strong>Referral Program</strong>
             <ul>
               <li>Referrers earn a <strong>30% bonus</strong> on the first deposit made by each referred user.</li>
@@ -225,6 +245,19 @@ function About() {
                 <ul>
                   <li>Referred user deposits $10: Referrer earns $3 (first deposit).</li>
                   <li>Referred user deposits another $10: Referrer earns $1.</li>
+                </ul>
+              </li>
+              <li><strong>Referral Bonus Terms</strong>
+                <ul>
+                  <li>Referral bonuses must be wagered before they can be withdrawn.</li>
+                  <li>Players must place bets totaling at least 2x the bonus amount to unlock it for withdrawal.</li>
+                  <li>This requirement ensures bonuses are used for betting on the platform, preventing misuse and supporting ongoing rewards.</li>
+                  <li>Specific details, such as eligible bet types and wagering requirements, will be provided when claiming the bonus.</li>
+                  <li>Players should review these details carefully to understand how to unlock the bonus for withdrawal.</li>
+                  <li>For questions, contact the BetFlix support team via live chat, email, or Telegram.</li>
+                  <li>Referral bonuses are promotional and subject to the general Terms and Conditions.</li>
+                  <li>BetFlix reserves the right to modify or cancel the referral program at any time.</li>
+                  <li>All bonuses must comply with applicable local laws and regulations.</li>
                 </ul>
               </li>
             </ul>
@@ -276,6 +309,48 @@ function About() {
             <ul>
               <li>By participating in BetFlix, users acknowledge and agree to comply with these Terms and Conditions.</li>
               <li>BetFlix reserves the right to modify these terms at any time, with changes effective upon posting.</li>
+            </ul>
+          </li>
+          <li><strong>Multiple Account Policy</strong>
+            <ul>
+              <li><strong>Single Account Requirement</strong>
+                <ul>
+                  <li>Each user is permitted to operate only one (1) active account on the BetFlix VIP platform. Creating or operating multiple accounts, whether directly or indirectly, is strictly prohibited and constitutes a breach of these Terms and Conditions.</li>
+                </ul>
+              </li>
+              <li><strong>Definition of Multiple Accounts</strong>
+                <ul>
+                  <li>Multiple accounts refer to any secondary, duplicate, or otherwise related accounts created by the same individual or group, including but not limited to:</li>
+                  <li>Use of different email addresses or identities;</li>
+                  <li>Accounts operated from the same IP address or device;</li>
+                  <li>Accounts linked via payment methods or personal data;</li>
+                  <li>Any circumvention of account creation limits intended to exploit promotions, bonuses, or platform functionality.</li>
+                </ul>
+              </li>
+              <li><strong>Consequences of Breach</strong>
+                <ul>
+                  <li>If BetFlix VIP determines, in its sole discretion, that a user has created or is operating multiple accounts, the following actions may be taken without prior notice:</li>
+                  <li>Immediate suspension and/or permanent termination of all related accounts;</li>
+                  <li>Forfeiture of winnings, promotional credits, or bonuses obtained through such accounts;</li>
+                  <li>Restriction from accessing future promotions or offers;</li>
+                  <li>Permanent ban from the BetFlix VIP platform.</li>
+                </ul>
+              </li>
+              <li><strong>Account Linking and Detection</strong>
+                <ul>
+                  <li>BetFlix VIP uses advanced detection tools, including IP tracking and other data-matching techniques to identify and prevent multiple account activity. By using the platform, users expressly consent to the use of such monitoring tools.</li>
+                </ul>
+              </li>
+              <li><strong>No Right to Appeal</strong>
+                <ul>
+                  <li>Due to the deliberate nature of this breach, users found in violation of this policy shall not be entitled to an appeal or review process. All decisions made by BetFlix VIP regarding multiple accounts are final.</li>
+                </ul>
+              </li>
+              <li><strong>User Responsibility</strong>
+                <ul>
+                  <li>Users are solely responsible for maintaining the integrity of their account. Allowing others to access your account or attempting to create multiple identities on the platform will be treated as a violation of these Terms.</li>
+                </ul>
+              </li>
             </ul>
           </li>
         </ol>
