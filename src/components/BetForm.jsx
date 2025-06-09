@@ -311,7 +311,7 @@ import PropTypes from 'prop-types';
 import crypto from 'crypto-js';
 import RecentResults from './recentResult';
 import OnlineUsers from './OnlineUsers';
-import '../styles/game.css';
+import '../styles/bet-form.css';
 import ball0 from '../assets/ball-0.svg';
 import ball1 from '../assets/ball1.svg';
 import ball2 from '../assets/ball2.svg';
@@ -325,7 +325,7 @@ import ball9 from '../assets/ball9.svg';
 
 function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft }) {
   const [selection, setSelection] = useState({ type: null, value: null });
-  const [amount, setAmount] = useState(''); // Keep as string to handle decimal input
+  const [amount, setAmount] = useState(''); // String to handle decimal input
   const [clientSeed, setClientSeed] = useState(
     `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`
   );
@@ -335,10 +335,10 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
   const firstFocusableElementRef = useRef(null);
   const lastFocusableElementRef = useRef(null);
 
-  // Updated suggested amounts to include decimals
-  const suggestedAmounts = [0.5, 1, 5, 10]; // Adjusted for decimal support
-  const COLOR_MULTIPLIER = 2.7; // Updated to match backend
-  const NUMBER_MULTIPLIER = 6.8; // Updated to match backend
+  // Payout multipliers from backend
+  const COLOR_MULTIPLIER = 2.7;
+  const NUMBER_MULTIPLIER = 6.8;
+  const suggestedAmounts = [0.5, 1, 5, 10]; // Decimal-friendly suggested amounts
 
   const balls = [
     { number: 0, src: ball0, color: 'Green' },
@@ -346,7 +346,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     { number: 2, src: ball2, color: 'Green' },
     { number: 3, src: ball3, color: 'Red' },
     { number: 4, src: ball4, color: 'Green' },
-    { number: 5, src: ball5, color: 'Violet' }, // Updated to Violet
+    { number: 5, src: ball5, color: 'Violet' }, // Violet for number 5
     { number: 6, src: ball6, color: 'Green' },
     { number: 7, src: ball7, color: 'Red' },
     { number: 8, src: ball8, color: 'Green' },
@@ -380,8 +380,8 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     }
 
     const betAmount = parseFloat(amount);
-    if (!betAmount || betAmount <= 0 || Number.isNaN(betAmount)) {
-      onSubmit({ error: 'Please enter a valid bet amount' });
+    if (!betAmount || betAmount < 0.01 || Number.isNaN(betAmount)) {
+      onSubmit({ error: 'Please enter a valid bet amount (minimum $0.01)' });
       setIsSubmitting(false);
       return;
     }
@@ -392,7 +392,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
       return;
     }
 
-    if (selection.type === 'color' && !['Green', 'Red', 'Violet'].includes(selection.value)) {
+    if (selection.type === 'color' && !['Red', 'Green', 'Violet'].includes(selection.value)) {
       onSubmit({ error: 'Invalid color selected' });
       setIsSubmitting(false);
       return;
@@ -407,13 +407,12 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     const newClientSeed = `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`;
     const bet = {
       type: selection.type,
-      value: selection.value.toString(),
+      value: selection.value,
       amount: betAmount,
       clientSeed: newClientSeed,
     };
     if (selection.type === 'number') {
       bet.color = getNumberColor(parseInt(selection.value));
-      bet.exactMultiplier = NUMBER_MULTIPLIER;
     }
     console.log('Submitting bet:', bet);
     try {
@@ -443,13 +442,13 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
   useEffect(() => {
     if (isModalOpen && modalRef.current) {
       const focusableElements = modalRef.current.querySelectorAll(
-        'button, [href], input, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
       firstFocusableElementRef.current = focusableElements[0];
       lastFocusableElementRef.current = focusableElements[focusableElements.length - 1];
       firstFocusableElementRef.current?.focus();
 
-      const/YOUR_URL/ handleKeyDown = (e) => {
+      const handleKeyDown = (e) => {
         if (e.key === 'Escape') {
           closeModal();
         } else if (e.key === 'Tab') {
@@ -462,12 +461,12 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
           }
         }
       };
-      document.addEventListener('keypress', handleKeyDown);
-      return () => document.removeEventListener('keypress', handleKeyDown);
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
     }
   }, [isModalOpen]);
 
-  const isBettingDisabled = isDisabled || timeLeft < 15; // Aligned with backend (15s cutoff)
+  const isBettingDisabled = isDisabled || timeLeft < 15;
 
   return (
     <div className="bet-form-container">
@@ -560,8 +559,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
             Potential Win: $
             {(amount && selection.type
               ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
-              : 0
-            ).toFixed(2)}
+              : 0).toFixed(2)}
           </p>
         </div>
       </form>
@@ -621,8 +619,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   Potential Win: $
                   {(amount && selection.type
                     ? parseFloat(amount) * (selection.type === 'color' ? COLOR_MULTIPLIER : NUMBER_MULTIPLIER)
-                    : 0
-                  ).toFixed(2)}
+                    : 0).toFixed(2)}
                 </p>
               </div>
               <button
@@ -644,7 +641,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
 BetForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  balance: Juno: PropTypes.number.isRequired,
+  balance: PropTypes.number.isRequired,
   isDisabled: PropTypes.bool.isRequired,
   roundData: PropTypes.shape({
     period: PropTypes.string,
