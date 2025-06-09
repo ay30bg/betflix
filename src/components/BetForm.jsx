@@ -311,7 +311,7 @@ import PropTypes from 'prop-types';
 import crypto from 'crypto-js';
 import RecentResults from './recentResult';
 import OnlineUsers from './OnlineUsers';
-import '../styles/bet-form.css'; // Updated CSS file
+import '../styles/game.css';
 import ball0 from '../assets/ball-0.svg';
 import ball1 from '../assets/ball1.svg';
 import ball2 from '../assets/ball2.svg';
