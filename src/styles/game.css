@@ -1075,10 +1075,21 @@ body {
     gap: 0.75rem;
   }
 
-  .color-button {
-    width: 10px;
-    font-size: 1rem;
-  }
+ .color-button.red {
+  background: #ef4444;
+  color: #fff;
+  width: 100px;
+}
+
+.color-button.green {
+  background: #10b981;
+  color: #fff;
+  width: 100px;
+}
+
+.color-button.violet {
+  width: 100px;
+}
 
   .ball-button {
     width: 50px;
