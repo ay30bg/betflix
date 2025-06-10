@@ -165,18 +165,21 @@ body {
   background: #ef4444;
   color: #fff;
   width: 140px;
+  text-align: center;
 }
 
 .color-button.green {
   background: #10b981;
   color: #fff;
   width: 140px;
+  text-align: center;
 }
 
 .color-button.violet {
   background: #8F00FF;
   color: #fff;
   width: 140px;
+  text-align: center;
 }
 
 .color-button.selected,
@@ -1076,19 +1079,16 @@ body {
   }
 
  .color-button.red {
-  background: #ef4444;
-  color: #fff;
   width: 100px;
 }
 
 .color-button.green {
-  background: #10b981;
-  color: #fff;
   width: 100px;
 }
 
 .color-button.violet {
   width: 100px;
+  
 }
 
   .ball-button {
