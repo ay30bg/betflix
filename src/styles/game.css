@@ -1078,6 +1078,11 @@ body {
     gap: 0.75rem;
   }
 
+
+  .color-button {
+  padding: 0.6rem 1rem;
+  }
+  
  .color-button.red {
     width: 70px; /* Maintain consistent width as per your existing rule */
     padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
