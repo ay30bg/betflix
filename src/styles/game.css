@@ -1079,16 +1079,39 @@ body {
   }
 
  .color-button.red {
-  width: 100px;
+    width: 100px; /* Maintain consistent width as per your existing rule */
+    padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
+    font-size: 1rem; /* Slightly smaller font for mobile readability */
+    font-weight: 600; /* Maintain bold text for clarity */
+    border-radius: 6px; /* Slightly smaller radius for a tighter look */
+    text-align: center; /* Ensure text is centered */
+    transition: all 0.2s ease; /* Smooth transitions for hover/focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
 }
 
 .color-button.green {
-  width: 100px;
+    width: 100px; /* Maintain consistent width as per your existing rule */
+    padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
+    font-size: 1rem; /* Slightly smaller font for mobile readability */
+    font-weight: 600; /* Maintain bold text for clarity */
+    border-radius: 6px; /* Slightly smaller radius for a tighter look */
+    text-align: center; /* Ensure text is centered */
+    transition: all 0.2s ease; /* Smooth transitions for hover/focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
 }
 
 .color-button.violet {
-  width: 100px;
-  
+    width: 100px; /* Maintain consistent width as per your existing rule */
+    padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
+    font-size: 1rem; /* Slightly smaller font for mobile readability */
+    font-weight: 600; /* Maintain bold text for clarity */
+    border-radius: 6px; /* Slightly smaller radius for a tighter look */
+    text-align: center; /* Ensure text is centered */
+    transition: all 0.2s ease; /* Smooth transitions for hover/focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
 }
 
   .ball-button {
