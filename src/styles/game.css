@@ -1079,7 +1079,7 @@ body {
   }
 
  .color-button.red {
-    width: 70px; /* Maintain consistent width as per your existing rule */
+    width: 100px; /* Maintain consistent width as per your existing rule */
     padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
     font-size: 1rem; /* Slightly smaller font for mobile readability */
     font-weight: 600; /* Maintain bold text for clarity */
@@ -1091,7 +1091,7 @@ body {
 
 
 .color-button.green {
-    width: 70px; /* Maintain consistent width as per your existing rule */
+    width: 100px; /* Maintain consistent width as per your existing rule */
     padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
     font-size: 1rem; /* Slightly smaller font for mobile readability */
     font-weight: 600; /* Maintain bold text for clarity */
@@ -1103,7 +1103,7 @@ body {
 
 
 .color-button.violet {
-    width: 70px; /* Maintain consistent width as per your existing rule */
+    width: 100px; /* Maintain consistent width as per your existing rule */
     padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
     font-size: 1rem; /* Slightly smaller font for mobile readability */
     font-weight: 600; /* Maintain bold text for clarity */
