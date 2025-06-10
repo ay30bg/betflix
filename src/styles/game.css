@@ -927,6 +927,41 @@ body {
   }
 }
 
+.modal-payout-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between payout multiplier and potential win */
+  margin: 15px 0; /* Vertical spacing around the payout info */
+  padding: 10px; /* Inner padding for content */
+  background-color: #f8f9fa; /* Light background for contrast */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  border: 1px solid #e0e0e0; /* Subtle border for definition */
+  font-size: 1rem; /* Readable font size */
+  color: #333; /* Dark text for readability */
+  text-align: center; /* Center-align text for balance */
+}
+
+/* Style for individual <p> elements inside .modal-payout-info */
+.modal-payout-info p {
+  margin: 0; /* Remove default margins */
+  padding: 5px 0; /* Light vertical padding */
+  font-weight: 500; /* Medium weight for emphasis */
+}
+
+/* Highlight the multiplier and potential win values for emphasis */
+.modal-payout-info p::before {
+  content: "• "; /* Add a bullet for visual separation */
+  color: #007bff; /* Blue color for the bullet */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .modal-payout-info {
+    font-size: 0.9rem; /* Slightly smaller font for mobile */
+    padding: 8px; /* Reduced padding for smaller screens */
+  }
+}
+
 @media (max-width: 600px) {
   .online-users {
     padding: 0.5rem 1rem;
