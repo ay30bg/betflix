@@ -9,28 +9,32 @@
 //       <section className="about-section">
 //         <h2 className="section-title">Provably Fair</h2>
 //         <p>
-//           BetFlix is a color prediction platform where users place bets on Red or Green colors, or directly on numbers (0-9), each round. Each number is either Green (even numbers) or Red (odd numbers).
+//           BetFlix is a color prediction platform where users place bets on Red, Green, or Violet colors, or directly on numbers (0-9), each round. Each number is associated with a color as follows:
 //           <br />
 //           <strong>Color-Numbers Breakdown:</strong>
 //           <br />
-//           Green (Even): 0, 2, 4, 6, 8
+//           Green (Even): 2, 4, 6, 8
 //           <br />
-//           Red (Odd): 1, 3, 5, 7, 9
+//           Red (Odd): 1, 3, 7, 9
+//           <br />
+//           Violet: 0, 5
 //         </p>
 //       </section>
 //       <section className="about-section">
 //         <h2 className="section-title">How To Play</h2>
 //         <p>
-//           Users may choose to bet on either a Color (Red/Green) or a specific Number.
+//           Users may choose to bet on either a Color (Red, Green, or Violet) or a specific Number (0-9).
 //           <br />
-//           Only one color or number can be selected per round.
+//           Only one color or number can be selected per bet.
 //           <br />
 //           Maximum of 2 bets per round is allowed.
 //           <br />
 //           <br />
 //           <strong>Winning Rules</strong>
 //           <br />
-//           Color Bet Win: Returns x1.9 of staked amount
+//           Red or Green Color Bet Win: Returns x1.85 of staked amount
+//           <br />
+//           Violet Color Bet Win: Returns x2.5 of staked amount
 //           <br />
 //           Number Bet Win: Returns x6.8 of staked amount
 //           <br />
@@ -45,11 +49,12 @@
 //         <ol>
 //           <li><strong>General Overview</strong>
 //             <ul>
-//               <li>BetFlix is a color prediction game where players bet on either Red or Green colors, or specific numbers (0-9) each round.</li>
+//               <li>BetFlix is a color prediction game where players bet on either Red, Green, or Violet colors, or specific numbers (0-9) each round.</li>
 //               <li>Numbers are categorized as follows:
 //                 <ul>
-//                   <li><strong>Green (Even Numbers):</strong> 0, 2, 4, 6, 8</li>
-//                   <li><strong>Red (Odd Numbers):</strong> 1, 3, 5, 7, 9</li>
+//                   <li><strong>Green (Even Numbers):</strong> 2, 4, 6, 8</li>
+//                   <li><strong>Red (Odd Numbers):</strong> 1, 3, 7, 9</li>
+//                   <li><strong>Violet:</strong> 0, 5</li>
 //                 </ul>
 //               </li>
 //               <li>By participating, users agree to abide by these Terms and Conditions.</li>
@@ -57,15 +62,16 @@
 //           </li>
 //           <li><strong>Gameplay Rules</strong>
 //             <ul>
-//               <li>Players may bet on either a color (Red or Green) or a specific number (0-9) per round.</li>
-//               <li>Only one selection (color or number) is permitted per round.</li>
+//               <li>Players may bet on either a color (Red, Green, or Violet) or a specific number (0-9) per bet.</li>
+//               <li>Only one selection (color or number) is permitted per bet.</li>
 //               <li>A maximum of two bets per round is allowed per user.</li>
 //               <li><strong>Minimum Bet:</strong> $0.50.</li>
 //             </ul>
 //           </li>
 //           <li><strong>Payout Structure</strong>
 //             <ul>
-//               <li><strong>Color Bet Win:</strong> Pays 1.9x the wagered amount.</li>
+//               <li><strong>Red or Green Color Bet Win:</strong> Pays 1.85x the wagered amount.</li>
+//               <li><strong>Violet Color Bet Win:</strong> Pays 2.5x the wagered amount.</li>
 //               <li><strong>Number Bet Win:</strong> Pays 6.8x the wagered amount.</li>
 //             </ul>
 //           </li>
@@ -104,7 +110,7 @@
 //                   <li>This requirement ensures bonuses are used for betting on the platform, preventing misuse and supporting ongoing rewards.</li>
 //                   <li>Specific details, such as eligible bet types and wagering requirements, will be provided when claiming the bonus.</li>
 //                   <li>Players should review these details carefully to understand how to unlock the bonus for withdrawal.</li>
-//                   <li>For questions, contact the BetFlix support team via live chat, email, or Telegram.</li>
+//                   <li>Users can contact the BetFlix support team via live chat, email, or Telegram for questions.</li>
 //                   <li>Referral bonuses are promotional and subject to the general Terms and Conditions.</li>
 //                   <li>BetFlix reserves the right to modify or cancel the referral program at any time.</li>
 //                   <li>All bonuses must comply with applicable local laws and regulations.</li>
@@ -198,13 +204,13 @@
 //               </li>
 //               <li><strong>User Responsibility</strong>
 //                 <ul>
-//                   <li>Users are solely responsible for maintaining the integrity of their account. Allowing others to access your account or attempting to create multiple identities on the platform will be treated as a violation of these Terms.</li>
+//                   <li>Users are solely responsible for maintaining the integrity of their account. Allowing others to access your account or entering multiple identities on the platform will be treated as a violation of these Terms.</li>
 //                 </ul>
 //               </li>
 //             </ul>
 //           </li>
 //         </ol>
-//         <p><em>Last Updated: May 21, 2025</em></p>
+//         <p><em>Last Updated: June 9, 2025</em></p>
 //       </section>
 //       <a href="/game" className="about-button">Start Game</a>
 //     </div>
@@ -253,6 +259,12 @@ function About() {
           <br />
           Number Bet Win: Returns x6.8 of staked amount
           <br />
+          <strong>Special Payouts:</strong>
+          <br />
+            - Red Bet with Violet Result (Number 5): Returns x0.925 (half of x1.85)
+          <br />
+            - Green Bet with Violet Result (Number 0): Returns x0.925 (half of x1.85)
+          <br />
           <br />
           <strong>Minimum Bet per Round:</strong>
           <br />
@@ -288,6 +300,12 @@ function About() {
               <li><strong>Red or Green Color Bet Win:</strong> Pays 1.85x the wagered amount.</li>
               <li><strong>Violet Color Bet Win:</strong> Pays 2.5x the wagered amount.</li>
               <li><strong>Number Bet Win:</strong> Pays 6.8x the wagered amount.</li>
+              <li><strong>Special Payouts:</strong>
+                <ul>
+                  <li>Red bet with Violet result and number 5: Pays 0.925x (half of 1.85x).</li>
+                  <li>Green bet with Violet result and number 0: Pays 0.925x (half of 1.85x).</li>
+                </ul>
+              </li>
             </ul>
           </li>
           <li><strong>Deposits and Withdrawals</strong>
@@ -425,7 +443,7 @@ function About() {
             </ul>
           </li>
         </ol>
-        <p><em>Last Updated: June 9, 2025</em></p>
+        <p><em>Last Updated: June 12, 2025</em></p>
       </section>
       <a href="/game" className="about-button">Start Game</a>
     </div>
