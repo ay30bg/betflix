@@ -1,14 +1,14 @@
-// // src/components/Header.jsx
 // import { Link } from 'react-router-dom';
 // import { useBalance } from '../context/BalanceContext';
-// import { FaWallet } from 'react-icons/fa';
+// import { FaWallet, FaSpinner } from 'react-icons/fa';
 // import '../styles/header.css';
+// import { memo } from 'react';
 
 // function Header() {
-//   const { balance } = useBalance();
+//   const { balance, isLoading, error } = useBalance();
 
 //   return (
-//     <header className="header">
+//     <header className="header" role="navigation">
 //       <div className="header-container">
 //         <Link to="/" className="header-logo" aria-label="BetFlix Home">
 //           BetFlix
@@ -19,7 +19,13 @@
 //               <FaWallet />
 //             </span>
 //             <strong className="balance-amount">
-//               {balance !== null ? `$${balance.toFixed(2)}` : 'Loading...'}
+//               {error ? (
+//                 '$0.00'
+//               ) : isLoading ? (
+//                 <FaSpinner className="spinner" aria-label="Loading balance" />
+//               ) : (
+//                 `$${(balance ?? 0).toFixed(2)}`
+//               )}
 //             </strong>
 //           </div>
 //         </div>
@@ -28,8 +34,7 @@
 //   );
 // }
 
-// export default Header;
-
+// export default memo(Header);
 
 import { Link } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
@@ -53,11 +58,11 @@ function Header() {
             </span>
             <strong className="balance-amount">
               {error ? (
-                '$0.00'
+                '₦0.00'
               ) : isLoading ? (
                 <FaSpinner className="spinner" aria-label="Loading balance" />
               ) : (
-                `$${(balance ?? 0).toFixed(2)}`
+                `₦${(balance ?? 0).toFixed(2)}`
               )}
             </strong>
           </div>
