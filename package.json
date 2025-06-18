@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
+    "@paystack/inline-js": "^2.22.6",
     "@tanstack/react-query": "^5.75.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
