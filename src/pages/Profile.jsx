@@ -1572,14 +1572,13 @@ const fetchTransactionHistory = async () => {
 };
 
 const fetchBanks = async () => {
-  // Static list for simplicity; in production, fetch from Paystack's /bank endpoint
+  // Static list for simplicity; replace with Paystack /bank API in production
   return [
     { code: '044', name: 'Access Bank' },
     { code: '050', name: 'Ecobank Nigeria' },
     { code: '070', name: 'Fidelity Bank' },
     { code: '011', name: 'First Bank of Nigeria' },
     { code: '057', name: 'Zenith Bank' },
-    // Add more banks as needed
   ];
 };
 
@@ -1735,8 +1734,8 @@ function Profile() {
   const [isWithdrawalPasswordModalOpen, setIsWithdrawalPasswordModalOpen] = useState(false);
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
   const [depositResult, setDepositResult] = useState(null);
-  const [depositMethod, setDepositMethod] = useState('crypto'); // New: Crypto or Paystack
-  const [withdrawalMethod, setWithdrawalMethod] = useState('crypto'); // New: Crypto or Paystack
+  const [depositMethod, setDepositMethod] = useState('crypto');
+  const [withdrawalMethod, setWithdrawalMethod] = useState('crypto');
   const [formData, setFormData] = useState({ username: '' });
   const [depositData, setDepositData] = useState({ amount: '', cryptoCurrency: 'BTC', network: 'BEP20' });
   const [withdrawData, setWithdrawData] = useState({
@@ -1770,7 +1769,7 @@ function Profile() {
   const { data: banks, isLoading: banksLoading } = useQuery({
     queryKey: ['banks'],
     queryFn: fetchBanks,
-    staleTime: Infinity, // Banks list doesn't change often
+    staleTime: Infinity,
   });
 
   // Handle authentication errors
@@ -1795,10 +1794,10 @@ function Profile() {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [navigate, queryClient, setBalance]);
 
   // Fetch user profile
-  const { data: user, isLoading: userLoading } = useQuery({
+  const { data: user, isLoading: userLoading, error: userError } = useQuery({
     queryKey: ['userProfile'],
     queryFn: fetchUserProfile,
     onSuccess: (data) => setFormData({ username: data.username || '' }),
@@ -1813,7 +1812,7 @@ function Profile() {
   });
 
   // Fetch stats
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
     queryKey: ['stats'],
     queryFn: fetchStats,
     onError: (err) => {
@@ -1827,7 +1826,7 @@ function Profile() {
   });
 
   // Fetch referral link
-  const { data: referralData, isLoading: referralLoading } = useQuery({
+  const { data: referralData, isLoading: referralLoading, error: referralError } = useQuery({
     queryKey: ['referralLink'],
     queryFn: fetchReferralLink,
     onSuccess: (data) => setReferralLink(data.referralLink || ''),
@@ -1842,7 +1841,7 @@ function Profile() {
   });
 
   // Fetch referral stats
-  const { data: referralStats, isLoading: referralStatsLoading } = useQuery({
+  const { data: referralStats, isLoading: referralStatsLoading, error: referralStatsError } = useQuery({
     queryKey: ['referralStats'],
     queryFn: fetchReferralStats,
     onError: (err) => {
@@ -2078,7 +2077,7 @@ function Profile() {
   const paystackDepositMutation = useMutation({
     mutationFn: initiatePaystackDeposit,
     onSuccess: (data) => {
-      window.location.href = data.paymentUrl; // Redirect to Paystack payment page
+      window.location.href = data.paymentUrl;
       setErrors((prev) => ({ ...prev, deposit: '' }));
     },
     onError: (err) => {
