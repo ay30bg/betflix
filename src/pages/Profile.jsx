@@ -1591,6 +1591,33 @@ const updateProfile = async ({ username }) => {
   return response.json();
 };
 
+// const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) => {
+//   const token = localStorage.getItem('token');
+//   if (!token) throw new Error('Authentication required. Please log in.');
+//   const payload = { amount, currency };
+//   if (currency === 'crypto' && cryptoCurrency) {
+//     payload.cryptoCurrency = cryptoCurrency;
+//     if (cryptoCurrency === 'USDT') {
+//       payload.network = network;
+//     }
+//   }
+//   const endpoint = currency === 'crypto' ? '/api/transactions/crypto-deposit' : '/api/transactions/fiat-deposit';
+//   const response = await fetch(`${API_URL}${endpoint}`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${token}`,
+//     },
+//     body: JSON.stringify(payload),
+//   });
+//   if (!response.ok) {
+//     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+//     if (response.status === 401) throw new Error('Authentication required');
+//     throw new Error(errorData.error || `Deposit initiation failed: ${response.status}`);
+//   }
+//   return response.json();
+// };
+
 const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
