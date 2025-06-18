@@ -1475,9 +1475,10 @@ import { FaUser, FaCopy } from 'react-icons/fa';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { QRCodeCanvas } from 'qrcode.react';
 import TelegramLogo from '../assets/Telegram-logo.png';
-import TransactionLogo from '../assets/Transaction-logo.png';
 import { Tooltip } from 'react-tooltip';
 import { jwtDecode } from 'jwt-decode';
+import TransactionLogo from '../assets/Transaction-logo.png';
+import PaystackPop from '@paystack/inline-js'; // Import Paystack
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://betflix-backend.vercel.app';
 
@@ -1494,7 +1495,7 @@ const isTokenExpired = (token) => {
   }
 };
 
-// API Functions
+// API Functions (Existing)
 const fetchUserProfile = async () => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -1571,17 +1572,6 @@ const fetchTransactionHistory = async () => {
   return response.json();
 };
 
-const fetchBanks = async () => {
-  // Static list for simplicity; replace with Paystack /bank API in production
-  return [
-    { code: '044', name: 'Access Bank' },
-    { code: '050', name: 'Ecobank Nigeria' },
-    { code: '070', name: 'Fidelity Bank' },
-    { code: '011', name: 'First Bank of Nigeria' },
-    { code: '057', name: 'Zenith Bank' },
-  ];
-};
-
 const updateProfile = async ({ username }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
@@ -1601,14 +1591,18 @@ const updateProfile = async ({ username }) => {
   return response.json();
 };
 
-const initiateCryptoDeposit = async ({ amount, cryptoCurrency, network }) => {
+const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
-  const payload = { amount, cryptoCurrency };
-  if (cryptoCurrency === 'USDT') {
-    payload.network = network;
+  const payload = { amount, currency };
+  if (currency === 'crypto' && cryptoCurrency) {
+    payload.cryptoCurrency = cryptoCurrency;
+    if (cryptoCurrency === 'USDT') {
+      payload.network = network;
+    }
   }
-  const response = await fetch(`${API_URL}/api/transactions/crypto-deposit`, {
+  const endpoint = currency === 'crypto' ? '/api/transactions/crypto-deposit' : '/api/transactions/fiat-deposit';
+  const response = await fetch(`${API_URL}${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -1619,68 +1613,38 @@ const initiateCryptoDeposit = async ({ amount, cryptoCurrency, network }) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData.error || `Crypto deposit initiation failed: ${response.status}`);
+    throw new Error(errorData.error || `Deposit initiation failed: ${response.status}`);
   }
   return response.json();
 };
 
-const initiatePaystackDeposit = async ({ amount }) => {
+const initiateWithdrawal = async ({ amount, currency, cryptoCurrency, walletAddress, bankCode, accountNumber, network, withdrawalPassword }) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
-  const response = await fetch(`${API_URL}/api/transactions/paystack-deposit`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ amount }),
-  });
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-    if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData.error || `Paystack deposit initiation failed: ${response.status}`);
+  const payload = { amount, currency, withdrawalPassword };
+  if (currency === 'crypto') {
+    payload.cryptoCurrency = cryptoCurrency;
+    payload.walletAddress = walletAddress;
+    if (cryptoCurrency === 'USDT') {
+      payload.network = network;
+    }
+  } else {
+    payload.bankCode = bankCode;
+    payload.accountNumber = accountNumber;
   }
-  return response.json();
-};
-
-const initiateCryptoWithdrawal = async ({ amount, cryptoCurrency, walletAddress, network, withdrawalPassword }) => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('Authentication required. Please log in.');
-  const payload = { amount, cryptoCurrency, walletAddress, withdrawalPassword };
-  if (cryptoCurrency === 'USDT') {
-    payload.network = network;
-  }
-  const response = await fetch(`${API_URL}/api/transactions/crypto-withdrawal`, {
+  const endpoint = currency === 'crypto' ? '/api/transactions/crypto-withdrawal' : '/api/transactions/fiat-withdrawal';
+  const response = await fetch(`${API_URL}${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
-  });
+    });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
     if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData.error || `Crypto withdrawal initiation failed: ${response.status}`);
-  }
-  return response.json();
-};
-
-const initiatePaystackWithdrawal = async ({ amount, bankCode, accountNumber, withdrawalPassword }) => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('Authentication required. Please log in.');
-  const response = await fetch(`${API_URL}/api/transactions/paystack-withdrawal`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ amount, bankCode, accountNumber, withdrawalPassword }),
-  });
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-    if (response.status === 401) throw new Error('Authentication required');
-    throw new Error(errorData.error || `Paystack withdrawal initiation failed: ${response.status}`);
+    throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
   }
   return response.json();
 };
@@ -1734,17 +1698,21 @@ function Profile() {
   const [isWithdrawalPasswordModalOpen, setIsWithdrawalPasswordModalOpen] = useState(false);
   const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
   const [depositResult, setDepositResult] = useState(null);
-  const [depositMethod, setDepositMethod] = useState('crypto');
-  const [withdrawalMethod, setWithdrawalMethod] = useState('crypto');
   const [formData, setFormData] = useState({ username: '' });
-  const [depositData, setDepositData] = useState({ amount: '', cryptoCurrency: 'BTC', network: 'BEP20' });
+  const [depositData, setDepositData] = useState({
+    amount: '',
+    currency: 'crypto',
+    cryptoCurrency: 'BTC',
+    network: 'BEP20',
+  });
   const [withdrawData, setWithdrawData] = useState({
     amount: '',
+    currency: 'crypto',
     cryptoCurrency: 'BTC',
     walletAddress: '',
-    network: 'BEP20',
     bankCode: '',
     accountNumber: '',
+    network: 'BEP20',
     withdrawalPassword: '',
     showWithdrawalPassword: false,
   });
@@ -1764,13 +1732,29 @@ function Profile() {
   });
   const [notification, setNotification] = useState(null);
   const [referralLink, setReferralLink] = useState('');
-
-  // Fetch banks for Paystack withdrawal
-  const { data: banks, isLoading: banksLoading } = useQuery({
-    queryKey: ['banks'],
-    queryFn: fetchBanks,
-    staleTime: Infinity,
-  });
+  const [bankCodes] = useState([
+    { code: '044', name: 'Access Bank' },
+    { code: '063', name: 'Diamond Bank (Access)' },
+    { code: '050', name: 'Ecobank' },
+    { code: '070', name: 'Fidelity Bank' },
+    { code: '011', name: 'First Bank' },
+    { code: '214', name: 'FCMB' },
+    { code: '058', name: 'GTBank' },
+    { code: '030', name: 'Heritage Bank' },
+    { code: '301', name: 'Jaiz Bank' },
+    { code: '082', name: 'Keystone Bank' },
+    { code: '101', name: 'Providus Bank' },
+    { code: '076', name: 'Polaris Bank' },
+    { code: '221', name: 'Stanbic IBTC' },
+    { code: '068', name: 'Standard Chartered' },
+    { code: '232', name: 'Sterling Bank' },
+    { code: '100', name: 'Suntrust Bank' },
+    { code: '032', name: 'Union Bank' },
+    { code: '033', name: 'UBA' },
+    { code: '215', name: 'Unity Bank' },
+    { code: '035', name: 'Wema Bank' },
+    { code: '057', name: 'Zenith Bank' },
+  ]);
 
   // Handle authentication errors
   const handleAuthError = () => {
@@ -1780,33 +1764,43 @@ function Profile() {
     setBalance(0);
     setFormData({ username: '' });
     setDepositResult(null);
-    setTimeout(() => navigate('/login'), 3000);
+    setTimeout(() => {
+      navigate('/login');
+    }, 3000);
   };
 
-  // Token expiration check
+  // Proactive token expiration check
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token && isTokenExpired(token)) handleAuthError();
+    if (token && isTokenExpired(token)) {
+      handleAuthError();
+    }
 
     const interval = setInterval(() => {
       const currentToken = localStorage.getItem('token');
-      if (currentToken && isTokenExpired(currentToken)) handleAuthError();
+      if (currentToken && isTokenExpired(currentToken)) {
+        handleAuthError();
+      }
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [navigate, queryClient, setBalance]);
+  }, [handleAuthError]);
 
   // Fetch user profile
   const { data: user, isLoading: userLoading, error: userError } = useQuery({
     queryKey: ['userProfile'],
     queryFn: fetchUserProfile,
-    onSuccess: (data) => setFormData({ username: data.username || '' }),
+    onSuccess: (data) => {
+      setFormData({ username: data.username || '' });
+    },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
@@ -1820,7 +1814,9 @@ function Profile() {
         ? 'Session expired. Please log in again.'
         : err.message;
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
@@ -1829,13 +1825,14 @@ function Profile() {
   const { data: referralData, isLoading: referralLoading, error: referralError } = useQuery({
     queryKey: ['referralLink'],
     queryFn: fetchReferralLink,
-    onSuccess: (data) => setReferralLink(data.referralLink || ''),
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
@@ -1850,7 +1847,9 @@ function Profile() {
         : err.message;
       setErrors((prev) => ({ ...prev, referralStats: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
@@ -1866,12 +1865,20 @@ function Profile() {
         : err.message;
       setErrors((prev) => ({ ...prev, transactionHistory: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
     retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
   });
 
-  // Session timeout
+  useEffect(() => {
+    if (referralData?.referralLink) {
+      setReferralLink(referralData.referralLink);
+    }
+  }, [referralData]);
+
+  // Session Timeout
   useEffect(() => {
     let timeout;
     const resetTimeout = () => {
@@ -1884,7 +1891,7 @@ function Profile() {
         setFormData({ username: '' });
         setDepositResult(null);
         navigate('/login');
-      }, 30 * 60 * 1000);
+      }, 30 * 60 * 1000); // 30 minutes
     };
 
     window.addEventListener('mousemove', resetTimeout);
@@ -1931,29 +1938,58 @@ function Profile() {
     e.preventDefault();
     const amount = parseFloat(depositData.amount);
     if (isNaN(amount) || amount <= 0) {
-      setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid amount greater than 0' }));
+      setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
       return;
     }
-    if (depositMethod === 'crypto') {
-      if (amount < 4500) {
-        setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
+    if (depositData.currency === 'crypto') {
+      if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
+        setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
         return;
       }
-      if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
-        setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network' }));
+      if (amount < 4500) { // ~$3 at ₦1500/$
+        setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
         return;
       }
       depositMutation.mutate({
         amount,
+        currency: depositData.currency,
         cryptoCurrency: depositData.cryptoCurrency,
         network: depositData.cryptoCurrency === 'USDT' ? depositData.network : undefined,
       });
     } else {
-      if (amount < 4500) {
+      if (amount < 4500) { // ~$3 at ₦1500/$
         setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
         return;
       }
-      paystackDepositMutation.mutate({ amount });
+      depositMutation.mutate(
+        { amount, currency: 'NGN' },
+        {
+          onSuccess: (data) => {
+            const paystack = new PaystackPop();
+            paystack.newTransaction({
+              key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
+              email: user.email,
+              amount: amount * 100, // Convert to kobo
+              currency: 'NGN',
+              reference: data.reference,
+              onSuccess: () => {
+                setNotification({ type: 'success', message: 'Deposit successful!' });
+                queryClient.invalidateQueries(['userProfile']);
+                queryClient.invalidateQueries(['transactionHistory']);
+                setIsDepositModalOpen(false);
+                setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
+                setDepositResult(null);
+              },
+              onCancel: () => {
+                setNotification({ type: 'info', message: 'Deposit cancelled.' });
+                setIsDepositModalOpen(false);
+                setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
+                setDepositResult(null);
+              },
+            });
+          },
+        }
+      );
     }
   };
 
@@ -1961,29 +1997,25 @@ function Profile() {
     e.preventDefault();
     const amount = parseFloat(withdrawData.amount);
     if (isNaN(amount) || amount <= 0) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid amount greater than 0' }));
+      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid withdrawal amount greater than 0' }));
       return;
     }
     if (amount > (balance ?? 0)) {
       setErrors((prev) => ({ ...prev, withdraw: 'Insufficient balance for withdrawal' }));
       return;
     }
-    if (amount < 15000) {
+    if (amount < 15000) { // ~$10 at ₦1500/$
       setErrors((prev) => ({ ...prev, withdraw: 'Minimum withdrawal amount is ₦15,000' }));
       return;
     }
-    if (!withdrawData.withdrawalPassword) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Please enter your withdrawal password' }));
-      return;
-    }
-    if (withdrawalMethod === 'crypto') {
+    if (withdrawData.currency === 'crypto') {
       if (!withdrawData.walletAddress) {
         setErrors((prev) => ({ ...prev, withdraw: 'Please enter a wallet address' }));
         return;
       }
       if (withdrawData.cryptoCurrency === 'USDT' && withdrawData.network === 'ARBITRUM') {
         if (!/^0x[a-fA-F0-9]{40}$/.test(withdrawData.walletAddress)) {
-          setErrors((prev) => ({ ...prev, withdraw: 'Invalid Arbitrum wallet address' }));
+          setErrors((prev) => ({ ...prev, withdraw: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)' }));
           return;
         }
       } else if (!/^[a-zA-Z0-9]{26,48}$/.test(withdrawData.walletAddress)) {
@@ -1991,32 +2023,33 @@ function Profile() {
         return;
       }
       if (withdrawData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(withdrawData.network)) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network' }));
+        setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
         return;
       }
-      withdrawMutation.mutate({
-        amount,
-        cryptoCurrency: withdrawData.cryptoCurrency,
-        walletAddress: withdrawData.walletAddress,
-        network: withdrawData.cryptoCurrency === 'USDT' ? withdrawData.network : undefined,
-        withdrawalPassword: withdrawData.withdrawalPassword,
-      });
     } else {
-      if (!withdrawData.bankCode) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please select a bank' }));
+      if (!withdrawData.bankCode || !/^\d{3}$/.test(withdrawData.bankCode)) {
+        setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid bank' }));
         return;
       }
-      if (!/^\d{10}$/.test(withdrawData.accountNumber)) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Invalid account number (must be 10 digits)' }));
+      if (!withdrawData.accountNumber || !/^\d{10}$/.test(withdrawData.accountNumber)) {
+        setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid 10-digit account number' }));
         return;
       }
-      paystackWithdrawMutation.mutate({
-        amount,
-        bankCode: withdrawData.bankCode,
-        accountNumber: withdrawData.accountNumber,
-        withdrawalPassword: withdrawData.withdrawalPassword,
-      });
     }
+    if (!withdrawData.withdrawalPassword) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please enter your withdrawal password' }));
+      return;
+    }
+    withdrawMutation.mutate({
+      amount,
+      currency: withdrawData.currency,
+      cryptoCurrency: withdrawData.currency === 'crypto' ? withdrawData.cryptoCurrency : undefined,
+      walletAddress: withdrawData.currency === 'crypto' ? withdrawData.walletAddress : undefined,
+      bankCode: withdrawData.currency === 'NGN' ? withdrawData.bankCode : undefined,
+      accountNumber: withdrawData.currency === 'NGN' ? withdrawData.accountNumber : undefined,
+      network: withdrawData.currency === 'crypto' && withdrawData.cryptoCurrency === 'USDT' ? withdrawData.network : undefined,
+      withdrawalPassword: withdrawData.withdrawalPassword,
+    });
   };
 
   const handleLogout = async () => {
@@ -2053,14 +2086,18 @@ function Profile() {
         : err.message;
       setErrors((prev) => ({ ...prev, profile: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
   });
 
   const depositMutation = useMutation({
-    mutationFn: initiateCryptoDeposit,
+    mutationFn: initiateDeposit,
     onSuccess: (data) => {
-      setDepositResult(data);
+      if (depositData.currency === 'crypto') {
+        setDepositResult(data);
+      }
       setErrors((prev) => ({ ...prev, deposit: '' }));
       queryClient.invalidateQueries(['userProfile']);
     },
@@ -2070,44 +2107,34 @@ function Profile() {
         : err.message;
       setErrors((prev) => ({ ...prev, deposit: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
-    },
-  });
-
-  const paystackDepositMutation = useMutation({
-    mutationFn: initiatePaystackDeposit,
-    onSuccess: (data) => {
-      window.location.href = data.paymentUrl;
-      setErrors((prev) => ({ ...prev, deposit: '' }));
-    },
-    onError: (err) => {
-      const errorMessage = err.message.includes('Authentication required')
-        ? 'Session expired. Please log in again.'
-        : err.message;
-      setErrors((prev) => ({ ...prev, deposit: errorMessage }));
-      setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
   });
 
   const withdrawMutation = useMutation({
-    mutationFn: initiateCryptoWithdrawal,
+    mutationFn: initiateWithdrawal,
     onSuccess: (data) => {
-      if (typeof data.balance === 'number') setBalance(data.balance);
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
       queryClient.setQueryData(['userProfile'], (old) => ({ ...old, balance: data.balance ?? 0 }));
       setIsWithdrawModalOpen(false);
       setWithdrawData({
         amount: '',
+        currency: 'crypto',
         cryptoCurrency: 'BTC',
         walletAddress: '',
-        network: 'BEP20',
         bankCode: '',
         accountNumber: '',
+        network: 'BEP20',
         withdrawalPassword: '',
         showWithdrawalPassword: false,
       });
       setErrors((prev) => ({ ...prev, withdraw: '' }));
-      setNotification({ type: 'success', message: data.message || 'Withdrawal request submitted!' });
+      setNotification({ type: 'success', message: data.message || 'Withdrawal request submitted for admin review!' });
+      queryClient.invalidateQueries(['transactionHistory']);
     },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
@@ -2115,36 +2142,9 @@ function Profile() {
         : err.message;
       setErrors((prev) => ({ ...prev, withdraw: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
-    },
-  });
-
-  const paystackWithdrawMutation = useMutation({
-    mutationFn: initiatePaystackWithdrawal,
-    onSuccess: (data) => {
-      if (typeof data.balance === 'number') setBalance(data.balance);
-      queryClient.setQueryData(['userProfile'], (old) => ({ ...old, balance: data.balance ?? 0 }));
-      setIsWithdrawModalOpen(false);
-      setWithdrawData({
-        amount: '',
-        cryptoCurrency: 'BTC',
-        walletAddress: '',
-        network: 'BEP20',
-        bankCode: '',
-        accountNumber: '',
-        withdrawalPassword: '',
-        showWithdrawalPassword: false,
-      });
-      setErrors((prev) => ({ ...prev, withdraw: '' }));
-      setNotification({ type: 'success', message: data.message || 'Withdrawal request submitted!' });
-    },
-    onError: (err) => {
-      const errorMessage = err.message.includes('Authentication required')
-        ? 'Session expired. Please log in again.'
-        : err.message;
-      setErrors((prev) => ({ ...prev, withdraw: errorMessage }));
-      setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
   });
 
@@ -2153,15 +2153,20 @@ function Profile() {
     onSuccess: (data) => {
       queryClient.invalidateQueries(['referralStats']);
       queryClient.invalidateQueries(['userProfile']);
-      if (typeof data.balance === 'number') setBalance(data.balance);
-      setNotification({ type: 'success', message: data.message || 'Referral bonus withdrawn!' });
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      setNotification({ type: 'success', message: data.message || 'Referral bonus withdrawn successfully!' });
+      queryClient.invalidateQueries(['transactionHistory']);
     },
     onError: (err) => {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
   });
 
@@ -2184,7 +2189,9 @@ function Profile() {
         : err.message;
       setErrors((prev) => ({ ...prev, withdrawalPassword: errorMessage }));
       setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) handleAuthError();
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
+      }
     },
   });
 
@@ -2213,7 +2220,10 @@ function Profile() {
         )}
         <p>
           <strong>Win Rate:</strong>{' '}
-          {stats?.totalBets > 0 ? ((stats.wins / stats.totalBets) * 100).toFixed(1) : 0}%
+          {stats?.totalBets > 0
+            ? ((stats.wins / stats.totalBets) * 100).toFixed(1)
+            : 0}
+          %
         </p>
         <button
           onClick={() => queryClient.invalidateQueries(['stats'])}
@@ -2227,7 +2237,7 @@ function Profile() {
     );
   };
 
-  // Render referral stats
+  // Render referral stats modal content
   const renderReferralStats = () => {
     if (referralStatsLoading) return <div className="loading-spinner" aria-live="polite">Loading referral stats...</div>;
     if (referralStatsError) return <p className="error" role="alert">{errors.referralStats}</p>;
@@ -2284,6 +2294,7 @@ function Profile() {
     );
   }
 
+  // Render main UI
   return (
     <div className="profile-page container">
       <Header />
@@ -2304,7 +2315,7 @@ function Profile() {
               onClick={() => setIsDepositModalOpen(true)}
               className="crypto-deposit-button"
               aria-label="Deposit funds"
-              disabled={depositMutation.isLoading || paystackDepositMutation.isLoading}
+              disabled={depositMutation.isLoading}
             >
               Deposit
             </button>
@@ -2312,7 +2323,7 @@ function Profile() {
               onClick={() => setIsWithdrawModalOpen(true)}
               className="crypto-withdraw-button"
               aria-label="Withdraw funds"
-              disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading || (balance ?? 0) === 0}
+              disabled={withdrawMutation.isLoading || (balance ?? 0) === 0}
             >
               Withdraw
             </button>
@@ -2323,7 +2334,7 @@ function Profile() {
             Referral Program
             <span
               data-tooltip-id="referral-tooltip"
-              data-tooltip-content="Invite friends using your unique referral link to earn rewards."
+              data-tooltip-content="Invite friends using your unique referral link to earn rewards when they sign up and place bets."
               className="help-icon"
             >
               ?
@@ -2361,7 +2372,7 @@ function Profile() {
             Withdrawal Password
             <span
               data-tooltip-id="withdrawal-password-tooltip"
-              data-tooltip-content="Set a secure password to protect your withdrawals."
+              data-tooltip-content="Set a secure password to protect your withdrawals. Required for all withdrawal transactions."
               className="help-icon"
             >
               ?
@@ -2411,7 +2422,9 @@ function Profile() {
                   id="username"
                   type="text"
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
                   className="modal-input"
                   placeholder="Enter new username"
                   disabled={updateProfileMutation.isLoading}
@@ -2438,9 +2451,8 @@ function Profile() {
               onClick={() => {
                 setIsDepositModalOpen(false);
                 setErrors((prev) => ({ ...prev, deposit: '' }));
-                setDepositData({ amount: '', cryptoCurrency: 'BTC', network: 'BEP20' });
+                setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
                 setDepositResult(null);
-                setDepositMethod('crypto');
               }}
               className="modal-close"
               aria-label="Close deposit modal"
@@ -2451,21 +2463,6 @@ function Profile() {
             {!depositResult ? (
               <form onSubmit={handleDeposit}>
                 <div className="form-group">
-                  <label htmlFor="payment-method" className="modal-label">
-                    Payment Method
-                  </label>
-                  <select
-                    id="payment-method"
-                    value={depositMethod}
-                    onChange={(e) => setDepositMethod(e.target.value)}
-                    className="modal-input"
-                    disabled={depositMutation.isLoading || paystackDepositMutation.isLoading}
-                  >
-                    <option value="crypto">Cryptocurrency</option>
-                    <option value="paystack">Paystack (NGN)</option>
-                  </select>
-                </div>
-                <div className="form-group">
                   <label htmlFor="deposit-amount" className="modal-label">
                     Amount (NGN)
                   </label>
@@ -2475,13 +2472,38 @@ function Profile() {
                     step="0.01"
                     min="0.01"
                     value={depositData.amount}
-                    onChange={(e) => setDepositData({ ...depositData, amount: e.target.value })}
+                    onChange={(e) =>
+                      setDepositData({ ...depositData, amount: e.target.value })
+                    }
                     className="modal-input"
                     placeholder="Enter amount in NGN"
-                    disabled={depositMutation.isLoading || paystackDepositMutation.isLoading}
+                    disabled={depositMutation.isLoading}
                   />
                 </div>
-                {depositMethod === 'crypto' && (
+                <div className="form-group">
+                  <label htmlFor="currency" className="modal-label">
+                    Currency
+                  </label>
+                  <select
+                    id="currency"
+                    name="currency"
+                    value={depositData.currency}
+                    onChange={(e) =>
+                      setDepositData({
+                        ...depositData,
+                        currency: e.target.value,
+                        cryptoCurrency: e.target.value === 'crypto' ? 'BTC' : undefined,
+                        network: e.target.value === 'crypto' ? 'BEP20' : undefined,
+                      })
+                    }
+                    className="modal-input"
+                    disabled={depositMutation.isLoading}
+                  >
+                    <option value="crypto">Cryptocurrency</option>
+                    <option value="NGN">Naira (NGN)</option>
+                  </select>
+                </div>
+                {depositData.currency === 'crypto' && (
                   <>
                     <div className="form-group">
                       <label htmlFor="crypto-currency" className="modal-label">
@@ -2512,7 +2534,7 @@ function Profile() {
                           Network
                           <span
                             data-tooltip-id="network-tooltip"
-                            data-tooltip-content="Select the blockchain network for USDT deposits."
+                            data-tooltip-content="Select the blockchain network for USDT deposits (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
                             className="help-icon"
                           >
                             ?
@@ -2522,7 +2544,9 @@ function Profile() {
                           id="network"
                           name="network"
                           value={depositData.network}
-                          onChange={(e) => setDepositData({ ...depositData, network: e.target.value })}
+                          onChange={(e) =>
+                            setDepositData({ ...depositData, network: e.target.value })
+                          }
                           className="modal-input"
                           disabled={depositMutation.isLoading}
                         >
@@ -2538,9 +2562,9 @@ function Profile() {
                 <button
                   type="submit"
                   className="modal-submit"
-                  disabled={depositMutation.isLoading || paystackDepositMutation.isLoading}
+                  disabled={depositMutation.isLoading}
                 >
-                  {depositMethod === 'crypto' ? 'Get Deposit Address' : 'Proceed to Paystack'}
+                  {depositData.currency === 'crypto' ? 'Get Deposit Address' : 'Proceed to Payment'}
                 </button>
               </form>
             ) : (
@@ -2559,7 +2583,7 @@ function Profile() {
                 </button>
                 <div
                   className="qr-code"
-                  aria-label={`QR code for ${depositData.cryptoCurrency} deposit`}
+                  aria-label={`QR code for ${depositData.cryptoCurrency} deposit to ${depositResult.payAddress}`}
                 >
                   <QRCodeCanvas
                     value={
@@ -2572,7 +2596,7 @@ function Profile() {
                 <button
                   onClick={() => {
                     setDepositResult(null);
-                    setDepositData({ amount: '', cryptoCurrency: 'BTC', network: 'BEP20' });
+                    setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
                   }}
                   className="modal-submit"
                 >
@@ -2580,7 +2604,11 @@ function Profile() {
                 </button>
                 <p>
                   Or use the payment link:{' '}
-                  <a href={depositResult.paymentUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={depositResult.paymentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Pay Now
                   </a>
                 </p>
@@ -2600,15 +2628,15 @@ function Profile() {
                 setErrors((prev) => ({ ...prev, withdraw: '' }));
                 setWithdrawData({
                   amount: '',
+                  currency: 'crypto',
                   cryptoCurrency: 'BTC',
                   walletAddress: '',
-                  network: 'BEP20',
                   bankCode: '',
                   accountNumber: '',
+                  network: 'BEP20',
                   withdrawalPassword: '',
                   showWithdrawalPassword: false,
                 });
-                setWithdrawalMethod('crypto');
               }}
               className="modal-close"
               aria-label="Close withdrawal modal"
@@ -2621,21 +2649,6 @@ function Profile() {
             </p>
             <form onSubmit={handleWithdraw}>
               <div className="form-group">
-                <label htmlFor="withdrawal-method" className="modal-label">
-                  Withdrawal Method
-                </label>
-                <select
-                  id="withdrawal-method"
-                  value={withdrawalMethod}
-                  onChange={(e) => setWithdrawalMethod(e.target.value)}
-                  className="modal-input"
-                  disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading}
-                >
-                  <option value="crypto">Cryptocurrency</option>
-                  <option value="paystack">Paystack (Bank Transfer)</option>
-                </select>
-              </div>
-              <div className="form-group">
                 <label htmlFor="withdraw-amount" className="modal-label">
                   Amount (NGN)
                 </label>
@@ -2645,13 +2658,41 @@ function Profile() {
                   step="0.01"
                   min="0.01"
                   value={withdrawData.amount}
-                  onChange={(e) => setWithdrawData({ ...withdrawData, amount: e.target.value })}
+                  onChange={(e) =>
+                    setWithdrawData({ ...withdrawData, amount: e.target.value })
+                  }
                   className="modal-input"
                   placeholder="Enter withdrawal amount in NGN"
-                  disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading}
+                  disabled={withdrawMutation.isLoading}
                 />
               </div>
-              {withdrawalMethod === 'crypto' && (
+              <div className="form-group">
+                <label htmlFor="currency" className="modal-label">
+                  Currency
+                </label>
+                <select
+                  id="currency"
+                  name="currency"
+                  value={withdrawData.currency}
+                  onChange={(e) =>
+                    setWithdrawData({
+                      ...withdrawData,
+                      currency: e.target.value,
+                      cryptoCurrency: e.target.value === 'crypto' ? 'BTC' : undefined,
+                      network: e.target.value === 'crypto' ? 'BEP20' : undefined,
+                      walletAddress: '',
+                      bankCode: '',
+                      accountNumber: '',
+                    })
+                  }
+                  className="modal-input"
+                  disabled={withdrawMutation.isLoading}
+                >
+                  <option value="crypto">Cryptocurrency</option>
+                  <option value="NGN">Naira (NGN)</option>
+                </select>
+              </div>
+              {withdrawData.currency === 'crypto' && (
                 <>
                   <div className="form-group">
                     <label htmlFor="crypto-currency" className="modal-label">
@@ -2682,7 +2723,7 @@ function Profile() {
                         Network
                         <span
                           data-tooltip-id="network-tooltip"
-                          data-tooltip-content="Select the blockchain network for USDT withdrawals."
+                          data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
                           className="help-icon"
                         >
                           ?
@@ -2692,7 +2733,9 @@ function Profile() {
                         id="withdraw-network"
                         name="network"
                         value={withdrawData.network}
-                        onChange={(e) => setWithdrawData({ ...withdrawData, network: e.target.value })}
+                        onChange={(e) =>
+                          setWithdrawData({ ...withdrawData, network: e.target.value })
+                        }
                         className="modal-input"
                         disabled={withdrawMutation.isLoading}
                       >
@@ -2710,7 +2753,9 @@ function Profile() {
                       id="wallet-address"
                       type="text"
                       value={withdrawData.walletAddress}
-                      onChange={(e) => setWithdrawData({ ...withdrawData, walletAddress: e.target.value })}
+                      onChange={(e) =>
+                        setWithdrawData({ ...withdrawData, walletAddress: e.target.value })
+                      }
                       className="modal-input"
                       placeholder="Enter your wallet address"
                       disabled={withdrawMutation.isLoading}
@@ -2718,7 +2763,7 @@ function Profile() {
                   </div>
                 </>
               )}
-              {withdrawalMethod === 'paystack' && (
+              {withdrawData.currency === 'NGN' && (
                 <>
                   <div className="form-group">
                     <label htmlFor="bank-code" className="modal-label">
@@ -2728,12 +2773,14 @@ function Profile() {
                       id="bank-code"
                       name="bankCode"
                       value={withdrawData.bankCode}
-                      onChange={(e) => setWithdrawData({ ...withdrawData, bankCode: e.target.value })}
+                      onChange={(e) =>
+                        setWithdrawData({ ...withdrawData, bankCode: e.target.value })
+                      }
                       className="modal-input"
-                      disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading || banksLoading}
+                      disabled={withdrawMutation.isLoading}
                     >
                       <option value="">Select Bank</option>
-                      {banks?.map((bank) => (
+                      {bankCodes.map((bank) => (
                         <option key={bank.code} value={bank.code}>
                           {bank.name}
                         </option>
@@ -2748,10 +2795,12 @@ function Profile() {
                       id="account-number"
                       type="text"
                       value={withdrawData.accountNumber}
-                      onChange={(e) => setWithdrawData({ ...withdrawData, accountNumber: e.target.value })}
+                      onChange={(e) =>
+                        setWithdrawData({ ...withdrawData, accountNumber: e.target.value })
+                      }
                       className="modal-input"
                       placeholder="Enter 10-digit account number"
-                      disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading}
+                      disabled={withdrawMutation.isLoading}
                     />
                   </div>
                 </>
@@ -2765,10 +2814,12 @@ function Profile() {
                     id="withdrawal-password"
                     type={withdrawData.showWithdrawalPassword ? 'text' : 'password'}
                     value={withdrawData.withdrawalPassword}
-                    onChange={(e) => setWithdrawData({ ...withdrawData, withdrawalPassword: e.target.value })}
+                    onChange={(e) =>
+                      setWithdrawData({ ...withdrawData, withdrawalPassword: e.target.value })
+                    }
                     className="modal-input password-input"
                     placeholder="Enter withdrawal password"
-                    disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading}
+                    disabled={withdrawMutation.isLoading}
                   />
                   <span
                     className="eye-icon"
@@ -2797,9 +2848,9 @@ function Profile() {
               <button
                 type="submit"
                 className="modal-submit"
-                disabled={withdrawMutation.isLoading || paystackWithdrawMutation.isLoading}
+                disabled={withdrawMutation.isLoading}
               >
-                Submit Withdrawal
+                Withdraw
               </button>
             </form>
           </div>
@@ -3007,16 +3058,20 @@ function Profile() {
                   <tbody>
                     {transactions.map((transaction) => (
                       <tr key={transaction.id}>
-                        <td>{transaction.type.replace('-', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</td>
+                        <td>{transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}</td>
                         <td>₦{transaction.amount.toFixed(2)}</td>
-                        <td>{transaction.currency === 'NGN' ? 'NGN' : transaction.cryptoCurrency || 'N/A'}</td>
+                        <td>{transaction.currency}</td>
                         <td>{transaction.network || 'N/A'}</td>
-                        <td>{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</td>
+                        <td>{transaction.status}</td>
                         <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
                         <td>
-                          {['crypto-deposit', 'fiat-deposit'].includes(transaction.type)
-                            ? transaction.transactionId || 'N/A'
-                            : transaction.walletAddress || transaction.accountNumber || 'N/A'}
+                          {transaction.type.includes('deposit') ? (
+                            transaction.transactionId || 'N/A'
+                          ) : transaction.type.includes('crypto') ? (
+                            transaction.walletAddress || 'N/A'
+                          ) : (
+                            `${transaction.bankCode || 'N/A'}/${transaction.accountNumber || 'N/A'}`
+                          )}
                         </td>
                       </tr>
                     ))}
