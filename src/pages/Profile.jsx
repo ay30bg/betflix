@@ -1628,7 +1628,7 @@ const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) =>
       payload.network = network;
     }
   }
-  const endpoint = currency === 'crypto' ? '/api/transactions/crypto-deposit' : '/api/transactions/fiat-deposit';
+  const endpoint = currency === 'crypto' ? '/api/transactions/crypto-deposit' : '/api/transactions/paystack-deposit';
   const response = await fetch(`${API_URL}${endpoint}`, {
     method: 'POST',
     headers: {
