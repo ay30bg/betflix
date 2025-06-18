@@ -745,7 +745,7 @@ function Profile() {
           <h2>User Information</h2>
           <p><strong>Username:</strong> {user?.username || 'N/A'}</p>
           <p><strong>Email:</strong> {user?.email || 'N/A'}</p>
-          <p><strong>Balance:</strong> ${(balance ?? 0).toFixed(2)}</p>
+          <p><strong>Balance:</strong> ₦{(balance ?? 0).toFixed(2)}</p>
           <div className="profile-button-group">
             <button
               onClick={() => setIsDepositModalOpen(true)}
