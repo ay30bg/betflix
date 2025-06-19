@@ -1591,87 +1591,62 @@ const updateProfile = async ({ username }) => {
   return response.json();
 };
 
-// const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required. Please log in.');
-//   const payload = { amount, currency };
-//   if (currency === 'crypto' && cryptoCurrency) {
-//     payload.cryptoCurrency = cryptoCurrency;
-//     if (cryptoCurrency === 'USDT') {
-//       payload.network = network;
-//     }
-//   }
-//   const endpoint = currency === 'crypto' ? '/api/transactions/crypto-deposit' : '/api/transactions/paystack-deposit';
-//   const response = await fetch(`${API_URL}${endpoint}`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: JSON.stringify(payload),
-//   });
-//   if (!response.ok) {
-//     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-//     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(errorData.error || `Deposit initiation failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
-// const initiateWithdrawal = async ({ amount, currency, cryptoCurrency, walletAddress, bankCode, accountNumber, network, withdrawalPassword }) => {
-//   const token = localStorage.getItem('token');
-//   if (!token) throw new Error('Authentication required. Please log in.');
-//   const payload = { amount, currency, withdrawalPassword };
-//   if (currency === 'crypto') {
-//     payload.cryptoCurrency = cryptoCurrency;
-//     payload.walletAddress = walletAddress;
-//     if (cryptoCurrency === 'USDT') {
-//       payload.network = network;
-//     }
-//   } else {
-//     payload.bankCode = bankCode;
-//     payload.accountNumber = accountNumber;
-//   }
-//   const endpoint = currency === 'crypto' ? '/api/transactions/crypto-withdrawal' : '/api/transactions/fiat-withdrawal';
-//   const response = await fetch(`${API_URL}${endpoint}`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${token}`,
-//     },
-//     body: JSON.stringify(payload),
-//     });
-//   if (!response.ok) {
-//     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-//     if (response.status === 401) throw new Error('Authentication required');
-//     throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
-//   }
-//   return response.json();
-// };
-
-const handleDeposit = (e) => {
-  e.preventDefault();
-  const amount = parseFloat(depositData.amount);
-  if (isNaN(amount) || amount <= 0) {
-    setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
-    return;
-  }
-  if (amount < 4500) {
-    setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
-    return;
-  }
-  depositMutation.mutate(
-    { amount, currency: 'NGN' },
-    {
-      onSuccess: (data) => {
-        console.log('Deposit response:', data);
-        setNotification({ type: 'success', message: 'Deposit started (no Paystack popup)' });
-        setIsDepositModalOpen(false);
-        setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
-        setDepositResult(null);
-      },
+const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required. Please log in.');
+  const payload = { amount, currency };
+  if (currency === 'crypto' && cryptoCurrency) {
+    payload.cryptoCurrency = cryptoCurrency;
+    if (cryptoCurrency === 'USDT') {
+      payload.network = network;
     }
-  );
+  }
+  const endpoint = currency === 'crypto' ? '/api/transactions/crypto-deposit' : '/api/transactions/paystack-deposit';
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData.error || `Deposit initiation failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const initiateWithdrawal = async ({ amount, currency, cryptoCurrency, walletAddress, bankCode, accountNumber, network, withdrawalPassword }) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required. Please log in.');
+  const payload = { amount, currency, withdrawalPassword };
+  if (currency === 'crypto') {
+    payload.cryptoCurrency = cryptoCurrency;
+    payload.walletAddress = walletAddress;
+    if (cryptoCurrency === 'USDT') {
+      payload.network = network;
+    }
+  } else {
+    payload.bankCode = bankCode;
+    payload.accountNumber = accountNumber;
+  }
+  const endpoint = currency === 'crypto' ? '/api/transactions/crypto-withdrawal' : '/api/transactions/fiat-withdrawal';
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+    });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData.error || `Withdrawal initiation failed: ${response.status}`);
+  }
+  return response.json();
 };
 
 const withdrawReferralBonus = async () => {
