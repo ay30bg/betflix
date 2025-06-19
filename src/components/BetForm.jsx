@@ -313,7 +313,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Enter amount (e.g., ₦100)"
-                  min="0.01"
+                  min="100"
                   required
                   disabled={isBettingDisabled || isSubmitting}
                   className="modal-input"
