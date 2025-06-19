@@ -1934,65 +1934,124 @@ function Profile() {
     updateProfileMutation.mutate({ username: formData.username });
   };
 
-  const handleDeposit = (e) => {
-    e.preventDefault();
-    const amount = parseFloat(depositData.amount);
-    if (isNaN(amount) || amount <= 0) {
-      setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
+  // const handleDeposit = (e) => {
+  //   e.preventDefault();
+  //   const amount = parseFloat(depositData.amount);
+  //   if (isNaN(amount) || amount <= 0) {
+  //     setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
+  //     return;
+  //   }
+  //   if (depositData.currency === 'crypto') {
+  //     if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
+  //       setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
+  //       return;
+  //     }
+  //     if (amount < 4500) { // ~$3 at ₦1500/$
+  //       setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
+  //       return;
+  //     }
+  //     depositMutation.mutate({
+  //       amount,
+  //       currency: depositData.currency,
+  //       cryptoCurrency: depositData.cryptoCurrency,
+  //       network: depositData.cryptoCurrency === 'USDT' ? depositData.network : undefined,
+  //     });
+  //   } else {
+  //     if (amount < 4500) { // ~$3 at ₦1500/$
+  //       setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
+  //       return;
+  //     }
+  //     depositMutation.mutate(
+  //       { amount, currency: 'NGN' },
+  //       {
+  //         onSuccess: (data) => {
+  //           const paystack = new PaystackPop();
+  //           paystack.newTransaction({
+  //             key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
+  //             email: user.email,
+  //             amount: amount * 100, // Convert to kobo
+  //             currency: 'NGN',
+  //             reference: data.reference,
+  //             onSuccess: () => {
+  //               setNotification({ type: 'success', message: 'Deposit successful!' });
+  //               queryClient.invalidateQueries(['userProfile']);
+  //               queryClient.invalidateQueries(['transactionHistory']);
+  //               setIsDepositModalOpen(false);
+  //               setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
+  //               setDepositResult(null);
+  //             },
+  //             onCancel: () => {
+  //               setNotification({ type: 'info', message: 'Deposit cancelled.' });
+  //               setIsDepositModalOpen(false);
+  //               setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
+  //               setDepositResult(null);
+  //             },
+  //           });
+  //         },
+  //       }
+  //     );
+  //   }
+  // };
+
+const handleDeposit = (e) => {
+  e.preventDefault();
+  const amount = parseFloat(depositData.amount);
+  if (isNaN(amount) || amount <= 0) {
+    setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
+    return;
+  }
+  if (depositData.currency === 'crypto') {
+    if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
+      setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
       return;
     }
-    if (depositData.currency === 'crypto') {
-      if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
-        setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
-        return;
-      }
-      if (amount < 4500) { // ~$3 at ₦1500/$
-        setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
-        return;
-      }
-      depositMutation.mutate({
-        amount,
-        currency: depositData.currency,
-        cryptoCurrency: depositData.cryptoCurrency,
-        network: depositData.cryptoCurrency === 'USDT' ? depositData.network : undefined,
-      });
-    } else {
-      if (amount < 4500) { // ~$3 at ₦1500/$
-        setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦4,500' }));
-        return;
-      }
-      depositMutation.mutate(
-        { amount, currency: 'NGN' },
-        {
-          onSuccess: (data) => {
-            const paystack = new PaystackPop();
-            paystack.newTransaction({
-              key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
-              email: user.email,
-              amount: amount * 100, // Convert to kobo
-              currency: 'NGN',
-              reference: data.reference,
-              onSuccess: () => {
-                setNotification({ type: 'success', message: 'Deposit successful!' });
-                queryClient.invalidateQueries(['userProfile']);
-                queryClient.invalidateQueries(['transactionHistory']);
-                setIsDepositModalOpen(false);
-                setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
-                setDepositResult(null);
-              },
-              onCancel: () => {
-                setNotification({ type: 'info', message: 'Deposit cancelled.' });
-                setIsDepositModalOpen(false);
-                setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
-                setDepositResult(null);
-              },
-            });
-          },
-        }
-      );
+    if (amount < 1000) { // Changed from 4500 to 1000
+      setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦1,000' }));
+      return;
     }
-  };
-
+    depositMutation.mutate({
+      amount,
+      currency: depositData.currency,
+      cryptoCurrency: depositData.cryptoCurrency,
+      network: depositData.cryptoCurrency === 'USDT' ? depositData.network : undefined,
+    });
+  } else {
+    if (amount < 1000) { // Changed from 4500 to 1000
+      setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦1,000' }));
+      return;
+    }
+    depositMutation.mutate(
+      { amount, currency: 'NGN' },
+      {
+        onSuccess: (data) => {
+          const paystack = new PaystackPop();
+          paystack.newTransaction({
+            key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
+            email: user.email,
+            amount: amount * 100, // Convert to kobo
+            currency: 'NGN',
+            reference: data.reference,
+            onSuccess: () => {
+              setNotification({ type: 'success', message: 'Deposit successful!' });
+              queryClient.invalidateQueries(['userProfile']);
+              queryClient.invalidateQueries(['transactionHistory']);
+              setIsDepositModalOpen(false);
+              setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
+              setDepositResult(null);
+            },
+            onCancel: () => {
+              setNotification({ type: 'info', message: 'Deposit cancelled.' });
+              setIsDepositModalOpen(false);
+              setDepositData({ amount: '', currency: 'crypto', cryptoCurrency: 'BTC', network: 'BEP20' });
+              setDepositResult(null);
+            },
+          });
+        },
+      }
+    );
+  }
+};
+  
   const handleWithdraw = (e) => {
     e.preventDefault();
     const amount = parseFloat(withdrawData.amount);
