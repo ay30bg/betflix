@@ -165,10 +165,6 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     }
   };
 
-  // const handleSuggestedAmount = (suggestedAmount) => {
-  //   setAmount(suggestedAmount.toFixed(2));
-  // };
-
 const handleSuggestedAmount = (suggestedAmount) => {
     setAmount(suggestedAmount);
 };
@@ -332,7 +328,7 @@ const handleSuggestedAmount = (suggestedAmount) => {
                     onClick={() => handleSuggestedAmount(suggestedAmount)}
                     disabled={isBettingDisabled || isSubmitting}
                   >
-                    {suggestedAmount.toFixed(2)}
+                    {suggestedAmount}
                   </button>
                 ))}
               </div>
