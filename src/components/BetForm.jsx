@@ -165,9 +165,13 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     }
   };
 
-  const handleSuggestedAmount = (suggestedAmount) => {
-    setAmount(suggestedAmount.toFixed(2));
-  };
+  // const handleSuggestedAmount = (suggestedAmount) => {
+  //   setAmount(suggestedAmount.toFixed(2));
+  // };
+
+const handleSuggestedAmount = (suggestedAmount) => {
+    setAmount(suggestedAmount);
+};
 
   const closeModal = () => {
     setIsModalOpen(false);
