@@ -57,7 +57,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     Violet: 2.5,
   };
   const NUMBER_MULTIPLIER = 6.8;
-  const suggestedAmounts = [0.5, 1, 5, 10];
+  const suggestedAmounts = [100, 200, 500, 1000];
 
   const balls = [
     { number: 0, src: ball0, color: 'Violet' },
