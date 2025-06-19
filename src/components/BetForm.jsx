@@ -337,8 +337,8 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   Payout Multiplier: {getPayoutMultiplier().toFixed(2)}x
                 </p>
                 <p>
-                  Potential Win: $
-                  {(amount && selection.type
+                  Potential Win: ₦
+                 {(amount && selection.type
                     ? parseFloat(amount) * getPayoutMultiplier()
                     : 0).toFixed(2)}
                 </p>
