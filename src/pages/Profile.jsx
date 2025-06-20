@@ -153,6 +153,7 @@ const initiateDeposit = async ({ amount, currency, cryptoCurrency, network }) =>
 
 const initiateWithdrawal = async ({ amount, currency, cryptoCurrency, walletAddress, bankCode, accountNumber, network, withdrawalPassword }) => {
   const token = localStorage.getItem('token');
+  console.log('Token sent in withdrawal request:', token); // Debug
   if (!token) throw new Error('Authentication required. Please log in.');
   const payload = { amount, currency, withdrawalPassword };
   if (currency === 'crypto') {
