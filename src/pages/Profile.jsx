@@ -1271,246 +1271,8 @@ function Profile() {
         </div>
       )}
 
-{/*       {/* Withdraw Modal */}
-      {isWithdrawModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button
-              onClick={() => {
-                setIsWithdrawModalOpen(false);
-                setErrors((prev) => ({ ...prev, withdraw: '' }));
-                setWithdrawData({
-                  amount: '',
-                  currency: 'crypto',
-                  cryptoCurrency: 'BTC',
-                  walletAddress: '',
-                  bankCode: '',
-                  accountNumber: '',
-                  network: 'BEP20',
-                  withdrawalPassword: '',
-                  showWithdrawalPassword: false,
-                });
-              }}
-              className="modal-close"
-              aria-label="Close withdrawal modal"
-            >
-              ×
-            </button>
-            <h2>Withdraw Funds</h2>
-            <p className="modal-note">
-              Note: Your withdrawal request will be reviewed by an admin before processing.
-            </p>
-            <form onSubmit={handleWithdraw}>
-              <div className="form-group">
-                <label htmlFor="withdraw-amount" className="modal-label">
-                  Amount (NGN)
-                </label>
-                <input
-                  id="withdraw-amount"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  value={withdrawData.amount}
-                  onChange={(e) =>
-                    setWithdrawData({ ...withdrawData, amount: e.target.value })
-                  }
-                  className="modal-input"
-                  placeholder="Enter withdrawal amount in NGN"
-                  disabled={withdrawMutation.isLoading}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="currency" className="modal-label">
-                  Currency
-                </label>
-                <select
-                  id="currency"
-                  name="currency"
-                  value={withdrawData.currency}
-                  onChange={(e) =>
-                    setWithdrawData({
-                      ...withdrawData,
-                      currency: e.target.value,
-                      cryptoCurrency: e.target.value === 'crypto' ? withdrawData.cryptoCurrency || 'BTC' : undefined,
-                      network: e.target.value === 'crypto' ? withdrawData.network || 'BEP20' : undefined,
-                      walletAddress: e.target.value === 'crypto' ? withdrawData.walletAddress : '',
-                      bankCode: e.target.value === 'NGN' ? withdrawData.bankCode : '',
-                      accountNumber: e.target.value === 'NGN' ? withdrawData.accountNumber : '',
-                    })
-                  }
-                  className="modal-input"
-                  disabled={withdrawMutation.isLoading}
-                >
-                  <option value="crypto">Cryptocurrency</option>
-                  <option value="NGN">Naira (NGN)</option>
-                </select>
-              </div>
-              {withdrawData.currency === 'crypto' && (
-                <>
-                  <div className="form-group">
-                    <label htmlFor="crypto-currency" className="modal-label">
-                      Cryptocurrency
-                    </label>
-                    <select
-                      id="crypto-currency"
-                      name="cryptoCurrency"
-                      value={withdrawData.cryptoCurrency}
-                      onChange={(e) =>
-                        setWithdrawData({
-                          ...withdrawData,
-                          cryptoCurrency: e.target.value,
-                          network: e.target.value === 'USDT' ? withdrawData.network || 'BEP20' : 'BEP20',
-                        })
-                      }
-                      className="modal-input"
-                      disabled={withdrawMutation.isLoading}
-                    >
-                      <option value="BTC">Bitcoin (BTC)</option>
-                      <option value="ETH">Ethereum (ETH)</option>
-                      <option value="USDT">Tether (USDT)</option>
-                    </select>
-                  </div>
-                  {withdrawData.cryptoCurrency === 'USDT' && (
-                    <div className="form-group">
-                      <label htmlFor="withdraw-network" className="modal-label">
-                        Network
-                        <span
-                          data-tooltip-id="network-tooltip"
-                          data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
-                          className="help-icon"
-                        >
-                          ?
-                        </span>
-                      </label>
-                      <select
-                        id="withdraw-network"
-                        name="network"
-                        value={withdrawData.network}
-                        onChange={(e) =>
-                          setWithdrawData({ ...withdrawData, network: e.target.value })
-                        }
-                        className="modal-input"
-                        disabled={withdrawMutation.isLoading}
-                      >
-                        <option value="BEP20">BEP20 (Binance Smart Chain)</option>
-                        <option value="ARBITRUM">ARBITRUM (Arbitrum)</option>
-                        <option value="TON">TON (The Open Network)</option>
-                      </select>
-                    </div>
-                  )}
-                  <div className="form-group">
-                    <label htmlFor="wallet-address" className="modal-label">
-                      Wallet Address
-                    </label>
-                    <input
-                      id="wallet-address"
-                      type="text"
-                      value={withdrawData.walletAddress}
-                      onChange={(e) =>
-                        setWithdrawData({ ...withdrawData, walletAddress: e.target.value })
-                      }
-                      className="modal-input"
-                      placeholder="Enter your wallet address"
-                      disabled={withdrawMutation.isLoading}
-                    />
-                  </div>
-                </>
-              )}
-              {withdrawData.currency === 'NGN' && (
-                <>
-                  <div className="form-group">
-                    <label htmlFor="bank-code" className="modal-label">
-                      Bank
-                    </label>
-                    <select
-                      id="bank-code"
-                      name="bankCode"
-                      value={withdrawData.bankCode}
-                      onChange={(e) =>
-                        setWithdrawData({ ...withdrawData, bankCode: e.target.value })
-                      }
-                      className="modal-input"
-                      disabled={withdrawMutation.isLoading}
-                    >
-                      <option value="">Select Bank</option>
-                      {bankCodes.map((bank) => (
-                        <option key={bank.code} value={bank.code}>
-                          {bank.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="account-number" className="modal-label">
-                      Account Number
-                    </label>
-                    <input
-                      id="account-number"
-                      type="text"
-                      value={withdrawData.accountNumber}
-                      onChange={(e) =>
-                        setWithdrawData({ ...withdrawData, accountNumber: e.target.value })
-                      }
-                      className="modal-input"
-                      placeholder="Enter 10-digit account number"
-                      disabled={withdrawMutation.isLoading}
-                    />
-                  </div>
-                </>
-              )}
-              <div className="form-group">
-                <label htmlFor="withdrawal-password" className="modal-label">
-                  Withdrawal Password
-                </label>
-                <div className="password-wrapper">
-                  <input
-                    id="withdrawal-password"
-                    type={withdrawData.showWithdrawalPassword ? 'text' : 'password'}
-                    value={withdrawData.withdrawalPassword}
-                    onChange={(e) =>
-                      setWithdrawData({ ...withdrawData, withdrawalPassword: e.target.value })
-                    }
-                    className="modal-input password-input"
-                    placeholder="Enter withdrawal password"
-                    disabled={withdrawMutation.isLoading}
-                  />
-                  <span
-                    className="eye-icon"
-                    onClick={() =>
-                      setWithdrawData({
-                        ...withdrawData,
-                        showWithdrawalPassword: !withdrawData.showWithdrawalPassword,
-                      })
-                    }
-                    aria-label={withdrawData.showWithdrawalPassword ? 'Hide password' : 'Show password'}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) =>
-                      e.key === 'Enter' &&
-                      setWithdrawData({
-                        ...withdrawData,
-                        showWithdrawalPassword: !withdrawData.showWithdrawalPassword,
-                      })
-                    }
-                  >
-                    {withdrawData.showWithdrawalPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-                  </span>
-                </div>
-              </div>
-              {errors.withdraw && <p className="modal-error">{errors.withdraw}</p>}
-              <button
-                type="submit"
-                className="modal-submit"
-                disabled={withdrawMutation.isLoading}
-              >
-                Withdraw
-              </button>
-            </form>
-          </div>
-        </div>
-      )} */}
 
-      {/* Withdraw Modal */}
+{/*       {/* Withdraw Modal */}
 {isWithdrawModalOpen && (
   <div className="modal-overlay">
     <div className="modal-content">
@@ -1694,6 +1456,251 @@ function Profile() {
                 placeholder="Enter 10-digit account number"
                 disabled={withdrawMutation.isLoading || (user?.boundAccount && withdrawData.accountNumber)}
               />
+            </div>
+          </>
+        )}
+        <div className="form-group">
+          <label htmlFor="withdrawal-password" className="modal-label">
+            Withdrawal Password
+          </label>
+          <div className="password-wrapper">
+            <input
+              id="withdrawal-password"
+              type={withdrawData.showWithdrawalPassword ? 'text' : 'password'}
+              value={withdrawData.withdrawalPassword}
+              onChange={(e) =>
+                setWithdrawData({ ...withdrawData, withdrawalPassword: e.target.value })
+              }
+              className="modal-input password-input"
+              placeholder="Enter withdrawal password"
+              disabled={withdrawMutation.isLoading}
+            />
+            <span
+              className="eye-icon"
+              onClick={() =>
+                setWithdrawData({
+                  ...withdrawData,
+                  showWithdrawalPassword: !withdrawData.showWithdrawalPassword,
+                })
+              }
+              aria-label={withdrawData.showWithdrawalPassword ? 'Hide password' : 'Show password'}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) =>
+                e.key === 'Enter' &&
+                setWithdrawData({
+                  ...withdrawData,
+                  showWithdrawalPassword: !withdrawData.showWithdrawalPassword,
+                })
+              }
+            >
+              {withdrawData.showWithdrawalPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </span>
+          </div>
+        </div>
+        {errors.withdraw && <p className="modal-error">{errors.withdraw}</p>}
+        <button
+          type="submit"
+          className="modal-submit"
+          disabled={withdrawMutation.isLoading}
+        >
+          Withdraw
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+ */}
+
+      {/* Withdraw Modal */}
+{isWithdrawModalOpen && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <button
+        onClick={() => {
+          setIsWithdrawModalOpen(false);
+          setErrors((prev) => ({ ...prev, withdraw: '' }));
+          setWithdrawData({
+            amount: '',
+            currency: 'crypto',
+            cryptoCurrency: 'BTC',
+            walletAddress: '',
+            bankCode: '',
+            accountNumber: '',
+            network: 'BEP20',
+            withdrawalPassword: '',
+            showWithdrawalPassword: false,
+          });
+        }}
+        className="modal-close"
+        aria-label="Close withdrawal modal"
+      >
+        ×
+      </button>
+      <h2>Withdraw Funds</h2>
+      <p className="modal-note">
+        Note: Your withdrawal request will be reviewed by an admin before processing.
+      </p>
+      <form onSubmit={handleWithdraw}>
+        <div className="form-group">
+          <label htmlFor="withdraw-amount" className="modal-label">
+            Amount (NGN)
+          </label>
+          <input
+            id="withdraw-amount"
+            type="number"
+            step="0.01"
+            min="0.01"
+            value={withdrawData.amount}
+            onChange={(e) =>
+              setWithdrawData({ ...withdrawData, amount: e.target.value })
+            }
+            className="modal-input"
+            placeholder="Enter withdrawal amount in NGN"
+            disabled={withdrawMutation.isLoading}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="currency" className="modal-label">
+            Currency
+          </label>
+          <select
+            id="currency"
+            name="currency"
+            value={withdrawData.currency}
+            onChange={(e) =>
+              setWithdrawData({
+                ...withdrawData,
+                currency: e.target.value,
+                cryptoCurrency: e.target.value === 'crypto' ? withdrawData.cryptoCurrency || 'BTC' : undefined,
+                network: e.target.value === 'crypto' ? withdrawData.network || 'BEP20' : undefined,
+                walletAddress: e.target.value === 'crypto' ? withdrawData.walletAddress : '',
+                bankCode: e.target.value === 'NGN' ? withdrawData.bankCode : '',
+                accountNumber: e.target.value === 'NGN' ? withdrawData.accountNumber : '',
+              })
+            }
+            className="modal-input"
+            disabled={withdrawMutation.isLoading}
+          >
+            <option value="crypto">Cryptocurrency</option>
+            <option value="NGN">Naira (NGN)</option>
+          </select>
+        </div>
+        {withdrawData.currency === 'crypto' && (
+          <>
+            <div className="form-group">
+              <label htmlFor="crypto-currency" className="modal-label">
+                Cryptocurrency
+              </label>
+              <select
+                id="crypto-currency"
+                name="cryptoCurrency"
+                value={withdrawData.cryptoCurrency}
+                onChange={(e) =>
+                  setWithdrawData({
+                    ...withdrawData,
+                    cryptoCurrency: e.target.value,
+                    network: e.target.value === 'USDT' ? withdrawData.network || 'BEP20' : 'BEP20',
+                  })
+                }
+                className="modal-input"
+                disabled={withdrawMutation.isLoading}
+              >
+                <option value="BTC">Bitcoin (BTC)</option>
+                <option value="ETH">Ethereum (ETH)</option>
+                <option value="USDT">Tether (USDT)</option>
+              </select>
+            </div>
+            {withdrawData.cryptoCurrency === 'USDT' && (
+              <div className="form-group">
+                <label htmlFor="withdraw-network" className="modal-label">
+                  Network
+                  <span
+                    data-tooltip-id="network-tooltip"
+                    data-tooltip-content="Select the blockchain network for USDT withdrawals (BEP20 for Binance Smart Chain, ARBITRUM for Arbitrum, TON for The Open Network)."
+                    className="help-icon"
+                  >
+                    ?
+                  </span>
+                </label>
+                <select
+                  id="withdraw-network"
+                  name="network"
+                  value={withdrawData.network}
+                  onChange={(e) =>
+                    setWithdrawData({ ...withdrawData, network: e.target.value })
+                  }
+                  className="modal-input"
+                  disabled={withdrawMutation.isLoading}
+                >
+                  <option value="BEP20">BEP20 (Binance Smart Chain)</option>
+                  <option value="ARBITRUM">ARBITRUM (Arbitrum)</option>
+                  <option value="TON">TON (The Open Network)</option>
+                </select>
+              </div>
+            )}
+            <div className="form-group">
+              <label htmlFor="wallet-address" className="modal-label">
+                Wallet Address
+              </label>
+              <input
+                id="wallet-address"
+                type="text"
+                value={withdrawData.walletAddress}
+                onChange={(e) =>
+                  setWithdrawData({ ...withdrawData, walletAddress: e.target.value })
+                }
+                className="modal-input"
+                placeholder="Enter your wallet address"
+                disabled={withdrawMutation.isLoading || (user?.boundWallet && withdrawData.walletAddress)}
+              />
+            </div>
+          </>
+        )}
+        {withdrawData.currency === 'NGN' && (
+          <>
+            <div className="form-group">
+              <label htmlFor="bank-code" className="modal-label">
+                Bank
+              </label>
+              <select
+                id="bank-code"
+                name="bankCode"
+                value={withdrawData.bankCode}
+                onChange={(e) =>
+                  setWithdrawData({ ...withdrawData, bankCode: e.target.value })
+                }
+                className="modal-input"
+                disabled={true} // Always disabled
+              >
+                <option value="">Select Bank</option>
+                {bankCodes.map((bank) => (
+                  <option key={bank.code} value={bank.code}>
+                    {bank.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="account-number" className="modal-label">
+                Account Number
+              </label>
+              <input
+                id="account-number"
+                type="text"
+                value={withdrawData.accountNumber}
+                onChange={(e) =>
+                  setWithdrawData({ ...withdrawData, accountNumber: e.target.value })
+                }
+                className="modal-input"
+                placeholder="Enter 10-digit account number"
+                disabled={true} // Always disabled
+              />
+              {!user?.boundAccount && (
+                <p className="modal-note" style={{ color: '#d32f2f', marginTop: '0.5rem' }}>
+                  You must bind a bank account first to withdraw to NGN. Go to Withdrawal Settings to bind.
+                </p>
+              )}
             </div>
           </>
         )}
