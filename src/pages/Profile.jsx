@@ -572,65 +572,125 @@ function Profile() {
     }
   };
 
-  const handleWithdraw = (e) => {
-    e.preventDefault();
-    const amount = parseFloat(withdrawData.amount);
-    if (isNaN(amount) || amount <= 0) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid withdrawal amount greater than 0' }));
-      return;
-    }
-    if (amount > (balance ?? 0)) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Insufficient balance for withdrawal' }));
-      return;
-    }
-    if (amount < 1500) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Minimum withdrawal amount is ₦1,500' }));
-      return;
-    }
-    if (withdrawData.currency === 'crypto') {
-      if (!withdrawData.walletAddress) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please enter a wallet address' }));
-        return;
-      }
-      if (withdrawData.cryptoCurrency === 'USDT' && withdrawData.network === 'ARBITRUM') {
-        if (!/^0x[a-fA-F0-9]{40}$/.test(withdrawData.walletAddress)) {
-          setErrors((prev) => ({ ...prev, withdraw: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)' }));
-          return;
-        }
-      } else if (!/^[a-zA-Z0-9]{26,48}$/.test(withdrawData.walletAddress)) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Invalid wallet address (26-48 characters)' }));
-        return;
-      }
-      if (withdrawData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(withdrawData.network)) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
-        return;
-      }
-    } else {
-      if (!withdrawData.bankCode || !/^\d{3}$/.test(withdrawData.bankCode)) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid bank' }));
-        return;
-      }
-      if (!withdrawData.accountNumber || !/^\d{10}$/.test(withdrawData.accountNumber)) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid 10-digit account number' }));
-        return;
-      }
-    }
-    if (!withdrawData.withdrawalPassword) {
-      setErrors((prev) => ({ ...prev, withdraw: 'Please enter your withdrawal password' }));
-      return;
-    }
-    withdrawMutation.mutate({
-      amount,
-      currency: withdrawData.currency,
-      cryptoCurrency: withdrawData.currency === 'crypto' ? withdrawData.cryptoCurrency : undefined,
-      walletAddress: withdrawData.currency === 'crypto' ? withdrawData.walletAddress : undefined,
-      bankCode: withdrawData.currency === 'NGN' ? withdrawData.bankCode : undefined,
-      accountNumber: withdrawData.currency === 'NGN' ? withdrawData.accountNumber : undefined,
-      network: withdrawData.currency === 'crypto' && withdrawData.cryptoCurrency === 'USDT' ? withdrawData.network : undefined,
-      withdrawalPassword: withdrawData.withdrawalPassword,
-    });
-  };
+  // const handleWithdraw = (e) => {
+  //   e.preventDefault();
+  //   const amount = parseFloat(withdrawData.amount);
+  //   if (isNaN(amount) || amount <= 0) {
+  //     setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid withdrawal amount greater than 0' }));
+  //     return;
+  //   }
+  //   if (amount > (balance ?? 0)) {
+  //     setErrors((prev) => ({ ...prev, withdraw: 'Insufficient balance for withdrawal' }));
+  //     return;
+  //   }
+  //   if (amount < 1500) {
+  //     setErrors((prev) => ({ ...prev, withdraw: 'Minimum withdrawal amount is ₦1,500' }));
+  //     return;
+  //   }
+  //   if (withdrawData.currency === 'crypto') {
+  //     if (!withdrawData.walletAddress) {
+  //       setErrors((prev) => ({ ...prev, withdraw: 'Please enter a wallet address' }));
+  //       return;
+  //     }
+  //     if (withdrawData.cryptoCurrency === 'USDT' && withdrawData.network === 'ARBITRUM') {
+  //       if (!/^0x[a-fA-F0-9]{40}$/.test(withdrawData.walletAddress)) {
+  //         setErrors((prev) => ({ ...prev, withdraw: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)' }));
+  //         return;
+  //       }
+  //     } else if (!/^[a-zA-Z0-9]{26,48}$/.test(withdrawData.walletAddress)) {
+  //       setErrors((prev) => ({ ...prev, withdraw: 'Invalid wallet address (26-48 characters)' }));
+  //       return;
+  //     }
+  //     if (withdrawData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(withdrawData.network)) {
+  //       setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
+  //       return;
+  //     }
+  //   } else {
+  //     if (!withdrawData.bankCode || !/^\d{3}$/.test(withdrawData.bankCode)) {
+  //       setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid bank' }));
+  //       return;
+  //     }
+  //     if (!withdrawData.accountNumber || !/^\d{10}$/.test(withdrawData.accountNumber)) {
+  //       setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid 10-digit account number' }));
+  //       return;
+  //     }
+  //   }
+  //   if (!withdrawData.withdrawalPassword) {
+  //     setErrors((prev) => ({ ...prev, withdraw: 'Please enter your withdrawal password' }));
+  //     return;
+  //   }
+  //   withdrawMutation.mutate({
+  //     amount,
+  //     currency: withdrawData.currency,
+  //     cryptoCurrency: withdrawData.currency === 'crypto' ? withdrawData.cryptoCurrency : undefined,
+  //     walletAddress: withdrawData.currency === 'crypto' ? withdrawData.walletAddress : undefined,
+  //     bankCode: withdrawData.currency === 'NGN' ? withdrawData.bankCode : undefined,
+  //     accountNumber: withdrawData.currency === 'NGN' ? withdrawData.accountNumber : undefined,
+  //     network: withdrawData.currency === 'crypto' && withdrawData.cryptoCurrency === 'USDT' ? withdrawData.network : undefined,
+  //     withdrawalPassword: withdrawData.withdrawalPassword,
+  //   });
+  // };
 
+const handleWithdraw = (e) => {
+  e.preventDefault();
+  const amount = parseFloat(withdrawData.amount);
+  if (isNaN(amount) || amount <= 0) {
+    setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid withdrawal amount greater than 0' }));
+    return;
+  }
+  if (amount > (balance ?? 0)) {
+    setErrors((prev) => ({ ...prev, withdraw: 'Insufficient balance for withdrawal' }));
+    return;
+  }
+  if (amount < 1500) {
+    setErrors((prev) => ({ ...prev, withdraw: 'Minimum withdrawal amount is ₦1,500' }));
+    return;
+  }
+  if (withdrawData.currency === 'crypto') {
+    if (!withdrawData.walletAddress) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a wallet address' }));
+      return;
+    }
+    if (withdrawData.cryptoCurrency === 'USDT' && withdrawData.network === 'ARBITRUM') {
+      if (!/^0x[a-fA-F0-9]{40}$/.test(withdrawData.walletAddress)) {
+        setErrors((prev) => ({ ...prev, withdraw: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)' }));
+        return;
+      }
+    } else if (!/^[a-zA-Z0-9]{26,48}$/.test(withdrawData.walletAddress)) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Invalid wallet address (26-48 characters)' }));
+      return;
+    }
+    if (withdrawData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(withdrawData.network)) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
+      return;
+    }
+  } else {
+    // Validate bankCode against bankCodes array
+    if (!withdrawData.bankCode || !bankCodes.some(bank => bank.code === withdrawData.bankCode)) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid bank' }));
+      return;
+    }
+    if (!withdrawData.accountNumber || !/^\d{10}$/.test(withdrawData.accountNumber)) {
+      setErrors((prev) => ({ ...prev, withdraw: 'Please enter a valid 10-digit account number' }));
+      return;
+    }
+  }
+  if (!withdrawData.withdrawalPassword) {
+    setErrors((prev) => ({ ...prev, withdraw: 'Please enter your withdrawal password' }));
+    return;
+  }
+  withdrawMutation.mutate({
+    amount,
+    currency: withdrawData.currency,
+    cryptoCurrency: withdrawData.currency === 'crypto' ? withdrawData.cryptoCurrency : undefined,
+    walletAddress: withdrawData.currency === 'crypto' ? withdrawData.walletAddress : undefined,
+    bankCode: withdrawData.currency === 'NGN' ? withdrawData.bankCode : undefined,
+    accountNumber: withdrawData.currency === 'NGN' ? withdrawData.accountNumber : undefined,
+    network: withdrawData.currency === 'crypto' && withdrawData.cryptoCurrency === 'USDT' ? withdrawData.network : undefined,
+    withdrawalPassword: withdrawData.withdrawalPassword,
+  });
+};
+  
   const handleLogout = async () => {
     if (window.confirm('Are you sure you want to log out?')) {
       try {
@@ -810,33 +870,87 @@ function Profile() {
     },
   });
 
-  const bindAccountWalletMutation = useMutation({
-    mutationFn: bindAccountWallet,
-    onSuccess: () => {
-      setIsBindAccountWalletModalOpen(false);
-      setBindData({
-        bindType: 'bank',
-        bankCode: '',
-        accountNumber: '',
-        cryptoCurrency: 'BTC',
-        walletAddress: '',
-        network: 'BEP20',
-      });
-      setErrors((prev) => ({ ...prev, bindAccountWallet: '' }));
-      setNotification({ type: 'success', message: 'Account/Wallet bound successfully!' });
-      queryClient.invalidateQueries(['userProfile']);
-    },
-    onError: (err) => {
-      const errorMessage = err.message.includes('Authentication required')
-        ? 'Session expired. Please log in again.'
-        : err.message;
-      setErrors((prev) => ({ ...prev, bindAccountWallet: errorMessage }));
-      setNotification({ type: 'error', message: errorMessage });
-      if (err.message.includes('Authentication required')) {
-        handleAuthError();
+  // const bindAccountWalletMutation = useMutation({
+  //   mutationFn: bindAccountWallet,
+  //   onSuccess: () => {
+  //     setIsBindAccountWalletModalOpen(false);
+  //     setBindData({
+  //       bindType: 'bank',
+  //       bankCode: '',
+  //       accountNumber: '',
+  //       cryptoCurrency: 'BTC',
+  //       walletAddress: '',
+  //       network: 'BEP20',
+  //     });
+  //     setErrors((prev) => ({ ...prev, bindAccountWallet: '' }));
+  //     setNotification({ type: 'success', message: 'Account/Wallet bound successfully!' });
+  //     queryClient.invalidateQueries(['userProfile']);
+  //   },
+  //   onError: (err) => {
+  //     const errorMessage = err.message.includes('Authentication required')
+  //       ? 'Session expired. Please log in again.'
+  //       : err.message;
+  //     setErrors((prev) => ({ ...prev, bindAccountWallet: errorMessage }));
+  //     setNotification({ type: 'error', message: errorMessage });
+  //     if (err.message.includes('Authentication required')) {
+  //       handleAuthError();
+  //     }
+  //   },
+  // });
+
+  <form
+  onSubmit={(e) => {
+    e.preventDefault();
+    if (bindData.bindType === 'bank') {
+      // Validate bankCode against bankCodes array
+      if (!bindData.bankCode || !bankCodes.some(bank => bank.code === bindData.bankCode)) {
+        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please select a valid bank' }));
+        return;
       }
-    },
-  });
+      if (!bindData.accountNumber || !/^\d{10}$/.test(bindData.accountNumber)) {
+        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please enter a valid 10-digit account number' }));
+        return;
+      }
+    } else {
+      if (!bindData.walletAddress) {
+        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please enter a wallet address' }));
+        return;
+      }
+      if (bindData.cryptoCurrency === 'USDT' && bindData.network === 'ARBITRUM') {
+        if (!/^0x[a-fA-F0-9]{40}$/.test(bindData.walletAddress)) {
+          setErrors((prev) => ({
+            ...prev,
+            bindAccountWallet: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)',
+          }));
+          return;
+        }
+      } else if (!/^[a-zA-Z0-9]{26,48}$/.test(bindData.walletAddress)) {
+        setErrors((prev) => ({
+          ...prev,
+          bindAccountWallet: 'Invalid wallet address (26-48 characters)',
+        }));
+        return;
+      }
+      if (bindData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(bindData.network)) {
+        setErrors((prev) => ({
+          ...prev,
+          bindAccountWallet: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)',
+        }));
+        return;
+      }
+    }
+    bindAccountWalletMutation.mutate({
+      bankCode: bindData.bindType === 'bank' ? bindData.bankCode : undefined,
+      accountNumber: bindData.bindType === 'bank' ? bindData.accountNumber : undefined,
+      cryptoCurrency: bindData.bindType === 'crypto' ? bindData.cryptoCurrency : undefined,
+      walletAddress: bindData.bindType === 'crypto' ? bindData.walletAddress : undefined,
+      network:
+        bindData.bindType === 'crypto' && bindData.cryptoCurrency === 'USDT'
+          ? bindData.network
+          : undefined,
+    });
+  }}
+>
 
   // Render betting stats
   const renderBettingStats = () => {
