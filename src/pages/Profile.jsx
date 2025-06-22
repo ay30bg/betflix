@@ -329,6 +329,10 @@ function Profile() {
     { code: '215', name: 'Unity Bank' },
     { code: '035', name: 'Wema Bank' },
     { code: '057', name: 'Zenith Bank' },
+    { code: '50515', name: 'Moniepoint Microfinance Bank' }, 
+    { code: '999992', name: 'OPay (Paycom)' }, 
+    { code: '090267', name: 'Kuda Microfinance Bank' }, 
+    { code: '999991', name: 'PalmPay' },
   ]);
 
   // Handle authentication errors
