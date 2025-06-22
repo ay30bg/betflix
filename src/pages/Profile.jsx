@@ -870,87 +870,33 @@ const handleWithdraw = (e) => {
     },
   });
 
-  // const bindAccountWalletMutation = useMutation({
-  //   mutationFn: bindAccountWallet,
-  //   onSuccess: () => {
-  //     setIsBindAccountWalletModalOpen(false);
-  //     setBindData({
-  //       bindType: 'bank',
-  //       bankCode: '',
-  //       accountNumber: '',
-  //       cryptoCurrency: 'BTC',
-  //       walletAddress: '',
-  //       network: 'BEP20',
-  //     });
-  //     setErrors((prev) => ({ ...prev, bindAccountWallet: '' }));
-  //     setNotification({ type: 'success', message: 'Account/Wallet bound successfully!' });
-  //     queryClient.invalidateQueries(['userProfile']);
-  //   },
-  //   onError: (err) => {
-  //     const errorMessage = err.message.includes('Authentication required')
-  //       ? 'Session expired. Please log in again.'
-  //       : err.message;
-  //     setErrors((prev) => ({ ...prev, bindAccountWallet: errorMessage }));
-  //     setNotification({ type: 'error', message: errorMessage });
-  //     if (err.message.includes('Authentication required')) {
-  //       handleAuthError();
-  //     }
-  //   },
-  // });
-
-  <form
-  onSubmit={(e) => {
-    e.preventDefault();
-    if (bindData.bindType === 'bank') {
-      // Validate bankCode against bankCodes array
-      if (!bindData.bankCode || !bankCodes.some(bank => bank.code === bindData.bankCode)) {
-        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please select a valid bank' }));
-        return;
+  const bindAccountWalletMutation = useMutation({
+    mutationFn: bindAccountWallet,
+    onSuccess: () => {
+      setIsBindAccountWalletModalOpen(false);
+      setBindData({
+        bindType: 'bank',
+        bankCode: '',
+        accountNumber: '',
+        cryptoCurrency: 'BTC',
+        walletAddress: '',
+        network: 'BEP20',
+      });
+      setErrors((prev) => ({ ...prev, bindAccountWallet: '' }));
+      setNotification({ type: 'success', message: 'Account/Wallet bound successfully!' });
+      queryClient.invalidateQueries(['userProfile']);
+    },
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setErrors((prev) => ({ ...prev, bindAccountWallet: errorMessage }));
+      setNotification({ type: 'error', message: errorMessage });
+      if (err.message.includes('Authentication required')) {
+        handleAuthError();
       }
-      if (!bindData.accountNumber || !/^\d{10}$/.test(bindData.accountNumber)) {
-        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please enter a valid 10-digit account number' }));
-        return;
-      }
-    } else {
-      if (!bindData.walletAddress) {
-        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please enter a wallet address' }));
-        return;
-      }
-      if (bindData.cryptoCurrency === 'USDT' && bindData.network === 'ARBITRUM') {
-        if (!/^0x[a-fA-F0-9]{40}$/.test(bindData.walletAddress)) {
-          setErrors((prev) => ({
-            ...prev,
-            bindAccountWallet: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)',
-          }));
-          return;
-        }
-      } else if (!/^[a-zA-Z0-9]{26,48}$/.test(bindData.walletAddress)) {
-        setErrors((prev) => ({
-          ...prev,
-          bindAccountWallet: 'Invalid wallet address (26-48 characters)',
-        }));
-        return;
-      }
-      if (bindData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(bindData.network)) {
-        setErrors((prev) => ({
-          ...prev,
-          bindAccountWallet: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)',
-        }));
-        return;
-      }
-    }
-    bindAccountWalletMutation.mutate({
-      bankCode: bindData.bindType === 'bank' ? bindData.bankCode : undefined,
-      accountNumber: bindData.bindType === 'bank' ? bindData.accountNumber : undefined,
-      cryptoCurrency: bindData.bindType === 'crypto' ? bindData.cryptoCurrency : undefined,
-      walletAddress: bindData.bindType === 'crypto' ? bindData.walletAddress : undefined,
-      network:
-        bindData.bindType === 'crypto' && bindData.cryptoCurrency === 'USDT'
-          ? bindData.network
-          : undefined,
-    });
-  }}
->
+    },
+  });
 
   // Render betting stats
   const renderBettingStats = () => {
@@ -1801,7 +1747,7 @@ const handleWithdraw = (e) => {
             <p className="modal-note">
               Bind your bank account or crypto wallet to streamline withdrawals.
             </p>
-            <form
+{/*             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 if (bindData.bindType === 'bank') {
@@ -1852,7 +1798,61 @@ const handleWithdraw = (e) => {
                       : undefined,
                 });
               }}
-            >
+            > */}
+
+            <form
+  onSubmit={(e) => {
+    e.preventDefault();
+    if (bindData.bindType === 'bank') {
+      // Validate bankCode against bankCodes array
+      if (!bindData.bankCode || !bankCodes.some(bank => bank.code === bindData.bankCode)) {
+        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please select a valid bank' }));
+        return;
+      }
+      if (!bindData.accountNumber || !/^\d{10}$/.test(bindData.accountNumber)) {
+        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please enter a valid 10-digit account number' }));
+        return;
+      }
+    } else {
+      if (!bindData.walletAddress) {
+        setErrors((prev) => ({ ...prev, bindAccountWallet: 'Please enter a wallet address' }));
+        return;
+      }
+      if (bindData.cryptoCurrency === 'USDT' && bindData.network === 'ARBITRUM') {
+        if (!/^0x[a-fA-F0-9]{40}$/.test(bindData.walletAddress)) {
+          setErrors((prev) => ({
+            ...prev,
+            bindAccountWallet: 'Invalid Arbitrum wallet address (must be 42 characters starting with 0x)',
+          }));
+          return;
+        }
+      } else if (!/^[a-zA-Z0-9]{26,48}$/.test(bindData.walletAddress)) {
+        setErrors((prev) => ({
+          ...prev,
+          bindAccountWallet: 'Invalid wallet address (26-48 characters)',
+        }));
+        return;
+      }
+      if (bindData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(bindData.network)) {
+        setErrors((prev) => ({
+          ...prev,
+          bindAccountWallet: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)',
+        }));
+        return;
+      }
+    }
+    bindAccountWalletMutation.mutate({
+      bankCode: bindData.bindType === 'bank' ? bindData.bankCode : undefined,
+      accountNumber: bindData.bindType === 'bank' ? bindData.accountNumber : undefined,
+      cryptoCurrency: bindData.bindType === 'crypto' ? bindData.cryptoCurrency : undefined,
+      walletAddress: bindData.bindType === 'crypto' ? bindData.walletAddress : undefined,
+      network:
+        bindData.bindType === 'crypto' && bindData.cryptoCurrency === 'USDT'
+          ? bindData.network
+          : undefined,
+    });
+  }}
+>
               <div className="form-group">
                 <label htmlFor="bind-type" className="modal-label">
                   Bind Type
