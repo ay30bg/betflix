@@ -1976,9 +1976,7 @@
 
 // export default Profile;
 
-
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBalance } from '../context/BalanceContext';
@@ -2135,7 +2133,7 @@ const initiateWithdrawal = async ({ amount, currency, cryptoCurrency, walletAddr
   const token = localStorage.getItem('token');
   console.log('Token sent in withdrawal request:', token);
   if (!token) throw new Error('Authentication required. Please log in.');
-  const payload = { amount, withdrawalPassword };
+  const payload = { amount, currency, withdrawalPassword };
   if (currency === 'crypto') {
     payload.cryptoCurrency = cryptoCurrency;
     payload.walletAddress = walletAddress;
@@ -2202,7 +2200,7 @@ const setWithdrawalPassword = async ({ password, confirmPassword }) => {
 };
 
 const bindAccountWallet = async ({ bankCode, accountNumber, cryptoCurrency, walletAddress, network }) => {
-  const token迄今  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('Authentication required. Please log in.');
   const payload = {};
   if (bankCode && accountNumber) {
@@ -2310,36 +2308,6 @@ function Profile() {
     { code: '035', name: 'Wema Bank' },
     { code: '057', name: 'Zenith Bank' },
   ]);
-
-  // Prefill withdrawal modal with bound details
-  useEffect(() => {
-    if (isWithdrawModalOpen && user) {
-      setWithdrawData((prev) => ({
-        ...prev,
-        bankCode: '',
-        accountNumber: '',
-        cryptoCurrency: 'BTC',
-        walletAddress: '',
-        network: 'BEP20',
-        amount: '',
-        withdrawalPassword: '',
-        showWithdrawalPassword: false,
-        ...(prev.currency === 'NGN' && user.boundBank
-          ? {
-              bankCode: user.boundBank.bankCode || '',
-              accountNumber: user.boundBank.accountNumber || '',
-            }
-          : {}),
-        ...(prev.currency === 'crypto' && user.boundWallet
-          ? {
-              cryptoCurrency: user.boundWallet.cryptoCurrency || 'BTC',
-              walletAddress: user.boundWallet.walletAddress || '',
-              network: user.boundWallet.network || 'BEP20',
-            }
-          : {}),
-      }));
-    }
-  }, [isWithdrawModalOpen, withdrawData.currency, user]);
 
   // Handle authentication errors
   const handleAuthError = () => {
@@ -2526,13 +2494,13 @@ function Profile() {
       setErrors((prev) => ({ ...prev, deposit: 'Please enter a valid deposit amount greater than 0' }));
       return;
     }
-    if (amount < 1000) {
-      setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦1,000' }));
-      return;
-    }
     if (depositData.currency === 'crypto') {
       if (depositData.cryptoCurrency === 'USDT' && !['BEP20', 'ARBITRUM', 'TON'].includes(depositData.network)) {
         setErrors((prev) => ({ ...prev, deposit: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
+        return;
+      }
+      if (amount < 1000) {
+        setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦1,000' }));
         return;
       }
       depositMutation.mutate({
@@ -2542,6 +2510,10 @@ function Profile() {
         network: depositData.cryptoCurrency === 'USDT' ? depositData.network : undefined,
       });
     } else {
+      if (amount < 1000) {
+        setErrors((prev) => ({ ...prev, deposit: 'Minimum deposit amount is ₦1,000' }));
+        return;
+      }
       depositMutation.mutate(
         { amount, currency: 'NGN' },
         {
@@ -2589,11 +2561,7 @@ function Profile() {
       setErrors((prev) => ({ ...prev, withdraw: 'Minimum withdrawal amount is ₦1,500' }));
       return;
     }
-    if (withdrawData.currency === 'crypto' && !user?.boundWallet) {
-      if (!withdrawData.cryptoCurrency) {
-        setErrors((prev) => ({ ...prev, withdraw: 'Please select a cryptocurrency' }));
-        return;
-      }
+    if (withdrawData.currency === 'crypto') {
       if (!withdrawData.walletAddress) {
         setErrors((prev) => ({ ...prev, withdraw: 'Please enter a wallet address' }));
         return;
@@ -2611,8 +2579,7 @@ function Profile() {
         setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid USDT network (BEP20, ARBITRUM, or TON)' }));
         return;
       }
-    }
-    if (withdrawData.currency === 'NGN' && !user?.boundBank) {
+    } else {
       if (!withdrawData.bankCode || !/^\d{3}$/.test(withdrawData.bankCode)) {
         setErrors((prev) => ({ ...prev, withdraw: 'Please select a valid bank' }));
         return;
@@ -2655,6 +2622,42 @@ function Profile() {
         setNotification({ type: 'error', message: 'Failed to log out' });
       }
     }
+  };
+
+  // NEW: Function to open withdraw modal and prefill with bound details
+  const openWithdrawModal = () => {
+    let newWithdrawData = {
+      amount: '',
+      currency: 'crypto',
+      cryptoCurrency: 'BTC',
+      walletAddress: '',
+      bankCode: '',
+      accountNumber: '',
+      network: 'BEP20',
+      withdrawalPassword: '',
+      showWithdrawalPassword: false,
+    };
+
+    // Prefill based on bound details
+    if (user?.boundAccount) {
+      newWithdrawData = {
+        ...newWithdrawData,
+        currency: 'NGN',
+        bankCode: user.boundAccount.bankCode || '',
+        accountNumber: user.boundAccount.accountNumber || '',
+      };
+    } else if (user?.boundWallet) {
+      newWithdrawData = {
+        ...newWithdrawData,
+        currency: 'crypto',
+        cryptoCurrency: user.boundWallet.cryptoCurrency || 'BTC',
+        walletAddress: user.boundWallet.walletAddress || '',
+        network: user.boundWallet.network || 'BEP20',
+      };
+    }
+
+    setWithdrawData(newWithdrawData);
+    setIsWithdrawModalOpen(true);
   };
 
   // Mutations
@@ -2898,6 +2901,16 @@ function Profile() {
     );
   };
 
+  // Render loading state
+  if (balanceLoading || userLoading || statsLoading || referralLoading) {
+    return (
+      <div className="profile-page container">
+        <Header />
+        <div className="loading-spinner" aria-live="polite">Loading...</div>
+      </div>
+    );
+  }
+
   // Render main UI
   return (
     <div className="profile-page container">
@@ -2914,26 +2927,7 @@ function Profile() {
           <p><strong>Username:</strong> {user?.username || 'N/A'}</p>
           <p><strong>Email:</strong> {user?.email || 'N/A'}</p>
           <p><strong>Balance:</strong> ₦{(balance ?? 0).toFixed(2)}</p>
-          {user?.boundBank && (
-            <p>
-              <strong>Bound Bank:</strong> {user.boundBank.bankName} ({user.boundBank.accountNumber})
-            </p>
-          )}
-          {user?.boundWallet && (
-            <p>
-              <strong>Bound Wallet:</strong> {user.boundWallet.cryptoCurrency} - {user.boundWallet.walletAddress}
-              {user.boundWallet.network && ` (${user.boundWallet.network})`}
-            </p>
-          )}
           <div className="profile-button-group">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="crypto-deposit-button"
-              aria-label="Update profile"
-              disabled={updateProfileMutation.isLoading}
-            >
-              Update Profile
-            </button>
             <button
               onClick={() => setIsDepositModalOpen(true)}
               className="crypto-deposit-button"
@@ -2943,7 +2937,7 @@ function Profile() {
               Deposit
             </button>
             <button
-              onClick={() => setIsWithdrawModalOpen(true)}
+              onClick={openWithdrawModal}
               className="crypto-withdraw-button"
               aria-label="Withdraw funds"
               disabled={withdrawMutation.isLoading || (balance ?? 0) === 0}
@@ -3279,16 +3273,6 @@ function Profile() {
             <h2>Withdraw Funds</h2>
             <p className="modal-note">
               Note: Your withdrawal request will be reviewed by an admin before processing.
-              {user?.boundBank && withdrawData.currency === 'NGN' && (
-                <span> Using bound bank: {user.boundBank.bankName} ({user.boundBank.accountNumber})</span>
-              )}
-              {user?.boundWallet && withdrawData.currency === 'crypto' && (
-                <span>
-                  {' '}
-                  Using bound wallet: {user.boundWallet.cryptoCurrency} - {user.boundWallet.walletAddress}
-                  {user.boundWallet.network && ` (${user.boundWallet.network})`}
-                </span>
-              )}
             </p>
             <form onSubmit={handleWithdraw}>
               <div className="form-group">
@@ -3321,11 +3305,11 @@ function Profile() {
                     setWithdrawData({
                       ...withdrawData,
                       currency: e.target.value,
-                      cryptoCurrency: e.target.value === 'crypto' ? 'BTC' : undefined,
-                      network: e.target.value === 'crypto' ? 'BEP20' : undefined,
-                      walletAddress: '',
-                      bankCode: '',
-                      accountNumber: '',
+                      cryptoCurrency: e.target.value === 'crypto' ? withdrawData.cryptoCurrency || 'BTC' : undefined,
+                      network: e.target.value === 'crypto' ? withdrawData.network || 'BEP20' : undefined,
+                      walletAddress: e.target.value === 'crypto' ? withdrawData.walletAddress : '',
+                      bankCode: e.target.value === 'NGN' ? withdrawData.bankCode : '',
+                      accountNumber: e.target.value === 'NGN' ? withdrawData.accountNumber : '',
                     })
                   }
                   className="modal-input"
@@ -3335,7 +3319,7 @@ function Profile() {
                   <option value="NGN">Naira (NGN)</option>
                 </select>
               </div>
-              {withdrawData.currency === 'crypto' && !user?.boundWallet && (
+              {withdrawData.currency === 'crypto' && (
                 <>
                   <div className="form-group">
                     <label htmlFor="crypto-currency" className="modal-label">
@@ -3349,7 +3333,7 @@ function Profile() {
                         setWithdrawData({
                           ...withdrawData,
                           cryptoCurrency: e.target.value,
-                          network: e.target.value === 'USDT' ? 'BEP20' : 'BEP20',
+                          network: e.target.value === 'USDT' ? withdrawData.network || 'BEP20' : 'BEP20',
                         })
                       }
                       className="modal-input"
@@ -3406,7 +3390,7 @@ function Profile() {
                   </div>
                 </>
               )}
-              {withdrawData.currency === 'NGN' && !user?.boundBank && (
+              {withdrawData.currency === 'NGN' && (
                 <>
                   <div className="form-group">
                     <label htmlFor="bank-code" className="modal-label">
