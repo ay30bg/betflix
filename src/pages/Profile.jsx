@@ -3648,7 +3648,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './profile.css'; // Assuming this is the provided CSS
+import '../styles/profile.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
