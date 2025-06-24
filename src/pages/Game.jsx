@@ -583,8 +583,8 @@ function Game() {
               {lastResult.payout === 0
                 ? 'No Payout'
                 : lastResult.won
-                ? `+$${Math.abs(lastResult.payout).toFixed(2)}`
-                : `-$${Math.abs(lastResult.payout).toFixed(2)}`}
+                ? `+$₦{Math.abs(lastResult.payout).toFixed(2)}`
+                : `-$₦{Math.abs(lastResult.payout).toFixed(2)}`}
             </div>
           </div>
         )}
