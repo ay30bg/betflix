@@ -54,8 +54,16 @@
   color: #ffffff;
 }
 
+.game-card[data-image] {
+  background-image: var(--bg-image); /* Apply background image if data-image exists */
+}
+
 .game-card:not([data-image]) {
   background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%); /* Fallback gradient for cards without images */
+}
+
+.game-card[data-image*="flingo_banner"] {
+  --bg-image: url('../assets/flingo_banner.png'); /* Match Flingo image */
 }
 
 .game-card::after {
