@@ -661,8 +661,8 @@
 // src/pages/GameSelection.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import '../styles/game-selection.css'; // Create a new CSS file for styling
+import Header from '../components/header';
+// import '../styles/game-selection.css';
 
 const GameSelection = () => {
   const navigate = useNavigate();
