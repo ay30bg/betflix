@@ -12,19 +12,6 @@ body {
   line-height: 1.5;
 }
 
-/* /* Game Page */
-.game-page {
-  padding: 2rem 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1.5rem; /* Increased gap for better spacing */
-}
- */
 /* Game Error (for Game.jsx errors) */
 .game-error {
   font-size: 1.25rem; /* Larger font for visibility */
