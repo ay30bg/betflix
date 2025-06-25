@@ -34,10 +34,8 @@ const GameSelection = () => {
             tabIndex={0}
             onKeyPress={(e) => e.key === 'Enter' && navigate(game.path)}
             aria-label={`Play ${game.name}`}
-{/*             style={{ backgroundImage: `url(${game.image})` }} // Inline background image */}
             data-image={game.image} // Pass image URL via data attribute
           >
-{/*             <img src={game.image} alt={game.alt} className="game-image" /> */}
             <span className="sr-only">{game.alt}</span>
             <h2>{game.name}</h2>
             <p>{game.description}</p>
