@@ -2,8 +2,8 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BalanceProvider } from './context/BalanceContext';
-// import { Analytics } from '@vercel/analytics/react'; // Import Analytics
 import Navbar from './components/navbar';
+import FlingoGame from './pages/FlingoGame';
 import Home from './pages/Home';
 import About from './pages/About';
 import Profile from './pages/Profile';
@@ -48,6 +48,7 @@ function Layout() {
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
+        <Route path="/game/flingo" element={<ProtectedRoute><FlingoGame /></ProtectedRoute>} />
         <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/sign-up" element={<Signup />} />
