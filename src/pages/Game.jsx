@@ -662,7 +662,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/header';
-// import '../styles/game-selection.css';
+import '../styles/game-selection.css';
 
 const GameSelection = () => {
   const navigate = useNavigate();
