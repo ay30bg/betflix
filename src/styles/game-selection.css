@@ -16,7 +16,7 @@
 .game-selection-page h1 {
   font-size: 2.25rem;
   font-weight: 700;
-  margin-top: 50px;
+  margin-top: 30px;
   background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient text from provided CSS */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
