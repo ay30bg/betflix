@@ -1,4 +1,5 @@
 /* src/styles/game-selection.css */
+
 .game-selection-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -53,16 +54,8 @@
   color: #ffffff;
 }
 
-.game-card[data-image] {
-  background-image: var(--bg-image); /* Apply background image if data-image exists */
-}
-
 .game-card:not([data-image]) {
   background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%); /* Fallback gradient for cards without images */
-}
-
-.game-card[data-image*="flingo_banner"] {
-  --bg-image: url('../assets/flingo_banner.png'); /* Match Flingo image */
 }
 
 .game-card::after {
@@ -99,21 +92,41 @@
 
 .game-card h2 {
   font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
   position: relative;
   z-index: 1;
   color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
 }
 
 .game-card p {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 400;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
   position: relative;
   z-index: 1;
-  color: #ffffff;
+  color: #e5e7eb;
+  opacity: 0.9;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.game-card:hover h2 {
+  transform: translateY(-4px);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.game-card:hover p {
+  opacity: 1;
+  transform: translateY(-2px);
 }
 
 .sr-only {
@@ -171,10 +184,16 @@
 
   .game-card h2 {
     font-size: 1.5rem;
+    letter-spacing: 0.03em;
   }
 
   .game-card p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .game-card::before {
+    font-size: 1.3rem;
   }
 }
 
@@ -199,10 +218,14 @@
 
   .game-card h2 {
     font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
   }
 
   .game-card p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    max-width: 95%;
   }
 
   .game-card::before {
