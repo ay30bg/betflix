@@ -1,6 +1,6 @@
 /* src/styles/game-selection.css */
 .game-selection-page {
-  padding: 2rem 1rem;
+/*   padding: 2rem 1rem; */
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Matches body gradient */
   text-align: center;
