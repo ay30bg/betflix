@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/header';
-import flingoImage from '../assets//flingo_banner.png';
+import flingoImage from '../assets/flingo_banner.png';
 import '../styles/game-selection.css';
 
 const GameSelection = () => {
