@@ -956,7 +956,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 500px; /* Consistent with set-password-button */
+  max-width: 800px; /* Consistent with set-password-button */
   height: 56px; /* Matches set-password-button for uniformity */
   background: #3b82f6; /* Blue background to differentiate from red set-password-button */
   color: #fff; /* White text for contrast */
@@ -1161,7 +1161,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 500px; /* Consistent with other buttons */
+    max-width: 800px; /* Consistent with other buttons */
     height: 56px; /* Matches crypto buttons for uniformity */
     background: #ef4444;
     color: #fff; /* White text for contrast */
