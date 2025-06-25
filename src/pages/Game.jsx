@@ -36,7 +36,7 @@ const GameSelection = () => {
             aria-label={`Play ${game.name}`}
             style={{ backgroundImage: `url(${game.image})` }} // Inline background image
           >
-            <img src={game.image} alt={game.alt} className="game-image" />
+{/*             <img src={game.image} alt={game.alt} className="game-image" /> */}
             <h2>{game.name}</h2>
             <p>{game.description}</p>
           </div>
