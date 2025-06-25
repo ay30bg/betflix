@@ -1,6 +1,5 @@
 /* src/styles/game-selection.css */
 .game-selection-page {
-/*   padding: 2rem 1rem; */
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Matches body gradient */
   text-align: center;
@@ -17,12 +16,11 @@
   font-size: 2.25rem;
   font-weight: 700;
   margin-top: 30px;
-  background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient text from provided CSS */
+  background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient text */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 2rem;
   letter-spacing: -0.025em;
-/*   text-transform: uppercase; */
   animation: fadeIn 0.5s ease;
 }
 
@@ -38,13 +36,16 @@
 .game-card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 2rem;
+  padding: 1.5rem; /* Reduced padding slightly to accommodate image */
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .game-card:hover {
@@ -59,6 +60,11 @@
   color: #ffffff;
 }
 
+.game-card:hover .game-image {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+  opacity: 0.9; /* Subtle fade for interactivity */
+}
+
 .game-card::before {
   content: '🎮'; /* Gamepad emoji for flair */
   position: absolute;
@@ -67,6 +73,17 @@
   font-size: 1.5rem;
   opacity: 0.2;
   z-index: 0;
+}
+
+.game-image {
+  width: 100%;
+  height: 160px; /* Fixed height for consistency */
+  object-fit: cover; /* Ensures images scale nicely */
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .game-card h2 {
@@ -128,7 +145,11 @@
   }
 
   .game-card {
-    padding: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  .game-image {
+    height: 140px; /* Slightly smaller for tablets */
   }
 
   .game-card h2 {
@@ -155,7 +176,11 @@
   }
 
   .game-card {
-    padding: 1.25rem;
+    padding: 1rem;
+  }
+
+  .game-image {
+    height: 120px; /* Smaller for mobile */
   }
 
   .game-card h2 {
