@@ -45,11 +45,22 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Align text to bottom */
-  height: 200px; /* Fixed height for consistency */
-  background-size: cover; /* Cover the entire card */
-  background-position: center; /* Center the image */
-  color: #ffffff; /* Default text color for readability */
+  justify-content: flex-end;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; /* Explicitly prevent repetition */
+  color: #ffffff;
+}
+
+.game-card[data-image] {
+  background-image: var(--bg-image); /* Fallback for older browsers */
+}
+
+/* Dynamically apply background image using :where() to handle data-image */
+:where(.game-card[data-image]) {
+  --bg-image: url('');
+  background-image: var(--bg-image);
 }
 
 .game-card::after {
@@ -59,7 +70,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay for text readability */
+  background: rgba(0, 0, 0, 0.5);
   z-index: 0;
   transition: background 0.3s ease;
 }
@@ -70,7 +81,7 @@
 }
 
 .game-card:hover::after {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.7), rgba(30, 64, 175, 0.7)); /* Gradient overlay on hover */
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.7), rgba(30, 64, 175, 0.7));
 }
 
 .game-card::before {
@@ -81,17 +92,16 @@
   font-size: 1.5rem;
   opacity: 0.2;
   z-index: 1;
-  color: #ffffff; /* Ensure emoji is visible on dark overlay */
+  color: #ffffff;
 }
 
 .game-card h2 {
   font-size: 1.75rem;
   font-weight: 600;
   margin: 0 0 0.75rem;
-  transition: color 0.3s ease;
   position: relative;
   z-index: 1;
-  color: #ffffff; /* White for readability */
+  color: #ffffff;
 }
 
 .game-card p {
@@ -99,10 +109,20 @@
   font-weight: 500;
   margin: 0;
   line-height: 1.5;
-  transition: color 0.3s ease;
   position: relative;
   z-index: 1;
-  color: #ffffff; /* White for readability */
+  color: #ffffff;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 /* Animations */
@@ -144,7 +164,7 @@
 
   .game-card {
     padding: 1.5rem;
-    height: 180px; /* Slightly smaller for tablets */
+    height: 180px;
   }
 
   .game-card h2 {
@@ -172,7 +192,7 @@
 
   .game-card {
     padding: 1.25rem;
-    height: 160px; /* Smaller for mobile */
+    height: 160px;
   }
 
   .game-card h2 {
@@ -186,4 +206,17 @@
   .game-card::before {
     font-size: 1.2rem;
   }
+}
+
+/* Dynamically set --bg-image for each game card */
+.game-card[data-image*="flingo"] {
+  --bg-image: url('../assets/images/flingo.jpg');
+}
+
+.game-card[data-image*="game2"] {
+  --bg-image: url('../assets/images/game2.jpg');
+}
+
+.game-card[data-image*="game3"] {
+  --bg-image: url('../assets/images/game3.jpg');
 }
