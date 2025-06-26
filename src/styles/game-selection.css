@@ -1,83 +1,316 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* src/styles/game-selection.css */
+
+/* Ensure styles are scoped to game-selection-page to avoid conflicts */
+.game-selection-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  text-align: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding: 2rem 1rem; /* Added padding to match game-page *
+}
+
+.game-selection-page.container {
+  max-width: 1200px; /* Match game-page max-width */
+  margin: 0 auto; /* Center content */
+}
+
+.game-selection-page h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 30px;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+  letter-spacing: -0.025em;
+  animation: fadeIn 0.5s ease;
+}
+
+.game-selection-page .game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.game-selection-page .game-card {
+  background: #ffffff; /* Fallback background for cards without images */
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #ffffff;
+}
+
+.game-selection-page .game-card[data-image] {
+  background-image: var(--bg-image);
+}
+
+.game-selection-page .game-card:not([data-image]) {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+}
+
+.game-selection-page .game-card[data-image*="flingo_banner"] {
+  --bg-image: url('../assets/flingo_banner.png');
+}
+
+.game-selection-page .game-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, -webkit-background-clip: text);
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+  letter-spacing: -0.025em;
+  animation: fadeIn 0.5s ease;
+}
+
+.game-selection-page .game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.game-selection-page .game-card {
+  background: #ffffff; /* Fallback background for cards without images */
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #ffffff;
+}
+
+.game-selection-page .game-card[data-image] {
+  background-image: var(--bg-image);
+}
+
+.game-selection-page .game-card:not([data-image]) {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+}
+
+.game-selection-page .game-card[data-image*="flingo_banner"] {
+  --bg-image: url('../assets/flingo_banner.png');
+}
+
+.game-selection-page .game-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* Light overlay for non-blurred image */
+  z-index: 0;
+  transition: background 0.3s ease;
+}
+
+.game-selection-page .game-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.game-selection-page .game-card:hover::after {
+  background: rgba(59, 130, 246, 0.4);
+}
+
+.game-selection-page .game-card::before {
+  content: '🎮';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 1.5rem;
+  opacity: 0.2;
+  z-index: 1;
+  color: #ffffff;
+  transition: opacity 0.3s ease;
+}
+
+.game-selection-page .game-card:hover::before {
+  opacity: 0.4;
+}
+
+.game-selection-page .game-card h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.game-selection-page .game-card p {
+  font-size: 0.95rem;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+  color: #e5e7eb;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+.game-selection-page .game-card:hover h2 {
+  opacity: 1;
+  transform: translateY(0);
+  text-shadow: 0 5px 10px rgba(0, 0, 0, 0.6);
+}
+
+.game-selection-page .game-card:hover p {
+  opacity: 1;
+  transform: translateY(0);
+  color: #ffffff;
+}
+
+.game-selection-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
-    padding-top: 60px; /* Space for header */
-    padding-bottom: 60px; /* Space for navbar */
+  to {
+    opacity: 1;
   }
-  
-  a {
-    text-decoration: none;
-    color: inherit;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  button, input, select {
-    font: inherit;
-    border: none;
-    outline: none;
-  }
-  
-  button {
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-  }
-  
-  button:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-  
-  button:active:not(:disabled) {
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .game-selection-page {
+    padding: 1.5rem 0.75rem;
   }
-  
-  h1, h2, h3 {
-    line-height: 1.2;
+
+  .game-selection-page h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
   }
-  
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+
+  .game-selection-page .game-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
   }
-  
-  :focus-visible {
-    outline: 2px solid #1e40af;
-    outline-offset: 2px;
+
+  .game-selection-page .game-card {
+    padding: 1.5rem;
+    height: 180px;
   }
-  
-  @media (max-width: 768px) {
-    .container {
-      padding: 0 0.5rem;
-    }
-  
-    h1 {
-      font-size: 1.8rem;
-    }
-  
-    h2 {
-      font-size: 1.5rem;
-    }
-  
-    body {
-      padding-top: 50px; /* Smaller header on mobile */
-      padding-bottom: 50px; /* Smaller navbar on mobile */
-    }
+
+  .game-selection-page .game-card h2 {
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   }
+
+  .game-selection-page .game-card p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .game-selection-page .game-card::before {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-selection-page {
+    padding: 1rem;
+  }
+
+  .game-selection-page h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .game-selection-page .game-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-selection-page .game-card {
+    padding: 1.25rem;
+    height: 160px;
+  }
+
+  .game-selection-page .game-card h2 {
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 2px  каждое 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .game-selection-page .game-card p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    max-width: 95%;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .game-selection-page .game-card::before {
+    font-size: 1.2rem;
+  }
+}
