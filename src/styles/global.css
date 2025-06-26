@@ -65,7 +65,7 @@
   
   @media (max-width: 768px) {
     .container {
-      padding: 0 0.5rem;
+/*       padding: 0 0.5rem; */
     }
   
     h1 {
