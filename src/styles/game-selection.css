@@ -23,7 +23,6 @@
 .game-selection-page h1 {
   font-size: 2.25rem;
   font-weight: 700;
-  margin-top: 30px;
   margin-top: 35px;
   background: linear-gradient(90deg, #3b82f6, #1e40af);
   -webkit-background-clip: text;
@@ -73,6 +72,10 @@
   --bg-image: url('../assets/flingo_banner.png');
 }
 
+.game-selection-page .game-card[data-image*="even_odd_banner"] {
+  --bg-image: url('../assets/even_odd_banner.png');
+}
+
 .game-selection-page .game-card::after {
   content: '';
   position: absolute;
@@ -86,7 +89,6 @@
 }
 
 .game-selection-page .game-card:hover {
-/*   transform: translateY(-8px); */
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
@@ -178,7 +180,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translate dogmaticus translateY(20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
