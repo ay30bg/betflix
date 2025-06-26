@@ -1,3 +1,4 @@
+
 /* Global Styles */
 * {
   box-sizing: border-box;
@@ -16,6 +17,7 @@ body {
 .game-page {
   padding: 2rem 1rem;
   max-width: 1200px;
+/*   margin: 0 auto; */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -23,6 +25,7 @@ body {
   justify-content: flex-start;
   gap: 1.5rem; /* Increased gap for better spacing */
 }
+
 
 /* Game Error (for Game.jsx errors) */
 .game-error {
@@ -41,65 +44,20 @@ body {
 
 /* Round Info (Current Round and Time Left) */
 .round-info {
-  background: linear-gradient(145deg, #ffffff, #f1f5f9); /* Subtle gradient for depth */
-  padding: 2rem;
-  border-radius: 16px; /* Softer, modern radius */
+  background: #ffffff; /* White background for contrast */
+  padding: 1.25rem;
+  border-radius: 12px;
   text-align: center;
   width: 100%;
-  max-width: 800px; /* Increased from 600px to 800px */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05); /* Layered shadow for elevation */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
-  margin-bottom: 5px;
-  margin-top: 15px;
-}
-
-.round-info::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)); /* Subtle color overlay */
-  z-index: -1;
-  opacity: 0.5;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .round-info p {
-  font-size: 1.25rem; /* Slightly larger for readability */
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b; /* Darker slate for contrast */
-  margin: 0.75rem 0;
-  letter-spacing: 0.02em; /* Subtle spacing for elegance */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem; /* Space for icons or emphasis */
-}
-
-.round-info p:first-child {
-  font-size: 1.5rem; /* Larger for current round */
-  font-weight: 700;
-  color: #1e40af; /* Vibrant blue for emphasis */
-  background: linear-gradient(90deg, #3b82f6, #1e40af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; /* Gradient text effect */
-}
-
-.round-info p:nth-child(2) {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #dc2626; /* Red for urgency */
-  animation: pulse 1.5s infinite; /* Pulsing effect for timer */
-}
-
-.round-info p:nth-child(3) {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #4b5563; /* Muted for secondary info */
+  color: #1f2937;
+  margin: 0.5rem 0;
 }
 
 /* Header (Balance and Reset Button) */
@@ -153,7 +111,7 @@ body {
 /* Bet Form */
 .bet-form-container {
   width: 100%;
-  max-width: 800px; /* Increased from 600px to 800px */
+  max-width: 600px;
   background: #ffffff;
   padding: 2rem;
   border-radius: 12px;
@@ -440,7 +398,7 @@ body {
 /* History Table */
 .history-table-container {
   width: 100%;
-  max-width: 1000px; /* Increased from 800px to 1000px */
+  max-width: 800px;
   background: #ffffff;
   padding: 1.5rem;
   border-radius: 12px;
@@ -638,7 +596,7 @@ body {
   margin: 8px 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 800px; /* Increased from 600px to 800px */
+  max-width: 800px;
 }
 
 .history-table .pending {
@@ -648,28 +606,24 @@ body {
 
 /* History Button */
 .history-button {
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient button */
-  color: #fff;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 5px;
   cursor: pointer;
-  margin-top: 1rem;
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
 }
 
 .history-button:hover {
-  background: linear-gradient(90deg, #2563eb, #1e3a8a); /* Darker gradient on hover */
-  transform: translateY(-2px); /* Lift effect */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+  background-color: #0056b3;
 }
 
 .history-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* Focus ring */
+  outline: 2px solid #0056b3;
+  outline-offset: 2px;
 }
 
 /* Modal Styles */
@@ -764,6 +718,102 @@ body {
 
 .modal-close-button:hover {
   background-color: #0056b3;
+}
+
+/* Round Info (Current Round and Time Left) */
+.round-info {
+  background: linear-gradient(145deg, #ffffff, #f1f5f9); /* Subtle gradient for depth */
+  padding: 2rem;
+  border-radius: 16px; /* Softer, modern radius */
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05); /* Layered shadow for elevation */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+  margin-bottom: 5px;
+  margin-top: 15px;
+}
+
+
+
+/* Background accent for modern flair */
+.round-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)); /* Subtle color overlay */
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* Typography for round info */
+.round-info p {
+  font-size: 1.25rem; /* Slightly larger for readability */
+  font-weight: 600;
+  color: #1e293b; /* Darker slate for contrast */
+  margin: 0.75rem 0;
+  letter-spacing: 0.02em; /* Subtle spacing for elegance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Space for icons or emphasis */
+}
+
+/* Highlight specific elements */
+.round-info p:first-child {
+  font-size: 1.5rem; /* Larger for current round */
+  font-weight: 700;
+  color: #1e40af; /* Vibrant blue for emphasis */
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Gradient text effect */
+}
+
+/* Timer styling */
+.round-info p:nth-child(2) {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #dc2626; /* Red for urgency */
+  animation: pulse 1.5s infinite; /* Pulsing effect for timer */
+}
+
+/* Expires At styling */
+.round-info p:nth-child(3) {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4b5563; /* Muted for secondary info */
+}
+
+/* History Button */
+.history-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(90deg, #3b82f6, #1e40af); /* Gradient button */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-button:hover {
+  background: linear-gradient(90deg, #2563eb, #1e3a8a); /* Darker gradient on hover */
+  transform: translateY(-2px); /* Lift effect */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+.history-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* Focus ring */
 }
 
 /* Recent Result */
@@ -921,7 +971,18 @@ body {
   }
 }
 
-/* Modal Payout Info */
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .online-users {
+    padding: 0.6rem 1.25rem;
+    max-width: 250px;
+  }
+
+  .online-users span {
+    font-size: 1rem;
+  }
+}
+
 .modal-payout-info {
   display: flex;
   flex-direction: column;
@@ -936,32 +997,47 @@ body {
   text-align: center; /* Center-align text for balance */
 }
 
+/* Style for individual <p> elements inside .modal-payout-info */
 .modal-payout-info p {
   margin: 0; /* Remove default margins */
   padding: 5px 0; /* Light vertical padding */
   font-weight: 500; /* Medium weight for emphasis */
 }
 
+/* Highlight the multiplier and potential win values for emphasis */
 .modal-payout-info p::before {
   content: "• "; /* Add a bullet for visual separation */
   color: #007bff; /* Blue color for the bullet */
 }
 
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .modal-payout-info {
+    font-size: 0.9rem; /* Slightly smaller font for mobile */
+    padding: 8px; /* Reduced padding for smaller screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .online-users {
+    padding: 0.5rem 1rem;
+    max-width: 200px;
+  }
+
+  .online-users span {
+    font-size: 0.9rem;
+  }
+
+  .online-users::before {
+    font-size: 1rem; /* Smaller icon on mobile */
+  }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .game-page {
-    padding: 1.5rem 0.75rem;
-  }
-
-  .game-error {
-    font-size: 1.1rem;
-    padding: 0.75rem;
-  }
-
   .round-info {
     padding: 1.25rem;
     border-radius: 8px;
-    max-width: 100%; /* Full width on smaller screens */
   }
 
   .round-info p {
@@ -980,132 +1056,16 @@ body {
     font-size: 1rem;
   }
 
-  .bet-form-container {
-    padding: 1.5rem;
-    max-width: 100%; /* Full width on smaller screens */
-  }
-
-  .color-button-group {
-    gap: 0.75rem;
-  }
-
-  .color-button.red {
-    width: 100px;
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 6px;
-    text-align: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .color-button.green {
-    width: 100px;
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 6px;
-    text-align: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .color-button.violet {
-    width: 100px;
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 6px;
-    text-align: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .ball-button {
-    width: 50px;
-    height: 50px;
-  }
-
-  .ball-button img {
-    width: 32px;
-    height: 32px;
-  }
-
-  .period-timer-container {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    font-size: 1.1rem;
-  }
-
-  .result {
-    font-size: 1.5rem;
-    padding: 2rem;
-    margin: 1.5rem 0;
-  }
-
-  .result-header {
-    font-size: 2rem;
-  }
-
-  .result-detail {
-    font-size: 1.25rem;
-  }
-
-  .result-payout {
-    font-size: 1.5rem;
-  }
-
-  .no-result {
-    font-size: 1.25rem;
-    padding: 2rem;
-    max-width: 100%; /* Full width on smaller screens */
-  }
-
-  .history-table-container {
-    max-width: 100%; /* Full width on smaller screens */
-  }
-
-  .history-table th,
-  .history-table td {
-    font-size: 0.9rem;
-    padding: 0.75rem;
-  }
-
   .history-button {
     padding: 0.6rem 1.25rem;
     font-size: 0.95rem;
   }
-
-  .online-users {
-    padding: 0.6rem 1.25rem;
-    max-width: 250px;
-  }
-
-  .online-users span {
-    font-size: 1rem;
-  }
 }
 
 @media (max-width: 600px) {
-  .modal-content {
-    width: 95%;
-    padding: 1.5rem;
-  }
-
-  .modal-content h2 {
-    font-size: 1.5rem;
-  }
-
-  .modal-payout-info {
-    font-size: 0.9rem;
-    padding: 8px;
-  }
-
   .round-info {
     padding: 1rem;
-    max-width: 100%; /* Full width on mobile */
+    max-width: 100%;
   }
 
   .round-info p {
@@ -1125,73 +1085,10 @@ body {
     font-size: 0.9rem;
   }
 
-  .bet-form-container {
-    padding: 1.25rem;
-    max-width: 100%; /* Full width on mobile */
-  }
-
-  .no-result {
-    font-size: 1.1rem;
-    padding: 1.5rem;
-    max-width: 100%; /* Full width on mobile */
-  }
-
-  .history-table-container {
-    max-width: 100%; /* Full width on mobile */
-  }
-
-  .history-table {
-    display: block;
-  }
-
-  .history-table thead {
-    display: none;
-  }
-
-  .history-table tbody,
-  .history-table tr {
-    display: block;
-  }
-
-  .history-table tr {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .history-table td {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border: none;
-  }
-
-  .history-table td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #4b5563;
-    width: 40%;
-  }
-
   .history-button {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     width: 100%; /* Full-width button on small screens */
-  }
-
-  .online-users {
-    padding: 0.5rem 1rem;
-    max-width: 200px;
-  }
-
-  .online-users span {
-    font-size: 0.9rem;
-  }
-
-  .online-users::before {
-    font-size: 1rem; /* Smaller icon on mobile */
   }
 }
 
@@ -1242,5 +1139,185 @@ body {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .game-page {
+/*     padding: 1.5rem 0.75rem; */
+  }
+
+  .game-error {
+    font-size: 1.1rem;
+    padding: 0.75rem;
+  }
+
+  .round-info {
+    padding: 1rem;
+  }
+
+  .round-info p {
+    font-size: 1.1rem;
+  }
+
+  .bet-form-container {
+    padding: 1.5rem;
+  }
+
+  .color-button-group {
+    gap: 0.75rem;
+  }
+
+ .color-button.red {
+    width: 100px; /* Maintain consistent width as per your existing rule */
+    padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
+    font-size: 1rem; /* Slightly smaller font for mobile readability */
+    font-weight: 600; /* Maintain bold text for clarity */
+    border-radius: 6px; /* Slightly smaller radius for a tighter look */
+    text-align: center; /* Ensure text is centered */
+    transition: all 0.2s ease; /* Smooth transitions for hover/focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+
+
+.color-button.green {
+    width: 100px; /* Maintain consistent width as per your existing rule */
+    padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
+    font-size: 1rem; /* Slightly smaller font for mobile readability */
+    font-weight: 600; /* Maintain bold text for clarity */
+    border-radius: 6px; /* Slightly smaller radius for a tighter look */
+    text-align: center; /* Ensure text is centered */
+    transition: all 0.2s ease; /* Smooth transitions for hover/focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+
+
+.color-button.violet {
+    width: 100px; /* Maintain consistent width as per your existing rule */
+    padding: 0.6rem 1rem; /* Slightly reduced padding for compact layout */
+    font-size: 1rem; /* Slightly smaller font for mobile readability */
+    font-weight: 600; /* Maintain bold text for clarity */
+    border-radius: 6px; /* Slightly smaller radius for a tighter look */
+    text-align: center; /* Ensure text is centered */
+    transition: all 0.2s ease; /* Smooth transitions for hover/focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+
+
+  .ball-button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ball-button img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .period-timer-container {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .result {
+    font-size: 1.5rem;
+    padding: 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .result-header {
+    font-size: 2rem;
+  }
+
+  .result-detail {
+    font-size: 1.25rem;
+  }
+
+  .result-payout {
+    font-size: 1.5rem;
+  }
+
+  .no-result {
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .history-table th,
+  .history-table td {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .modal-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .result {
+    font-size: 1.3rem;
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .result-header {
+    font-size: 1.75rem;
+  }
+
+  .result-detail {
+    font-size: 1.1rem;
+  }
+
+  .result-payout {
+    font-size: 1.3rem;
+  }
+
+  .no-result {
+    font-size: 1.1rem;
+    padding: 1.5rem;
+  }
+
+  .history-table {
+    display: block;
+  }
+
+  .history-table thead {
+    display: none;
+  }
+
+  .history-table tbody,
+  .history-table tr {
+    display: block;
+  }
+
+  .history-table tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .history-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border: none;
+  }
+
+  .history-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4b5563;
+    width: 40%;
   }
 }
