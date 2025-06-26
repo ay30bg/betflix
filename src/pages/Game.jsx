@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/header';
 import flingoImage from '../assets/flingo_banner.png';
+import evenImage from '../assets/even_odd_banner.png';
 import '../styles/game-selection.css';
 
 const GameSelection = () => {
@@ -16,7 +17,12 @@ const GameSelection = () => {
       alt: 'Flingo game preview',
     },
     // Add more games here as needed
-    { name: 'Even & Odd', path: '/game/game2', description: 'Coming soon!' },
+    { name: 'Even & Odd', 
+     path: '/game/game2', 
+     description: 'Coming soon!', 
+     image: evenImage,
+     alt: 'Even & Odd game preview',
+    },
     { name: 'Game 3', path: '/game/game3', description: 'Coming soon!' },
   ];
 
