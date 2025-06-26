@@ -7,9 +7,10 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-/*   color: #1f2937; */
-    color: red;
+/*   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); */
+  background: red;
+  color: #1f2937;
+  padding: 0;
   line-height: 1.5;
 }
 
