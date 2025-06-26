@@ -44,7 +44,7 @@ body {
 /* Round Info (Current Round and Time Left) */
 .round-info {
   background: #ffffff; /* White background for contrast */
-  padding: 1.25rem;
+/*   padding: 1.25rem; */
   border-radius: 12px;
   text-align: center;
   width: 100%;
