@@ -53,7 +53,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 250px; /* Height from previous update */
+  height: 230px; /* Reduced from 250px */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -206,7 +206,7 @@
 
   .game-selection-page .game-card {
     padding: 1.5rem;
-    height: 225px; /* Height from previous update */
+    height: 205px; /* Reduced from 225px */
   }
 
   .game-selection-page .game-card h2 {
@@ -242,7 +242,7 @@
 
   .game-selection-page .game-card {
     padding: 1.25rem;
-    height: 200px; /* Height from previous update */
+    height: 180px; /* Reduced from 200px */
   }
 
   .game-selection-page .game-card h2 {
