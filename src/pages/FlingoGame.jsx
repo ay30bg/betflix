@@ -521,7 +521,7 @@ function FlingoGame() {
 
   return (
     <ErrorBoundary>
-      <div className="game-page container">
+      <div className="game-page">
         <Header />
         {notification && (
           <div className={`result ${notification.type}`} role="alert" aria-live="polite">
