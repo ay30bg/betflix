@@ -18,7 +18,7 @@ const GameSelection = () => {
     },
     // Add more games here as needed
     { name: 'Even & Odd', 
-     path: '/game/game2', 
+     path: '/game/even-odd', 
      description: 'Coming soon!', 
      image: evenImage,
      alt: 'Even & Odd game preview',
