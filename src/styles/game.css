@@ -1146,6 +1146,7 @@ body {
 @media (max-width: 768px) {
   .game-page {
 /*     padding: 1.5rem 0.75rem; */
+    margin: 0;
   }
 
   .game-error {
