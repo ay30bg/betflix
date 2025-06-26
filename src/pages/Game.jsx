@@ -23,7 +23,6 @@ const GameSelection = () => {
      image: evenImage,
      alt: 'Even & Odd game preview',
     },
-    { name: 'Game 3', path: '/game/game3', description: 'Coming soon!' },
   ];
 
   return (
