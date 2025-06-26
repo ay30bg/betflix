@@ -16,7 +16,7 @@ const GameSelection = () => {
       alt: 'Flingo game preview',
     },
     // Add more games here as needed
-    { name: 'Game 2', path: '/game/game2', description: 'Coming soon!' },
+    { name: 'Even & Odd', path: '/game/game2', description: 'Coming soon!' },
     { name: 'Game 3', path: '/game/game3', description: 'Coming soon!' },
   ];
 
