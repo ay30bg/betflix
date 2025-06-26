@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import crypto from 'crypto-js';
-import '../styles/even-odd.css'; // Assuming the same stylesheet can be adapted
+import '../styles/even-odd.css';
 
 // Jackpot Animation Component for Even/Odd wins
 function JackpotAnimation({ isActive }) {
