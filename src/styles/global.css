@@ -37,11 +37,11 @@
     transform: translateY(0);
   }
   
-  .container {
+/*   .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
-  }
+  } */
   
   h1, h2, h3 {
     line-height: 1.2;
