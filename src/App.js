@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BalanceProvider } from './context/BalanceContext';
 import Navbar from './components/navbar';
 import FlingoGame from './pages/FlingoGame';
+import EvenOdd from './pages/EvenOdd';
 import Home from './pages/Home';
 import About from './pages/About';
 import Profile from './pages/Profile';
@@ -49,6 +50,7 @@ function Layout() {
         <Route path="/login" element={<Login />} />
         <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
         <Route path="/game/flingo" element={<ProtectedRoute><FlingoGame /></ProtectedRoute>} />
+        <Route path="/game/even-odd" element={<ProtectedRoute><EvenOdd /></ProtectedRoute>} />
         <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/sign-up" element={<Signup />} />
