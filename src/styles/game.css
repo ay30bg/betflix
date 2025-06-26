@@ -13,7 +13,7 @@ body {
 }
 
 /* Game Page */
-.game-page {
+/* .game-page {
   padding: 2rem 1rem;
   max-width: 1200px;
 /*   margin: 0 auto; */
@@ -22,8 +22,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 1.5rem; /* Increased gap for better spacing */
-}
+  gap: 1.5rem; 
+} */
 
 
 /* Game Error (for Game.jsx errors) */
