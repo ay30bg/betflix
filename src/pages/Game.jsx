@@ -23,7 +23,7 @@ const GameSelection = () => {
   return (
     <div className="game-selection-page container">
       <Header />
-      <h1>Choose a Game</h1>
+      <h1>Select Game</h1>
       <div className="game-grid">
         {games.map((game) => (
           <div
