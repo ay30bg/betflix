@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+veimport React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import '../styles/even-odd.css';
 import Header from '../components/header';
 import BetForm from '../components/EvenOddBetform';
-import HistoryTable from '../components/HistoryTable';
+import HistoryTable from '../components/EvenOddHistoryTable';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
