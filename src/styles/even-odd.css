@@ -61,7 +61,7 @@
   .construction-container {
     width: 90%; /* Flexible width for smaller screens */
     height: 300px; /* Slightly reduced height for mobile */
-    margin-top: 150px;
+    margin: 70px auto;
   }
 
   .construction-container h1 {
