@@ -26,16 +26,16 @@ body {
 }
 
 /* Container */
-.eo-container {
+/* .eo-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-}
+} */
 
 /* Bet Form Container */
-/* .eo-bet-form-container {
+.eo-bet-form-container {
   width: 100%;
   max-width: 600px;
   background: #ffffff;
@@ -44,7 +44,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
- */
+
 .eo-bet-form-container:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
