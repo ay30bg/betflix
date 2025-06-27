@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import '../styles/game.css'; 
 import Header from '../components/header';
-// import BetForm from '../components/EvenOddBetForm';
+import BetForm from '../components/BetForm';
 import HistoryTable from '../components/HistoryTable';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
