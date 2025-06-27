@@ -60,7 +60,8 @@
 @media (max-width: 800px) {
   .construction-container {
     width: 90%; /* Flexible width for smaller screens */
-    height: 400px; /* Slightly reduced height for mobile */
+    height: 300px; /* Slightly reduced height for mobile */
+    margin-top: 60px;
   }
 
   .construction-container h1 {
