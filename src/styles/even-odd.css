@@ -1,13 +1,36 @@
 /* even-odd.css */
 
-/* Container for the entire betting form */
-.eo-bet-form-container {
-  max-width: 500px;
+/* Base page styling */
+.eo-game-page {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center vertically */
+}
+
+/* Container for centering content */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Bet form container */
+.eo-bet-form-container {
+  max-width: 500px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
 }
 
@@ -15,30 +38,33 @@
 .eo-bet-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
+  align-items: center;
 }
 
 /* Form group for choice buttons */
 .eo-form-group.eo-choice-buttons {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 /* Choice button group */
 .eo-choice-button-group {
   display: flex;
-  gap: 10px;
+  gap: 15px;
+  justify-content: center;
 }
 
 /* Choice buttons (Even/Odd) */
 .eo-choice-button {
-  padding: 12px 24px;
+  padding: 12px 30px;
   font-size: 16px;
   font-weight: bold;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Even button */
@@ -47,21 +73,31 @@
   color: white;
 }
 
+.eo-choice-button.eo-even:hover:not(:disabled) {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
 /* Odd button */
 .eo-choice-button.eo-odd {
   background-color: #007bff;
   color: white;
 }
 
+.eo-choice-button.eo-odd:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
 /* Selected state for choice buttons */
 .eo-choice-button.eo-selected {
   transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Disabled state for choice buttons */
 .eo-choice-button:disabled {
-  background-color: #ccc;
+  background-color: #cccccc;
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -73,66 +109,80 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeInOverlay 0.3s ease-in;
 }
 
 /* Modal content */
 .eo-modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  width: 100%;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
   position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  animation: slideInModal 0.3s ease-out;
 }
 
 /* Modal close button */
 .eo-modal-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
-  color: #333;
+  color: #333333;
+  transition: color 0.2s ease;
+}
+
+.eo-modal-close:hover {
+  color: #000000;
 }
 
 /* Modal title */
 .eo-modal-content h2 {
-  margin: 0 0 15px;
-  font-size: 24px;
-  color: #333;
+  margin: 0 0 20px;
+  font-size: 26px;
+  color: #333333;
   text-align: center;
 }
 
 /* Modal form group */
 .eo-form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 /* Modal label */
 .eo-modal-label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-size: 14px;
   font-weight: bold;
-  color: #333;
+  color: #333333;
 }
 
 /* Modal input */
 .eo-modal-input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
   box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.eo-modal-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
 /* Modal input disabled state */
@@ -144,61 +194,67 @@
 /* Suggested amounts container */
 .eo-suggested-amounts {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 12px;
+  margin-bottom: 20px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* Suggested amount buttons */
 .eo-suggested-amount-button {
-  padding: 8px 16px;
+  padding: 10px 20px;
   font-size: 14px;
   border: 1px solid #007bff;
-  border-radius: 5px;
-  background-color: #fff;
+  border-radius: 8px;
+  background-color: #ffffff;
   color: #007bff;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
-/* Suggested amount button hover */
-.eo-suggested-amount-button:hover {
+.eo-suggested-amount-button:hover:not(:disabled) {
   background-color: #007bff;
-  color: white;
+  color: #ffffff;
+  transform: scale(1.05);
 }
 
 /* Suggested amount button disabled */
 .eo-suggested-amount-button:disabled {
-  background-color: #ccc;
-  color: #666;
+  background-color: #cccccc;
+  color: #666666;
   cursor: not-allowed;
 }
 
 /* Modal payout info */
 .eo-modal-payout-info {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   text-align: center;
   font-size: 14px;
-  color: #555;
+  color: #555555;
 }
 
 /* Modal submit button */
 .eo-modal-submit {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
   font-weight: bold;
   background-color: #28a745;
-  color: white;
+  color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.eo-modal-submit:hover:not(:disabled) {
+  background-color: #218838;
+  transform: scale(1.02);
 }
 
 /* Modal submit button disabled */
 .eo-modal-submit:disabled {
-  background-color: #ccc;
+  background-color: #cccccc;
   cursor: not-allowed;
 }
 
@@ -216,17 +272,17 @@
 /* Confetti particles */
 .eo-confetti-particle {
   position: absolute;
-  width: 10px;
-  height: 10px;
-  opacity: 0.8;
-  animation: eo-fall 2s ease-out forwards;
+  width: 12px;
+  height: 12px;
+  opacity: 0.9;
+  animation: eo-fall 2.5s ease-out forwards;
 }
 
 /* Confetti fall animation */
 @keyframes eo-fall {
   0% {
     transform: translateY(-100vh) rotate(0deg);
-    opacity: 0.8;
+    opacity: 0.9;
   }
   100% {
     transform: translateY(100vh) rotate(720deg);
@@ -240,11 +296,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 48px;
+  font-size: 50px;
   font-weight: bold;
   color: #FFD700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  animation: eo-pulse 1s infinite;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  animation: eo-pulse 1.2s infinite;
 }
 
 /* Pulse animation for jackpot text */
@@ -253,53 +309,17 @@
     transform: translate(-50%, -50%) scale(1);
   }
   50% {
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: translate(-50%, -50%) scale(1.25);
   }
   100% {
     transform: translate(-50%, -50%) scale(1);
   }
 }
 
-/* Responsive design */
-@media (max-width: 600px) {
-  .eo-bet-form-container {
-    padding: 15px;
-  }
-
-  .eo-modal-content {
-    max-width: 90%;
-  }
-
-  .eo-choice-button {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
-
-  .eo-jackpot-text {
-    font-size: 36px;
-  }
-}
-
-/* even-odd.css */
-.eo-game-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f6f8;
-  min-height: 100vh;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 /* Loading Spinner */
 .eo-loading-spinner {
   font-size: 1.5rem;
-  color: #333;
+  color: #333333;
   text-align: center;
   padding: 50px;
   animation: pulse 1.5s infinite ease-in-out;
@@ -316,9 +336,9 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 15px 25px;
+  padding: 15px 30px;
   border-radius: 8px;
-  color: #fff;
+  color: #ffffff;
   font-weight: bold;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -342,47 +362,49 @@
 .eo-game-error {
   color: #dc3545;
   background-color: #ffe6e6;
-  padding: 10px 20px;
-  border-radius: 5px;
-  margin: 15px 0;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin: 15px auto;
   text-align: center;
   font-weight: 500;
+  max-width: 600px;
+  width: 90%;
 }
 
 /* Game Container */
 .eo-game-container {
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 800px;
-  margin-top: 20px;
+  margin: 20px auto;
 }
 
 /* Round Info */
 .eo-round-info {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .eo-round-info h2 {
   font-size: 2rem;
   color: #1a1a1a;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .eo-round-info p {
   font-size: 1.1rem;
-  color: #555;
-  margin: 5px 0;
+  color: #555555;
+  margin: 8px 0;
 }
 
 /* Result Display */
 .eo-result {
   position: relative;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 20px;
   text-align: center;
   animation: fadeIn 0.5s ease-in;
@@ -406,28 +428,29 @@
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #555;
+  color: #555555;
+  transition: color 0.2s ease;
 }
 
 .eo-result-close:hover {
-  color: #000;
+  color: #000000;
 }
 
 .eo-result-header {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .eo-result-detail {
   font-size: 1.1rem;
-  color: #333;
+  color: #333333;
 }
 
 .eo-result-payout {
   font-size: 1.2rem;
   font-weight: 500;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .eo-result.won .eo-result-payout {
@@ -448,34 +471,115 @@
   background-color: #fff3cd;
   border: 1px solid #ffeeba;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   text-align: center;
   margin-bottom: 20px;
+  max-width: 600px;
+  width: 90%;
 }
 
 .eo-pending-bet p {
-  margin: 5px 0;
+  margin: 8px 0;
   color: #856404;
+}
+
+/* History Table (Assuming a basic structure) */
+.eo-history-table {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.eo-history-table th,
+.eo-history-table td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.eo-history-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: #333333;
+}
+
+.eo-history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.eo-history-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Modal animations */
+@keyframes fadeInOverlay {
+  from { background-color: rgba(0, 0, 0, 0); }
+  to { background-color: rgba(0, 0, 0, 0.6); }
+}
+
+@keyframes slideInModal {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
   .eo-game-page {
-    padding: 10px;
-  }
-
-  .eo-game-container {
     padding: 15px;
   }
 
+  .eo-bet-form-container {
+    padding: 15px;
+    margin: 15px auto;
+  }
+
+  .eo-game-container {
+    padding: 20px;
+  }
+
   .eo-round-info h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+  }
+
+  .eo-round-info p {
+    font-size: 1rem;
+  }
+
+  .eo-choice-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .eo-modal-content {
+    max-width: 95%;
+    padding: 20px;
+  }
+
+  .eo-modal-content h2 {
+    font-size: 22px;
+  }
+
+  .eo-jackpot-text {
+    font-size: 36px;
   }
 
   .eo-notification {
     top: 10px;
     right: 10px;
     left: 10px;
+    padding: 12px 20px;
     font-size: 0.9rem;
+  }
+
+  .eo-history-table th,
+  .eo-history-table td {
+    font-size: 12px;
+    padding: 10px;
   }
 }
