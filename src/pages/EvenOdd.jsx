@@ -152,7 +152,7 @@ function EvenOddGame() {
 
   if (roundLoading || betsLoading) {
     return (
-      <div className="eo-game-page container">
+      <div className="eo-game-page">
         <Header />
         <div className="eo-loading-spinner" aria-live="polite">Loading...</div>
       </div>
