@@ -172,7 +172,7 @@ function EvenOddGame() {
           {error}
         </p>
       )}
-      <div className="eo-game-container">
+      <div>
         <div className="eo-round-info">
           <h2>Even/Odd Game</h2>
           <p>Current Round: {roundData?.period || 'Loading...'}</p>
