@@ -240,11 +240,13 @@ const UnderConstruction = () => {
   return (
     <div className="under-construction-container">
       <Header />
+      <div className="construction-container">
       <h1>Page Under Construction</h1>
       <p>Check back soon for the Even & Odd game!</p>
       <Link to="/game">
         <button className="explore-button">Explore Other Games</button>
       </Link>
+      <div/>
     </div>
   );
 };
