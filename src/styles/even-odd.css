@@ -1,1 +1,281 @@
+/* even-odd.css */
 
+/* Container for the entire betting form */
+.eo-bet-form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+/* Form styling */
+.eo-bet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Form group for choice buttons */
+.eo-form-group.eo-choice-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+/* Choice button group */
+.eo-choice-button-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* Choice buttons (Even/Odd) */
+.eo-choice-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Even button */
+.eo-choice-button.eo-even {
+  background-color: #28a745;
+  color: white;
+}
+
+/* Odd button */
+.eo-choice-button.eo-odd {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Selected state for choice buttons */
+.eo-choice-button.eo-selected {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled state for choice buttons */
+.eo-choice-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Modal overlay */
+.eo-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.eo-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal close button */
+.eo-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Modal title */
+.eo-modal-content h2 {
+  margin: 0 0 15px;
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+/* Modal form group */
+.eo-form-group {
+  margin-bottom: 15px;
+}
+
+/* Modal label */
+.eo-modal-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Modal input */
+.eo-modal-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Modal input disabled state */
+.eo-modal-input:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Suggested amounts container */
+.eo-suggested-amounts {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  justify-content: center;
+}
+
+/* Suggested amount buttons */
+.eo-suggested-amount-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #007bff;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Suggested amount button hover */
+.eo-suggested-amount-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Suggested amount button disabled */
+.eo-suggested-amount-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Modal payout info */
+.eo-modal-payout-info {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Modal submit button */
+.eo-modal-submit {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Modal submit button disabled */
+.eo-modal-submit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Jackpot animation container */
+.eo-jackpot-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Confetti particles */
+.eo-confetti-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 0.8;
+  animation: eo-fall 2s ease-out forwards;
+}
+
+/* Confetti fall animation */
+@keyframes eo-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Jackpot text */
+.eo-jackpot-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: eo-pulse 1s infinite;
+}
+
+/* Pulse animation for jackpot text */
+@keyframes eo-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .eo-bet-form-container {
+    padding: 15px;
+  }
+
+  .eo-modal-content {
+    max-width: 90%;
+  }
+
+  .eo-choice-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .eo-jackpot-text {
+    font-size: 36px;
+  }
+}
