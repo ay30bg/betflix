@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import '../styles/game.css'; 
+import '../styles/even-odd.css';
 import Header from '../components/header';
 import BetForm from '../components/EvenOddBetform';
 import HistoryTable from '../components/HistoryTable';
