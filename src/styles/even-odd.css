@@ -59,9 +59,8 @@
 /* Responsive adjustments */
 @media (max-width: 800px) {
   .construction-container {
-    width: 90%; /* Flexible width for smaller screens */
-    height: 300px; /* Slightly reduced height for mobile */
-    margin: 70px auto;
+    width: 90%; 
+    height: 300px;
   }
 
   .construction-container h1 {
