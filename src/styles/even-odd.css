@@ -15,8 +15,8 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background-color: #fff3cd; /* Light yellow for construction theme */
-  border: 2px solid #ffc107; /* Orange border */
+  background-color: #ffffff; /* Light yellow for construction theme */
+  border: 2px solid #1e40af; /* Orange border */
   border-radius: 8px;
   margin: 100px auto; /* Center horizontally */
   width: 750px; /* Fixed width in 700-800px range */
@@ -45,7 +45,7 @@
   font-size: 1rem;
   font-weight: 500;
   color: #fff;
-  background-color: #ffc107; /* Matches border for consistency */
+  background-color: linear-gradient(90deg, #3b82f6, #1e40af);
   border: none;
   border-radius: 5px;
   cursor: pointer;
