@@ -239,7 +239,7 @@ import '../styles/even-odd.css';
 const UnderConstruction = () => {
   return (
     <div className="under-construction-container">
-      <Header />S
+      <Header />
       <h1>Page Under Construction</h1>
       <p>Check back soon for the Even & Odd game!</p>
       <Link to="/game">
