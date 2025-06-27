@@ -86,7 +86,7 @@ p {
 @media (min-width: 901px) {
   .under-construction-container {
     padding: 2rem;
-  H
+  }
 
   h1 {
     font-size: clamp(2.3rem, 3vw, 2.8rem);
