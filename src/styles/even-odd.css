@@ -1,6 +1,6 @@
 /* styles/even-odd.css */
 
-/* Style for the parent under-construction-container */
+/* Parent container to fill viewport and stack Header and content */
 .under-construction-container {
   min-height: 100vh;
   display: flex;
@@ -8,60 +8,62 @@
   background-color: #f8f9fa; /* Light gray background */
 }
 
-/* Style for the construction-container */
+/* Main construction container */
 .construction-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-grow: 1; /* Takes remaining space after Header */
-  text-align: center;
   padding: 20px;
-  background: linear-gradient(135deg, #ffca28 0%, #ff9800 100%); /* Construction-themed gradient */
-  color: #1a1a1a; /* Dark text for contrast */
-  border-radius: 10px;
-  margin: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: #fff3cd; /* Light yellow for construction theme */
+  border: 2px solid #ffc107; /* Orange border */
+  border-radius: 8px;
+  margin: 20px auto; /* Center horizontally */
+  width: 750px; /* Fixed width in 700-800px range */
+  text-align: center;
+  flex-grow: 1; /* Takes remaining space after Header */
 }
 
-/* Style for the heading */
+/* Heading styling */
 .construction-container h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
+  color: #1a1a1a; /* Dark text for contrast */
   margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
-/* Style for the paragraph */
+/* Paragraph styling */
 .construction-container p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  max-width: 600px;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
 }
 
-/* Style for the explore button */
+/* Explore button styling */
 .explore-button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #fff;
-  background-color: #1a1a1a; /* Dark button to contrast with background */
+  background-color: #ffc107; /* Matches border for consistency */
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .explore-button:hover {
-  background-color: #333;
-  transform: scale(1.05);
+  background-color: #e0a800; /* Slightly darker on hover */
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .construction-container {
+    width: 90%; /* Flexible width for smaller screens */
+  }
+
   .construction-container h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
 
   .construction-container p {
@@ -69,7 +71,7 @@
   }
 
   .explore-button {
-    padding: 10px 20px;
+    padding: 8px 16px;
     font-size: 0.9rem;
   }
 }
