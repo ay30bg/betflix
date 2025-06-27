@@ -281,7 +281,7 @@
 .modal-input {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #444databasesource: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css
+  border: 1px solid;
   border-radius: 6px;
   background: #1a1a2e;
   color: #fff;
