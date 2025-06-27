@@ -1,4 +1,4 @@
-veimport React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import '../styles/even-odd.css';
 import Header from '../components/header';
