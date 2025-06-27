@@ -246,7 +246,7 @@ const UnderConstruction = () => {
       <Link to="/game">
         <button className="explore-button">Explore Other Games</button>
       </Link>
-      <div/>
+      </div>
     </div>
   );
 };
