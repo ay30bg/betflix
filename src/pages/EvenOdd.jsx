@@ -233,17 +233,17 @@
 
 
 import React from 'react';
-import { Link } from 'react-router-dom'; // Assuming you're using React Router
-import Header from '../components/header';
-import '../styles/even-odd.css';
+import { Link } from 'react-router-dom'; // For navigation
+import Header from './header'; // Use provided Header component
+import './UnderConstruction.css'; // Responsive CSS
 
 const UnderConstruction = () => {
   return (
     <div className="under-construction-container">
-      <Header balance={balance} />
+      <Header />S
       <h1>Page Under Construction</h1>
       <p>Check back soon for the Even & Odd game!</p>
-      <Link to="/game">
+      <Link to="/games">
         <button className="explore-button">Explore Other Games</button>
       </Link>
     </div>
