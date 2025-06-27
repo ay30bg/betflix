@@ -583,3 +583,106 @@
     padding: 10px;
   }
 }
+
+.eo-history-table-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+.eo-no-history {
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  margin: 20px 0;
+}
+
+.eo-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.eo-history-table th,
+.eo-history-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.eo-history-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  color: #333;
+}
+
+.eo-history-table td {
+  color: #333;
+}
+
+.eo-color-green {
+  color: #00FF00;
+  font-weight: bold;
+}
+
+.eo-color-red {
+  color: #FF0000;
+  font-weight: bold;
+}
+
+.eo-pending {
+  color: #FFA500;
+  font-weight: bold;
+}
+
+.eo-won {
+  color: #00FF00;
+  font-weight: bold;
+}
+
+.eo-lost {
+  color: #FF0000;
+  font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .eo-history-table {
+    display: block;
+  }
+
+  .eo-history-table thead {
+    display: none;
+  }
+
+  .eo-history-table tbody,
+  .eo-history-table tr,
+  .eo-history-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .eo-history-table tr {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .eo-history-table td {
+    padding: 8px;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .eo-history-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    font-weight: bold;
+    color: #333;
+  }
+}
