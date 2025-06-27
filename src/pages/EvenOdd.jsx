@@ -1,4 +1,3 @@
-
 // import React, { useState, useEffect, useCallback, memo } from 'react';
 // import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 // import '../styles/even-odd.css';
@@ -234,7 +233,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom'; // For navigation
-import Header from './header'; // Use provided Header component
+import Header from '../components/header';
 import '../styles/even-odd.css';
 
 const UnderConstruction = () => {
