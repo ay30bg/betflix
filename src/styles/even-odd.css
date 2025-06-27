@@ -279,3 +279,203 @@
     font-size: 36px;
   }
 }
+
+/* even-odd.css */
+.eo-game-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Loading Spinner */
+.eo-loading-spinner {
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  padding: 50px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Notification Styles */
+.eo-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.eo-notification.success {
+  background-color: #28a745;
+}
+
+.eo-notification.info {
+  background-color: #007bff;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Error Message */
+.eo-game-error {
+  color: #dc3545;
+  background-color: #ffe6e6;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 15px 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Game Container */
+.eo-game-container {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+  margin-top: 20px;
+}
+
+/* Round Info */
+.eo-round-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.eo-round-info h2 {
+  font-size: 2rem;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+}
+
+.eo-round-info p {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+/* Result Display */
+.eo-result {
+  position: relative;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.eo-result.won {
+  background-color: #e6ffed;
+  border: 1px solid #28a745;
+}
+
+.eo-result.lost {
+  background-color: #ffe6e6;
+  border: 1px solid #dc3545;
+}
+
+.eo-result-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.eo-result-close:hover {
+  color: #000;
+}
+
+.eo-result-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.eo-result-detail {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.eo-result-payout {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.eo-result.won .eo-result-payout {
+  color: #28a745;
+}
+
+.eo-result.lost .eo-result-payout {
+  color: #dc3545;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Pending Bet */
+.eo-pending-bet {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.eo-pending-bet p {
+  margin: 5px 0;
+  color: #856404;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .eo-game-page {
+    padding: 10px;
+  }
+
+  .eo-game-container {
+    padding: 15px;
+  }
+
+  .eo-round-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .eo-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    font-size: 0.9rem;
+  }
+}
