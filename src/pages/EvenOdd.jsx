@@ -235,7 +235,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // For navigation
 import Header from './header'; // Use provided Header component
-import './UnderConstruction.css'; // Responsive CSS
+import '../styles/even-odd.css';
 
 const UnderConstruction = () => {
   return (
