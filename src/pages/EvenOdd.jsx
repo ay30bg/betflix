@@ -243,7 +243,7 @@ const UnderConstruction = () => {
       <Header />S
       <h1>Page Under Construction</h1>
       <p>Check back soon for the Even & Odd game!</p>
-      <Link to="/games">
+      <Link to="/game">
         <button className="explore-button">Explore Other Games</button>
       </Link>
     </div>
