@@ -234,11 +234,13 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom'; // Assuming you're using React Router
+import Header from '../components/header';
 import '../styles/even-odd.css';
 
 const UnderConstruction = () => {
   return (
     <div className="under-construction-container">
+      <Header balance={balance} />
       <h1>Page Under Construction</h1>
       <p>Check back soon for the Even & Odd game!</p>
       <Link to="/game">
