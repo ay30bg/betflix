@@ -20,8 +20,8 @@
   border-radius: 8px;
   margin: 20px auto; /* Center horizontally */
   width: 750px; /* Fixed width in 700-800px range */
+  height: 500px; /* Fixed height of 500px */
   text-align: center;
-  flex-grow: 1; /* Takes remaining space after Header */
 }
 
 /* Heading styling */
@@ -60,6 +60,7 @@
 @media (max-width: 800px) {
   .construction-container {
     width: 90%; /* Flexible width for smaller screens */
+    height: 400px; /* Slightly reduced height for mobile */
   }
 
   .construction-container h1 {
