@@ -53,6 +53,14 @@ function About() {
       <section className="about-section">
         <h2 className="section-title">Terms and Conditions</h2>
         <ol>
+          <li><strong>Player Eligibility and Responsibilities</strong>
+            <ul>
+              <li>Players must be at least 18 years old to participate.</li>
+              <li>All bets and deposits are final, and no refunds will be issued.</li>
+              <li>BetFlix is not liable for any financial losses incurred through gameplay or betting strategies.</li>
+              <li>Players are expected to engage in responsible gaming and understand the inherent risks of gambling.</li>
+            </ul>
+          </li>
           <li><strong>General Overview</strong>
             <ul>
               <li>BetFlix is a color prediction game where players bet on either Red, Green, or Violet colors, or specific numbers (0-9) each round.</li>
@@ -87,95 +95,12 @@ function About() {
               </li>
             </ul>
           </li>
-          <li><strong>Deposits and Withdrawals</strong>
-            <ul>
-              <li><strong>Minimum Deposit:</strong> $10.50.</li>
-              <li><strong>Minimum Withdrawal:</strong> $10.00.</li>
-              <li>All deposits and withdrawals are final and non-refundable.</li>
-            </ul>
-          </li>
-          <li><strong>Withdrawal Policy – Turnover Requirement</strong>
-            <ul>
-              <li>To make a withdrawal, players must place bets equal to the amount of their most recent deposit.</li>
-              <li><strong>Example:</strong> If you deposit $10, you must play $10 worth of games (on settled results) before you can withdraw.</li>
-              <li>Only games with a final result (win or lose) count toward the playthrough requirement.</li>
-              <li>This requirement helps maintain a fair, safe, and enjoyable platform for all users.</li>
-              <li>Players can track their progress toward meeting the turnover requirement in their bet history.</li>
-              <li>Once the turnover requirement is met, withdrawals will be available automatically.</li>
-              <li>For assistance, contact the BetFlix support team via the profile dashboard or the official BetFlix helpdesk.</li>
-            </ul>
-          </li>
-          <li><strong>Referral Program</strong>
-            <ul>
-              <li>Referrers earn a <strong>30% bonus</strong> on the first deposit made by each referred user.</li>
-              <li>For subsequent deposits by referred users, referrers earn a <strong>10% bonus</strong>.</li>
-              <li><strong>Example:</strong>
-                <ul>
-                  <li>Referred user deposits $10: Referrer earns $3 (first deposit).</li>
-                  <li>Referred user deposits another $10: Referrer earns $1.</li>
-                </ul>
-              </li>
-              <li><strong>Referral Bonus Terms</strong>
-                <ul>
-                  <li>Referral bonuses must be wagered before they can be withdrawn.</li>
-                  <li>Players must place bets totaling at least 2x the bonus amount to unlock it for withdrawal.</li>
-                  <li>This requirement ensures bonuses are used for betting on the platform, preventing misuse and supporting ongoing rewards.</li>
-                  <li>Specific details, such as eligible bet types and wagering requirements, will be provided when claiming the bonus.</li>
-                  <li>Players should review these details carefully to understand how to unlock the bonus for withdrawal.</li>
-                  <li>Users can contact the BetFlix support team via live chat, email, or Telegram for questions.</li>
-                  <li>Referral bonuses are promotional and subject to the general Terms and Conditions.</li>
-                  <li>BetFlix reserves the right to modify or cancel the referral program at any time.</li>
-                  <li>All bonuses must comply with applicable local laws and regulations.</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li><strong>Optional Betting Strategy (Martingale System)</strong>
-            <ul>
-              <li>Players may opt to use the Martingale strategy, tripling their bet after each loss to potentially recover losses and gain profit upon winning.</li>
-              <li><strong>Example Progression:</strong>
-                <ul>
-                  <li>Round 1: Bet $0.50</li>
-                  <li>Round 2: If lost, bet $1.50 ($0.50 × 3)</li>
-                  <li>Round 3: If lost, bet $4.50 ($0.50 × 9)</li>
-                  <li>Round 4: If lost, bet $13.50 ($0.50 × 27)</li>
-                  <li>Round 5: If lost, bet $40.50 ($0.50 × 81)</li>
-                </ul>
-              </li>
-              <li>Use of this strategy is optional, and players are solely responsible for managing their funds and understanding associated risks.</li>
-            </ul>
-          </li>
-          <li><strong>Player Eligibility and Responsibilities</strong>
-            <ul>
-              <li>Players must be at least 18 years old to participate.</li>
-              <li>All bets and deposits are final, and no refunds will be issued.</li>
-              <li>BetFlix is not liable for any financial losses incurred through gameplay or betting strategies.</li>
-              <li>Players are expected to engage in responsible gaming and understand the inherent risks of gambling.</li>
-            </ul>
-          </li>
-          <li><strong>Responsible Gambling</strong>
-            <ul>
-              <li>BetFlix encourages responsible gambling and provides resources for players to manage their gaming habits.</li>
-              <li>Users may request self-exclusion or set betting limits through their account settings.</li>
-            </ul>
-          </li>
           <li><strong>Fair Play and Account Integrity</strong>
             <ul>
               <li>A maximum of two bets per round per user is strictly enforced.</li>
               <li>Any attempt to manipulate game outcomes or exploit the platform will result in immediate account suspension and forfeiture of all funds.</li>
               <li>Engaging in malicious activities, such as hacking, fraud, or any attempt to disrupt platform operations, will result in immediate account banning and forfeiture of all funds.</li>
               <li>Prohibited activities include, but are not limited to, creating multiple accounts, using automated systems or bots, colluding with other players, or engaging in any form of cheating.</li>
-            </ul>
-          </li>
-          <li><strong>Support and Inquiries</strong>
-            <ul>
-              <li>For assistance, contact the BetFlix support team via the profile dashboard or the official BetFlix helpdesk.</li>
-            </ul>
-          </li>
-          <li><strong>Acceptance of Terms</strong>
-            <ul>
-              <li>By participating in BetFlix, users acknowledge and agree to comply with these Terms and Conditions.</li>
-              <li>BetFlix reserves the right to modify these terms at any time, with changes effective upon posting.</li>
             </ul>
           </li>
           <li><strong>Multiple Account Policy</strong>
@@ -218,6 +143,79 @@ function About() {
                   <li>Users are solely responsible for maintaining the integrity of their account. Allowing others to access your account or entering multiple identities on the platform will be treated as a violation of these Terms.</li>
                 </ul>
               </li>
+            </ul>
+          </li>
+          <li><strong>Deposits and Withdrawals</strong>
+            <ul>
+              <li><strong>Minimum Deposit:</strong> ₦1000.</li>
+              <li><strong>Minimum Withdrawal:</strong> ₦1500.</li>
+              <li>Once deposits or withdrawals are made, they are final and cannot be refunded.</li>
+            </ul>
+          </li>
+          <li><strong>Withdrawal Policy – Turnover Requirement</strong>
+            <ul>
+              <li>To make a withdrawal, players must place bets worth 1.3x of their most recent deposit.</li>
+              <li><strong>Example:</strong> If you deposit ₦1000, you must play ₦1300 worth of games (on settled results) before you can withdraw.</li>
+              <li>Only games with a final result (win or lose) count toward the playthrough requirement.</li>
+              <li>This requirement helps maintain a fair, safe, and enjoyable platform for all users.</li>
+              <li>Players can track their progress toward meeting the turnover requirement in their bet history.</li>
+              <li>Once the turnover requirement is met, withdrawals will be available automatically.</li>
+              <li>For assistance, contact the BetFlix support team via the profile dashboard or the official BetFlix helpdesk.</li>
+            </ul>
+          </li>
+          <li><strong>Referral Program</strong>
+            <ul>
+              <li>Referrers earn a <strong>10% bonus</strong> on all deposits made by each referred user.</li>
+              <li><strong>Example:</strong>
+                <ul>
+                  <li>Referred user deposits ₦1000: Referrer earns ₦100 (All deposits).</li>
+                </ul>
+              </li>
+              <li><strong>Referral Bonus Terms</strong>
+                <ul>
+                  <li>Referral bonuses must be wagered before they can be withdrawn.</li>
+                  <li>Players must place bets totaling at least 1.3x the bonus amount to unlock it for withdrawal.</li>
+                  <li>This requirement ensures bonuses are used for betting on the platform, preventing misuse and supporting ongoing rewards.</li>
+                  <li>Specific details, such as eligible bet types and wagering requirements, will be provided when claiming the bonus.</li>
+                  <li>Players should review these details carefully to understand how to unlock the bonus for withdrawal.</li>
+                  <li>Users can contact the BetFlix support team via live chat, email, or Telegram for questions.</li>
+                  <li>Referral bonuses are promotional and subject to the general Terms and Conditions.</li>
+                  <li>BetFlix reserves the right to modify or cancel the referral program at any time.</li>
+                  <li>All bonuses must comply with applicable local laws and regulations.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>Optional Betting Strategy (Martingale System)</strong>
+            <ul>
+              <li>Players may opt to use the Martingale strategy, tripling their bet after each loss to potentially recover losses and gain profit upon winning.</li>
+              <li><strong>Example Progression:</strong>
+                <ul>
+                  <li>Round 1: Bet ₦100</li>
+                  <li>Round 2: If lost, bet ₦300 ($0.50 × 3)</li>
+                  <li>Round 3: If lost, bet ₦900 ($0.50 × 9)</li>
+                  <li>Round 4: If lost, bet ₦2700 ($0.50 × 27)</li>
+                  <li>Round 5: If lost, bet ₦8100 ($0.50 × 81)</li>
+                </ul>
+              </li>
+              <li>Use of this strategy is optional, and players are solely responsible for managing their funds and understanding associated risks.</li>
+            </ul>
+          </li>
+          <li><strong>Responsible Gambling</strong>
+            <ul>
+              <li>BetFlix encourages responsible gambling and provides resources for players to manage their gaming habits.</li>
+              <li>Users may request self-exclusion or set betting limits through their account settings.</li>
+            </ul>
+          </li>
+          <li><strong>Support and Inquiries</strong>
+            <ul>
+              <li>For assistance, contact the BetFlix support team via the profile dashboard or the official BetFlix helpdesk.</li>
+            </ul>
+          </li>
+          <li><strong>Acceptance of Terms</strong>
+            <ul>
+              <li>By participating in BetFlix, users acknowledge and agree to comply with these Terms and Conditions.</li>
+              <li>BetFlix reserves the right to modify these terms at any time, with changes effective upon posting.</li>
             </ul>
           </li>
         </ol>
