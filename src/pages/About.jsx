@@ -47,7 +47,7 @@ function About() {
           <br />
           <strong>Minimum Bet per Round:</strong>
           <br />
-          $0.50
+          ₦1000
         </p>
       </section>
       <section className="about-section">
@@ -79,7 +79,7 @@ function About() {
               <li>Players may bet on either a color (Red, Green, or Violet) or a specific number (0-9) per bet.</li>
               <li>Only one selection (color or number) is permitted per bet.</li>
               <li>A maximum of two bets per round is allowed per user.</li>
-              <li><strong>Minimum Bet:</strong> $0.50.</li>
+              <li><strong>Minimum Bet:</strong> ₦1000.</li>
             </ul>
           </li>
           <li><strong>Payout Structure</strong>
