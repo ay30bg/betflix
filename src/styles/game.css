@@ -467,27 +467,56 @@ body {
 
 /* Loading Spinner */
 .loading-spinner {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1e40af;
-  text-align: center;
-  margin: 1.5rem 0;
-  position: relative;
-  padding-left: 2.5rem;
+  display: flex; /* Aligns text and spinner side by side */
+  align-items: center; /* Centers vertically */
+  justify-content: center; /* Centers horizontally */
+  font-size: 1.25rem; /* Text size for "Loading..." */
+  font-weight: 600; /* Bold text */
+  color: #ef4444; /* Red text to match the red spinner */
+  text-align: center; /* Centers the text */
+  margin: 2rem 0; /* Space above and below */
+  position: relative; /* Allows positioning of spinner circles */
+  padding-left: 3rem; /* Space for the spinner */
 }
 
+/* Outer spinning circle (Red) */
 .loading-spinner::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 2rem;
-  height: 2rem;
-  border: 4px solid #1e40af;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  transform: translateY(-50%);
+  content: ''; /* Empty content for the circle */
+  position: absolute; /* Position relative to the text */
+  left: 0; /* Align to the left of the text */
+  top: 50%; /* Center vertically */
+  width: 2.5rem; /* Size of the outer circle */
+  height: 2.5rem; /* Size of the outer circle */
+  border: 5px solid rgba(239, 68, 68, 0.2); /* Light red for the base ring */
+  border-top-color: #ef4444; /* Solid red for the spinning part */
+  border-radius: 50%; /* Makes it a circle */
+  animation: spin 0.8s ease-in-out infinite; /* Spins forever */
+  transform: translateY(-50%); /* Adjusts vertical centering */
+}
+
+/* Inner spinning circle (Green) */
+.loading-spinner::after {
+  content: ''; /* Empty content for the inner circle */
+  position: absolute; /* Position relative to the text */
+  left: 0.25rem; /* Slightly offset from the outer circle */
+  top: 50%; /* Center vertically */
+  width: 2rem; /* Smaller inner circle */
+  height: 2rem; /* Smaller inner circle */
+  border: 4px solid rgba(16, 185, 129, 0.2); /* Light green for the base ring */
+  border-top-color: #10b981; /* Solid green for the spinning part */
+  border-radius: 50%; /* Makes it a circle */
+  animation: spin 1.2s ease-in-out infinite reverse; /* Spins in opposite direction */
+  transform: translateY(-50%); /* Adjusts vertical centering */
+}
+
+/* Animation to make the circles spin */
+@keyframes spin {
+  0% {
+    transform: translateY(-50%) rotate(0deg); /* Start position */
+  }
+  100% {
+    transform: translateY(-50%) rotate(360deg); /* Full rotation */
+  }
 }
 
 /* Result Display */
@@ -1121,12 +1150,6 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
