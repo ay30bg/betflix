@@ -23,11 +23,10 @@
 .game-selection-page h1 {
   font-size: 2.25rem;
   font-weight: 700;
-  margin-top: 15px;
+  margin: 15px 0; /* Sets margin-top and margin-bottom to 15px, margin-left and margin-right to 0 */
   background: linear-gradient(90deg, #3b82f6, #1e40af);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: -15px;
   letter-spacing: -0.025em;
   animation: fadeIn 0.5s ease;
 }
