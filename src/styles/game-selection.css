@@ -1,3 +1,4 @@
+
 /* src/styles/game-selection.css */
 
 /* Ensure styles are scoped to game-selection-page to avoid conflicts */
@@ -12,21 +13,23 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1.5rem;
-  padding: 2rem 1rem;
+  padding: 2rem 1rem; /* Added padding to match game-page */
 }
 
 .game-selection-page.container {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1200px; /* Match game-page max-width */
+  margin: 0 auto; /* Center content */
 }
 
 .game-selection-page h1 {
   font-size: 2.25rem;
   font-weight: 700;
-  margin: 15px 0; /* Updated to equal margins */
+  margin-top: 35px;
+   margin-top: 15px;
   background: linear-gradient(90deg, #3b82f6, #1e40af);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
   letter-spacing: -0.025em;
   animation: fadeIn 0.5s ease;
 }
@@ -39,13 +42,9 @@
   width: 100%;
 }
 
-.game-selection-page .game-grid .game-card:first-child {
-  margin-top: -10px; 
-}
-
 .game-selection-page .game-card {
   background: #ffffff; /* Fallback background for cards without images */
-  border-radius: 20px;
+  border-radius: 15px;
   padding: 2rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -199,16 +198,12 @@
 
   .game-selection-page h1 {
     font-size: 1.75rem;
-    margin: 15px 0; /* Updated to equal margins */
+    margin-bottom: 1.5rem;
   }
 
   .game-selection-page .game-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-  }
-
-  .game-selection-page .game-grid .game-card:first-child {
-    margin-top: 0.5rem; /* Maintain reduced margin-top */
   }
 
   .game-selection-page .game-card {
@@ -240,15 +235,11 @@
 
   .game-selection-page h1 {
     font-size: 1.5rem;
-    margin: 15px 0; /* Updated to equal margins */
+    margin-bottom: 1rem;
   }
 
   .game-selection-page .game-grid {
     grid-template-columns: 1fr;
-  }
-
-  .game-selection-page .game-grid .game-card:first-child {
-    margin-top: 0.5rem; /* Maintain reduced margin-top */
   }
 
   .game-selection-page .game-card {
