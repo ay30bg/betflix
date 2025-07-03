@@ -40,7 +40,7 @@
 }
 
 .game-selection-page .game-grid .game-card:first-child {
-  margin-top: 0.5rem; /* Reduced margin-top for the first card */
+  margin-top: -10px; 
 }
 
 .game-selection-page .game-card {
