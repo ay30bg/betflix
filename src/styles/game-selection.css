@@ -16,14 +16,14 @@
 }
 
 .game-selection-page.container {
-  max-width: 1200px; 
-  margin: 0 auto; 
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .game-selection-page h1 {
   font-size: 2.25rem;
   font-weight: 700;
-  margin: 15px 0; /* Sets margin-top and margin-bottom to 15px, margin-left and margin-right to 0 */
+  margin: 15px 0; /* Updated to equal margins */
   background: linear-gradient(90deg, #3b82f6, #1e40af);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -34,14 +34,18 @@
 .game-selection-page .game-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
+  gap: 1.5rem;
   max-width: 1200px;
   width: 100%;
 }
 
+.game-selection-page .game-grid .game-card:first-child {
+  margin-top: 0.5rem; /* Reduced margin-top for the first card */
+}
+
 .game-selection-page .game-card {
-  background: #ffffff; 
-  border-radius: 15px;
+  background: #ffffff; /* Fallback background for cards without images */
+  border-radius: 12px;
   padding: 2rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -52,7 +56,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 200px; 
+  height: 230px; /* Reduced from 250px */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -195,7 +199,7 @@
 
   .game-selection-page h1 {
     font-size: 1.75rem;
-    margin-bottom: 1.5rem;
+    margin: 15px 0; /* Updated to equal margins */
   }
 
   .game-selection-page .game-grid {
@@ -203,9 +207,13 @@
     gap: 1rem;
   }
 
+  .game-selection-page .game-grid .game-card:first-child {
+    margin-top: 0.5rem; /* Maintain reduced margin-top */
+  }
+
   .game-selection-page .game-card {
     padding: 1.5rem;
-    height: 200px; /* Reduced from 225px */
+    height: 205px; /* Reduced from 225px */
   }
 
   .game-selection-page .game-card h2 {
@@ -232,11 +240,15 @@
 
   .game-selection-page h1 {
     font-size: 1.5rem;
-    margin-bottom: 1rem;
+    margin: 15px 0; /* Updated to equal margins */
   }
 
   .game-selection-page .game-grid {
     grid-template-columns: 1fr;
+  }
+
+  .game-selection-page .game-grid .game-card:first-child {
+    margin-top: 0.5rem; /* Maintain reduced margin-top */
   }
 
   .game-selection-page .game-card {
