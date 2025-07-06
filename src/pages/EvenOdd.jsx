@@ -1,540 +1,646 @@
-// // import React from 'react';
-// // import { Link } from 'react-router-dom'; // For navigation
-// // import Header from '../components/header';
-// // import '../styles/even-odd.css';
+import React, { useState, useEffect, useCallback, memo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useBalance } from '../context/BalanceContext'; // Assuming a similar context for balance
+import BetForm from '../components/BetForm'; // Reused, but modified for even/odd
+import HistoryTable from '../components/HistoryTable'; // Reused, but adapted for even/odd data
+import Header from '../components/Header'; // Reused
+import { jwtDecode } from 'jwt-decode';
+import '../styles/game.css'; // Reusing the same CSS with minor adjustments
 
-// // const UnderConstruction = () => {
-// //   return (
-// //     <div className="under-construction-container">
-// //       <Header />
-// //       <div className="construction-container">
-// //       <h1>Page Under Construction</h1>
-// //       <p>Check back soon for the Even & Odd game!</p>
-// //       <Link to="/game">
-// //         <button className="explore-button">Explore Other Games</button>
-// //       </Link>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default UnderConstruction;
-
-import React, { useState, useRef, useEffect } from 'react';
-import '../styles/even-odd.css';
-
-const RocketGame = () => {
-  const [multiplier, setMultiplier] = useState(1.0);
-  const [isFlying, setIsFlying] = useState(false);
-  const [crashed, setCrashed] = useState(false);
-  const [cashOutMultiplier, setCashOutMultiplier] = useState(null);
-  const [rocketPosition, setRocketPosition] = useState({ left: 0, bottom: 100 });
-  const [bet, setBet] = useState(10);
-  const [winnings, setWinnings] = useState(0);
-  const [balance, setBalance] = useState(1000);
-  const [history, setHistory] = useState([]);
-  const [isStormy, setIsStormy] = useState(false);
-  const [autoCashOut, setAutoCashOut] = useState(null);
-  const [leaderboard, setLeaderboard] = useState(
-    JSON.parse(localStorage.getItem('leaderboard')) || []
-  );
-  const [activeTab, setActiveTab] = useState('history');
-  const intervalRef = useRef(null);
-  const gameAreaRef = useRef(null);
-
-  // Generate pulsing stars
-  const [stars, setStars] = useState([]);
-  // Add state for shooting stars
-  const [shootingStars, setShootingStars] = useState([]);
-  // Add state for asteroids with enhanced properties
-  const [asteroids, setAsteroids] = useState([]);
-
-  useEffect(() => {
-    const newStars = Array.from({ length: 20 }, () => ({
-      left: Math.random() * 600,
-      top: Math.random() * 300,
-      animationDelay: `${Math.random() * 3}s`,
-      size: Math.random() * 2 + 1,
-    }));
-    setStars(newStars);
-
-    // Initialize asteroids with varied properties
-    const newAsteroids = Array.from({ length: 5 }, () => ({
-      id: Math.random().toString(36).substr(2, 9),
-      left: -20,
-      top: Math.random() * 300,
-      size: Math.random() * 10 + 6, // Size between 6px and 16px
-      speed: Math.random() * 2 + 1, // Speed between 1 and 3
-      angle: Math.random() * 60 - 30, // Angle between -30 and 30 degrees
-      rotation: Math.random() * 360,
-      animationDuration: Math.random() * 5 + 10, // Duration between 10s and 15s
-    }));
-    setAsteroids(newAsteroids);
-  }, []);
-
-  // Generate shooting stars periodically
-  useEffect(() => {
-    const generateShootingStar = () => {
-      const newShootingStar = {
-        id: Math.random().toString(36).substr(2, 9),
-        left: Math.random() * 600,
-        top: -20,
-        angle: Math.random() * 90 + 45, // Diagonal trajectory (45° to 135°)
-        speed: Math.random() * 2 + 2, // Speed between 2 and 4
-        duration: Math.random() * 2 + 1, // Duration between 1s and 3s
-      };
-      setShootingStars((prev) => [...prev, newShootingStar].slice(-3)); // Keep max 3 shooting stars
-    };
-
-    const interval = setInterval(generateShootingStar, 3000); // New shooting star every 3 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  // Center rocket on mount and on window resize
-  useEffect(() => {
-    const updateRocketPosition = () => {
-      if (gameAreaRef.current) {
-        const gameAreaWidth = gameAreaRef.current.offsetWidth;
-        const rocketWidth = 100;
-        const centeredLeft = Math.max(0, (gameAreaWidth - rocketWidth) / 2);
-        setRocketPosition((prev) => ({ ...prev, left: centeredLeft }));
-      }
-    };
-    updateRocketPosition();
-    window.addEventListener('resize', updateRocketPosition);
-    return () => window.removeEventListener('resize', updateRocketPosition);
-  }, []);
-
-  // Reset background position, rocket, and asteroids when game ends
-  useEffect(() => {
-    if (!isFlying && (crashed || cashOutMultiplier)) {
-      if (gameAreaRef.current) {
-        gameAreaRef.current.style.backgroundPositionY = '0px';
-        const gameAreaWidth = gameAreaRef.current.offsetWidth;
-        const rocketWidth = 100;
-        const centeredLeft = Math.max(0, (gameAreaWidth - rocketWidth) / 2);
-        setRocketPosition({ left: centeredLeft, bottom: 100 });
-        // Reset asteroids
-        setAsteroids(
-          Array.from({ length: 5 }, () => ({
-            id: Math.random().toString(36).substr(2, 9),
-            left: -20,
-            top: Math.random() * 300,
-            size: Math.random() * 10 + 6,
-            speed: Math.random() * 2 + 1,
-            angle: Math.random() * 60 - 30,
-            rotation: Math.random() * 360,
-            animationDuration: Math.random() * 5 + 10,
-          }))
-        );
-      }
+// ErrorBoundary remains the same
+class ErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return <div>Error: {this.state.error.message}</div>;
     }
-  }, [isFlying, crashed, cashOutMultiplier]);
+    return this.props.children;
+  }
+}
 
-  const startGame = () => {
-    if (bet > balance) {
-      alert('Insufficient balance!');
+const API_URL = process.env.REACT_APP_API_URL || 'https://evenodd-backend.vercel.app';
+
+// Token expiration check (same as original)
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decoded.exp < currentTime;
+  } catch (err) {
+    console.error('Error decoding token:', err);
+    return true;
+  }
+};
+
+// API functions adapted for even/odd game
+const fetchBets = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Bets fetch failed: ${response.status}`);
+  }
+  const bets = await response.json();
+  return bets.filter((bet) => bet && bet.status !== 'invalid');
+};
+
+const fetchPendingBets = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    throw new Error(errorData || `Pending bets fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const fetchCurrentRound = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/current`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.text().catch(() => 'Unknown error');
+    if (response.status === 401) throw new Error('Authentication required');
+    if (response.status === 429) throw new Error('Too many requests, please try again later');
+    throw new Error(errorData || `Round fetch failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const placeBet = async (betData) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(betData),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Bet placement failed: ${response.status}`);
+  }
+  return response.json();
+};
+
+const fetchBetResult = async (period) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  console.log(`Fetching result for period: ${period}`);
+  const response = await fetch(`${API_URL}/api/bets/result/${period}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error(`Error response: ${JSON.stringify(errorData)}`);
+    throw new Error(errorData.error || `Bet result fetch failed: ${ლ
+
+System: Let's create a simplified version of the `EvenOddGame` component, focusing on the core functionality and UI, while reusing and adapting the provided CSS and components. I'll assume the backend API endpoints are similar but tailored for an even/odd game (e.g., betting on "even" or "odd" instead of colors or numbers). The `BetForm` and `HistoryTable` components will be modified to accommodate even/odd betting options. Since the full code for these components wasn't provided, I'll create simplified versions that align with the game's requirements.
+
+---
+
+### EvenOddGame Component
+
+```jsx
+import React, { useState, useEffect, useCallback, memo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useBalance } from '../context/BalanceContext'; // Assuming a similar context for balance
+import { jwtDecode } from 'jwt-decode';
+import '../styles/game.css'; // Reusing the provided CSS
+
+// ErrorBoundary (unchanged)
+class ErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return <div>Error: {this.state.error.message}</div>;
+    }
+    return this.props.children;
+  }
+}
+
+// API URL (replace with your actual backend)
+const API_URL = process.env.REACT_APP_API_URL || 'https://evenodd-backend.vercel.app';
+
+// Token expiration check (unchanged)
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decoded.exp < currentTime;
+  } catch (err) {
+    console.error('Error decoding token:', err);
+    return true;
+  }
+};
+
+// API functions (simplified and adapted for even/odd)
+const fetchBets = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error(response.status === 401 ? 'Authentication required' : 'Failed to fetch bets');
+  return (await response.json()).filter((bet) => bet && bet.status !== 'invalid');
+};
+
+const fetchPendingBets = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/pending`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error(response.status === 401 ? 'Authentication required' : 'Failed to fetch pending bets');
+  return response.json();
+};
+
+const fetchCurrentRound = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/current`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error(response.status === 401 ? 'Authentication required' : 'Failed to fetch current round');
+  return response.json();
+};
+
+const placeBet = async (betData) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(betData),
+  });
+  if (!response.ok) throw new Error('Bet placement failed');
+  return response.json();
+};
+
+const fetchBetResult = async (period) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/result/${period}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error('Failed to fetch bet result');
+  return response.json();
+};
+
+const fetchRecentRounds = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/bets/rounds/recent`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error('Failed to fetch recent rounds');
+  return response.json();
+};
+
+const fetchProfile = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Authentication required');
+  const response = await fetch(`${API_URL}/api/user/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error('Failed to fetch profile');
+  return response.json();
+};
+
+// Simplified BetForm component
+const BetForm = ({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft }) => {
+  const [amount, setAmount] = useState('');
+  const [choice, setChoice] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!choice || !amount || amount <= 0) {
+      onSubmit({ error: 'Please select even/odd and enter a valid amount' });
       return;
     }
-    setBalance((prev) => prev - bet);
-    setIsFlying(true);
-    setCrashed(false);
-    setCashOutMultiplier(null);
-    setMultiplier(1.0);
-    setWinnings(0);
-    setIsStormy(false);
-
-    // Ensure rocket is centered at start
-    if (gameAreaRef.current) {
-      const gameAreaWidth = gameAreaRef.current.offsetWidth;
-      const rocketWidth = 100;
-      setRocketPosition({ left: (gameAreaWidth - rocketWidth) / 2, bottom: 100 });
-    }
-
-    const crashPoint = Number((Math.random() * 9 + 1.1).toFixed(2));
-
-    intervalRef.current = setInterval(() => {
-      setMultiplier((prev) => {
-        const newMultiplier = Number((prev * 1.05).toFixed(2));
-        if (newMultiplier > 5) {
-          setIsStormy(true);
-        }
-        if (autoCashOut && newMultiplier >= autoCashOut) {
-          cashOut();
-          return prev;
-        }
-        if (newMultiplier >= crashPoint && !crashed) {
-          clearInterval(intervalRef.current);
-          setIsFlying(false);
-          setCrashed(true);
-          setHistory((prev) => [
-            ...prev,
-            { bet, multiplier: newMultiplier, winnings: 0, outcome: 'Crashed' },
-          ]);
-          return prev;
-        }
-        return newMultiplier;
-      });
-      setRocketPosition((prev) => {
-        if (!gameAreaRef.current) {
-          return prev;
-        }
-        const gameAreaWidth = gameAreaRef.current.offsetWidth;
-        const gameAreaHeight = gameAreaRef.current.offsetHeight;
-        const rocketWidth = 100;
-        const rocketHeight = 150;
-        const rocketSpeed = 2;
-        const newBottom = Math.min(prev.bottom + rocketSpeed, gameAreaHeight - rocketHeight);
-        const backgroundSpeed = rocketSpeed * 1.2;
-        gameAreaRef.current.style.backgroundPositionY = `${-newBottom * backgroundSpeed / rocketSpeed}px`;
-        const newLeft = (gameAreaWidth - rocketWidth) / 2 + (Math.random() * 10 - 5);
-        return {
-          left: newLeft,
-          bottom: newBottom,
-        };
-      });
-    }, 100);
-  };
-
-  const cashOut = () => {
-    if (isFlying && !crashed) {
-      setIsFlying(false);
-      setCashOutMultiplier(multiplier);
-      const calculatedWinnings = Number((bet * multiplier).toFixed(2));
-      setWinnings(calculatedWinnings);
-      setBalance((prev) => prev + calculatedWinnings);
-      setHistory((prev) => [
-        ...prev,
-        { bet, multiplier, winnings: calculatedWinnings, outcome: 'Cashed Out' },
-      ]);
-      setLeaderboard((prev) => {
-        const newLeaderboard = [
-          ...prev,
-          { multiplier, winnings: calculatedWinnings, timestamp: new Date().toLocaleString() },
-        ].sort((a, b) => b.winnings - a.winnings).slice(0, 5);
-        localStorage.setItem('leaderboard', JSON.stringify(newLeaderboard));
-        return newLeaderboard;
-      });
-      clearInterval(intervalRef.current);
-    }
-  };
-
-  const handleBetChange = (e) => {
-    const newBet = Number(e.target.value);
-    if (!isNaN(newBet) && newBet >= 1 && newBet <= 1000) {
-      setBet(Math.floor(newBet));
-    }
-  };
-
-  const handleAutoCashOutChange = (e) => {
-    const value = Number(e.target.value);
-    if (!isNaN(value) && value >= 1) {
-      setAutoCashOut(value);
-    } else {
-      setAutoCashOut(null);
-    }
-  };
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
-
-  // Remove completed shooting stars
-  const handleAnimationEnd = (id) => {
-    setShootingStars((prev) => prev.filter((star) => star.id !== id));
+    onSubmit({ choice, amount: parseFloat(amount), period: roundData?.period });
   };
 
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
-        rel="stylesheet"
-      />
-      <div className="game-container">
-        <div
-          className={`game-area ${isStormy ? 'stormy' : ''}`}
-          ref={gameAreaRef}
-        >
-          <div className="background-layer far-stars"></div>
-          <div className="background-layer near-stars"></div>
-          <div className="nebula"></div>
-          <div className="planet planet-1">
-            <div className="planet-ring"></div>
-          </div>
-          <div className="planet planet-2"></div>
-          {stars.map((star, index) => (
-            <div
-              key={index}
-              className="pulsing-star"
-              style={{
-                left: `${star.left}px`,
-                top: `${star.top}px`,
-                animationDelay: star.animationDelay,
-                width: `${star.size}px`,
-                height: `${star.size}px`,
-              }}
-            ></div>
-          ))}
-          {shootingStars.map((star) => (
-            <div
-              key={star.id}
-              className="shooting-star"
-              style={{
-                left: `${star.left}px`,
-                top: `${star.top}px`,
-                transform: `rotate(${star.angle}deg)`,
-                animationDuration: `${star.duration}s`,
-              }}
-              onAnimationEnd={() => handleAnimationEnd(star.id)}
-            >
-              <div className="star-head"></div>
-              <div className="star-tail"></div>
-            </div>
-          ))}
-          {asteroids.map((asteroid) => (
-            <div
-              key={asteroid.id}
-              className="asteroid"
-              style={{
-                left: `${asteroid.left}px`,
-                top: `${asteroid.top}px`,
-                width: `${asteroid.size}px`,
-                height: `${asteroid.size}px`,
-                animationDuration: `${asteroid.animationDuration}s`,
-                transform: `rotate(${asteroid.angle}deg)`,
-              }}
-            ></div>
-          ))}
-          <div className="orbit-trail"></div>
-          <div className="hud-overlay">
-            <div className="hud-corner top-left"></div>
-            <div className="hud-corner top-right"></div>
-            <div className="hud-corner bottom-left"></div>
-            <div className="hud-corner bottom-right"></div>
-          </div>
-          <div
-            className={`rocket ${crashed ? 'crashed' : ''}`}
-            style={{
-              left: `${rocketPosition.left}px`,
-              bottom: `${rocketPosition.bottom}px`,
-              visibility: 'visible',
-            }}
+    <div className="bet-form-container">
+      <form className="bet-form" onSubmit={handleSubmit}>
+        <div className="color-button-group">
+          <button
+            type="button"
+            className={`color-button even ${choice === 'even' ? 'selected' : ''}`}
+            onClick={() => setChoice('even')}
+            disabled={isDisabled}
           >
-            <svg width="100" height="150" viewBox="0 0 200 300" className="rocket-svg">
-              {/* SVG content remains unchanged */}
-              <defs>
-                <linearGradient id="rocketGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: '#e6e6e6', stopOpacity: 1 }} />
-                  <stop offset="50%" style={{ stopColor: '#a1a1a1', stopOpacity: 1 }} />
-                  <stop offset="100%" style={{ stopColor: '#666666', stopOpacity: 1 }} />
-                </linearGradient>
-                <linearGradient id="flameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: '#ff4500', stopOpacity: 1 }} />
-                  <stop offset="50%" style={{ stopColor: '#ffa500', stopOpacity: 1 }} />
-                  <stop offset="100%" style={{ stopColor: '#ffff00', stopOpacity: 0.8 }} />
-                </linearGradient>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <path
-                d="M100,40 L80,200 L120,200 Z"
-                fill="#000000"
-                fillOpacity="0.3"
-                transform="translate(8, 8)"
-                className="rocket-shadow"
-              />
-              <path
-                d="M100,30 C115,30 125,50 125,80 C125,140 120,180 100,200 C80,180 75,140 75,80 C75,50 85,30 100,30 Z"
-                fill="url(#rocketGradient)"
-                stroke="#444"
-                strokeWidth="3"
-                className="rocket-body"
-                filter="url(#glow)"
-              />
-              <circle cx="100" cy="60" r="10" fill="#222" stroke="#00ffcc" strokeWidth="2" filter="url(#glow)" />
-              <circle cx="100" cy="100" r="8" fill="#222" stroke="#00ffcc" strokeWidth="2" filter="url(#glow)" />
-              <path
-                d="M75,150 L55,200 L75,200 Z"
-                fill="url(#rocketGradient)"
-                stroke="#444"
-                strokeWidth="3"
-                className="left-fin"
-                filter="url(#glow)"
-              />
-              <path
-                d="M125,150 L145,200 L125,200 Z"
-                fill="url(#rocketGradient)"
-                stroke="#444"
-                strokeWidth="3"
-                className="right-fin"
-                filter="url(#glow)"
-              />
-              <path
-                d="M80,200 L100,280 L120,200 Z"
-                fill="url(#flameGradient)"
-                className="rocket-flames outer-flame"
-                filter="url(#glow)"
-              />
-              <path
-                d="M90,200 L100,260 L110,200 Z"
-                fill="url(#flameGradient)"
-                fillOpacity="0.7"
-                className="rocket-flames inner-flame"
-                filter="url(#glow)"
-              />
-              <path
-                d="M95,200 L100,240 L105,200 Z"
-                fill="url(#flameGradient)"
-                fillOpacity="0.9"
-                className="rocket-flames core-flame"
-                filter="url(#glow)"
-              />
-              {Array.from({ length: 5 }).map((_, index) => (
-                <circle
-                  key={`exhaust-${index}`}
-                  cx={100}
-                  cy={220 + index * 5}
-                  r="2"
-                  fill="#ff4500"
-                  className="exhaust-particle"
-                  style={{ animationDelay: `${Math.random() * 0.5}s` }}
-                />
-              ))}
-            </svg>
-          </div>
-          <div className="multiplier">
-            Multiplier: {multiplier.toFixed(2)}x
-          </div>
-          <div className="multiplier-bar">
-            <div
-              className="multiplier-progress"
-              style={{ width: `${Math.min(multiplier * 10, 100)}%` }}
-            ></div>
-          </div>
-          {crashed && <div className="crash-message">Rocket Exploded!</div>}
-          {cashOutMultiplier && (
-            <div className="cashout-message">
-              Cashed out at {cashOutMultiplier.toFixed(2)}x! Winnings: ${winnings.toFixed(2)}
-            </div>
-          )}
+            Even
+          </button>
+          <button
+            type="button"
+            className={`color-button odd ${choice === 'odd' ? 'selected' : ''}`}
+            onClick={() => setChoice('odd')}
+            disabled={isDisabled}
+          >
+            Odd
+          </button>
         </div>
-        <div className="controls">
+        <div className="form-group">
+          <label className="modal-label">Bet Amount</label>
           <input
             type="number"
-            value={bet}
-            onChange={handleBetChange}
-            min="1"
-            max="1000"
-            step="1"
-            disabled={isFlying}
-            placeholder="Enter bet amount"
-            className="bet-input"
+            className="modal-input"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            min="0"
+            step="0.01"
+            disabled={isDisabled}
           />
-          <input
-            type="number"
-            value={autoCashOut || ''}
-            onChange={handleAutoCashOutChange}
-            min="1"
-            step="0.1"
-            disabled={isFlying}
-            placeholder="Auto Cash Out (x)"
-            className="bet-input"
-          />
-          {!isFlying && !crashed && !cashOutMultiplier && (
-            <button onClick={startGame} className="action-button">Launch Rocket</button>
-          )}
-          {isFlying && !crashed && (
-            <button onClick={cashOut} className="action-button cash-out">Cash Out</button>
-          )}
-          {(crashed || cashOutMultiplier) && (
-            <button onClick={startGame} className="action-button">Play Again</button>
-          )}
         </div>
-        <div className="tab-container">
-          <div className="tab-buttons">
-            <button
-              className={`tab-button ${activeTab === 'history' ? 'active' : ''}`}
-              onClick={() => handleTabChange('history')}
-            >
-              Game History
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'leaderboard' ? 'active' : ''}`}
-              onClick={() => handleTabChange('leaderboard')}
-            >
-              Leaderboard
-            </button>
-          </div>
-          <div className="tab-content">
-            {activeTab === 'history' && (
-              <div className="history">
-                <h2>Game History</h2>
-                {history.length === 0 ? (
-                  <p>No games played yet.</p>
-                ) : (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Bet ($)</th>
-                        <th>Multiplier (x)</th>
-                        <th>Winnings ($)</th>
-                        <th>Outcome</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {history.map((round, index) => (
-                        <tr key={index}>
-                          <td>{Number(round.bet).toFixed(2)}</td>
-                          <td>{Number(round.multiplier).toFixed(2)}</td>
-                          <td>{Number(round.winnings).toFixed(2)}</td>
-                          <td>{round.outcome}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-            {activeTab === 'leaderboard' && (
-              <div className="leaderboard">
-                <h2>Leaderboard</h2>
-                {leaderboard.length === 0 ? (
-                  <p>No high scores yet.</p>
-                ) : (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Multiplier (x)</th>
-                        <th>Winnings ($)</th>
-                        <th>Time</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {leaderboard.map((entry, index) => (
-                        <tr key={index}>
-                          <td>{Number(entry.multiplier).toFixed(2)}</td>
-                          <td>{Number(entry.winnings).toFixed(2)}</td>
-                          <td>{entry.timestamp}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
+        <button type="submit" className="modal-submit" disabled={isLoading || isDisabled}>
+          {isLoading ? 'Placing Bet...' : 'Place Bet'}
+        </button>
+      </form>
+    </div>
   );
 };
 
-export default RocketGame;
+// Simplified HistoryTable component
+const HistoryTable = ({ bets }) => (
+  <div className="history-table-container">
+    <table className="history-table">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Choice</th>
+          <th>Amount</th>
+          <th>Result</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {bets.length > 0 ? (
+          bets.map((bet) => (
+            <tr key={bet._id}>
+              <td>{bet.period}</td>
+              <td>{bet.choice}</td>
+              <td>₦{bet.amount.toFixed(2)}</td>
+              <td>{bet.result || 'N/A'}</td>
+              <td className={bet.status === 'won' ? 'won' : bet.status === 'lost' ? 'lost' : 'pending'}>
+                {bet.status}
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="5" className="no-history">No bets available</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+);
 
+function EvenOddGame() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { balance, setBalance, isLoading: balanceLoading } = useBalance();
+  const [error, setError] = useState('');
+  const [notification, setNotification] = useState(null);
+  const [lastResult, setLastResult] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [pendingBet, setPendingBet] = useState(null);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
+  const handleAuthError = useCallback(() => {
+    setNotification({ type: 'error', message: 'Session expired. Please log in again.' });
+    localStorage.removeItem('token');
+    queryClient.clear();
+    setBalance(0);
+    setPendingBet(null);
+    setLastResult(null);
+    setTimeout(() => navigate('/login'), 3000);
+  }, [navigate, queryClient, setBalance]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && isTokenExpired(token)) handleAuthError();
+
+    const interval = setInterval(() => {
+      const currentToken = localStorage.getItem('token');
+      if (currentToken && isTokenExpired(currentToken)) handleAuthError();
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [handleAuthError]);
+
+  useQuery({
+    queryKey: ['profile'],
+    queryFn: fetchProfile,
+    onSuccess: (data) => {
+      if (typeof data.balance === 'number') setBalance(data.balance);
+    },
+    onError: (err) => {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) handleAuthError();
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
+
+  const { data: betsData, isLoading: betsLoading } = useQuery({
+    queryKey: ['bets'],
+    queryFn: fetchBets,
+    onSuccess: (data) => {
+      data.forEach((bet) => {
+        if (bet.status === 'finalized' && typeof bet.newBalance === 'number') {
+          setBalance(bet.newBalance);
+          setNotification({
+            type: bet.won ? 'success' : 'info',
+            message: bet.won
+              ? `You won ₦${bet.payout.toFixed(2)} for round ${bet.period}!`
+              : `Bet lost for round ${bet.period}.`,
+          });
+        }
+      });
+    },
+    onError: (err) => {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) handleAuthError();
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
+
+  const { data: pendingBetsData, isLoading: pendingBetsLoading } = useQuery({
+    queryKey: ['pendingBets'],
+    queryFn: fetchPendingBets,
+    refetchInterval: 5000,
+    onSuccess: (data) => {
+      const activeBet = data.find((bet) => bet.status === 'pending' && bet.roundStatus === 'active');
+      if (activeBet && !pendingBet) {
+        setPendingBet(activeBet);
+        setNotification({ type: 'info', message: `Restored pending bet for round ${activeBet.period}` });
+      }
+    },
+    onError: (err) => {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) handleAuthError();
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
+
+  const { data: roundData, isLoading: roundLoading } = useQuery({
+    queryKey: ['currentRound'],
+    queryFn: fetchCurrentRound,
+    refetchInterval: 6000,
+    onError: (err) => {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) handleAuthError();
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
+
+  const { data: recentRoundsData, isLoading: roundsLoading } = useQuery({
+    queryKey: ['recentRounds'],
+    queryFn: fetchRecentRounds,
+    onError: (err) => {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) handleAuthError();
+    },
+    retry: (failureCount, error) => failureCount < 2 && !error.message.includes('Authentication'),
+  });
+
+  useEffect(() => {
+    if (roundData?.expiresAt) {
+      const updateTimeLeft = () => {
+        const timeRemaining = Math.max(0, (new Date(roundData.expiresAt) - Date.now()) / 1000);
+        setTimeLeft(Math.floor(timeRemaining));
+      };
+      updateTimeLeft();
+      const interval = setInterval(updateTimeLeft, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [roundData]);
+
+  useEffect(() => {
+    if (notification) {
+      const timeout = setTimeout(() => setNotification(null), 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [notification]);
+
+  const fetchResult = useCallback(
+    async (period) => {
+      try {
+        const data = await fetchBetResult(period);
+        if (data.bet.status === 'pending') return;
+        setLastResult(data.bet);
+        if (typeof data.balance === 'number') {
+          setBalance(data.balance);
+          setNotification({
+            type: data.bet.won ? 'success' : 'info',
+            message: data.bet.won
+              ? `You won ₦${data.bet.payout.toFixed(2)}!`
+              : 'Bet lost.',
+          });
+        }
+        queryClient.invalidateQueries(['bets']);
+        setPendingBet(null);
+      } catch (err) {
+        setError(err.message);
+        setTimeout(() => setError(''), 5000);
+        if (err.message.includes('Authentication')) handleAuthError();
+      }
+    },
+    [queryClient, setBalance, handleAuthError]
+  );
+
+  const debouncedFetchResult = useCallback(
+    (period) => {
+      let timeout;
+      return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fetchResult(period), 1000);
+      };
+    },
+    [fetchResult]
+  );
+
+  const mutation = useMutation({
+    mutationFn: placeBet,
+    onSuccess: (data) => {
+      setBalance(data.balance);
+      setPendingBet(data.bet);
+      setNotification({ type: 'success', message: 'Bet placed successfully!' });
+      queryClient.invalidateQueries(['bets']);
+      queryClient.invalidateQueries(['pendingBets']);
+    },
+    onError: (err) => {
+      setError(err.message);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) handleAuthError();
+    },
+  });
+
+  const handleBet = async (betData) => {
+    if (betData.error) {
+      setError(betData.error);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    if (betData.amount > balance) {
+      setError('Insufficient balance');
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    mutation.mutate(betData);
+  };
+
+  if (balanceLoading || betsLoading || roundLoading || roundsLoading || pendingBetsLoading) {
+    return (
+      <ErrorBoundary>
+        <div className="game-page container">
+          <Header />
+          <div className="loading-spinner">Loading...</div>
+        </div>
+      </ErrorBoundary>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <div className="game-page">
+        <Header />
+        {notification && (
+          <div className={`result ${notification.type}`} role="alert">
+            {notification.message}
+          </div>
+        )}
+        {error && (
+          <p className="game-error" role="alert">
+            {error}
+          </p>
+        )}
+        <div className="round-info">
+          <p>Current Round: {roundData?.period || 'Loading...'}</p>
+          <p>Time Left: {timeLeft} seconds</p>
+          <button
+            className="history-button"
+            onClick={() => setIsHistoryModalOpen(true)}
+            aria-label="View recent rounds history"
+          >
+            View History
+          </button>
+        </div>
+        {mutation.isLoading && <div className="loading-spinner">Processing Bet...</div>}
+        {lastResult && (
+          <div
+            className={`result ${lastResult.won ? 'won' : 'lost'}`}
+            role="alert"
+          >
+            <button
+              className="result-close"
+              onClick={() => setLastResult(null)}
+              aria-label="Close result"
+            >
+              ×
+            </button>
+            <div className="result-header">
+              {lastResult.won ? '🎉 You Won!' : '😔 You Lost'}
+            </div>
+            <div className="result-detail">Result: {lastResult.result || 'N/A'}</div>
+            <div className="result-payout">
+              {lastResult.payout === 0 ? 'No Payout' : `₦${Math.abs(lastResult.payout).toFixed(2)}`}
+            </div>
+          </div>
+        )}
+        {pendingBet && !lastResult && !mutation.isLoading && (
+          <div className="no-result" role="alert">
+            <p>Bet placed on {pendingBet.period}.</p>
+            <p>Waiting for results... ⌛</p>
+          </div>
+        )}
+        {!pendingBet && !lastResult && !mutation.isLoading && (
+          <p className="no-result">Place a bet to see the result.</p>
+        )}
+        {isHistoryModalOpen && (
+          <div className="modal-overlay" role="dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h2>Recent Rounds</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setIsHistoryModalOpen(false)}
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <table className="history-table">
+                  <thead>
+                    <tr>
+                      <th>Period</th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentRoundsData?.length > 0 ? (
+                      recentRoundsData.map((round) => (
+                        <tr key={round.period}>
+                          <td>{round.period}</td>
+                          <td>{round.result || 'N/A'}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="2">No rounds available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+        <BetForm
+          onSubmit={handleBet}
+          isLoading={mutation.isLoading}
+          balance={balance ?? 0}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
+          roundData={roundData}
+          timeLeft={timeLeft}
+        />
+        <HistoryTable bets={betsData || []} />
+      </div>
+    </ErrorBoundary>
+  );
+}
+
+export default memo(EvenOddGame);
