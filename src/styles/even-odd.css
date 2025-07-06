@@ -1,16 +1,3 @@
-/* General page styling */
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: linear-gradient(to bottom, #0a0a23, #1a252f);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #fff;
-  font-size: clamp(14px, 2.5vw, 16px);
-}
-
 /* Game container styling */
 .game-container {
   text-align: center;
