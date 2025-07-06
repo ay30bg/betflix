@@ -1,16 +1,17 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+/* General page styling */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
-  color: #1f2937;
-  line-height: 1.5;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(to bottom, #0a0a23, #1a252f);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(14px, 2.5vw, 16px);
 }
 
+/* Game container styling */
 .game-container {
   text-align: center;
   background: rgba(255, 255, 255, 0.05);
