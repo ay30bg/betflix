@@ -16,14 +16,14 @@ const GameSelection = () => {
       image: flingoImage, 
       alt: 'Flingo game preview',
     },
-    // Add more games here as needed
-    { name: 'Even & Odd', 
-     path: '/game/even-odd', 
-     description: 'Coming soon!', 
-     image: evenImage,
-     alt: 'Even & Odd game preview',
-    },
-  ];
+    
+  //   { name: 'Even & Odd', 
+  //    path: '/game/even-odd', 
+  //    description: 'Coming soon!', 
+  //    image: evenImage,
+  //    alt: 'Even & Odd game preview',
+  //   },
+  // ];
 
   return (
     <div className="game-selection-page container">
