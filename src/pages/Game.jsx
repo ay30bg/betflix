@@ -23,7 +23,7 @@ const GameSelection = () => {
   //    image: evenImage,
   //    alt: 'Even & Odd game preview',
   //   },
-  // ];
+  ];
 
   return (
     <div className="game-selection-page container">
