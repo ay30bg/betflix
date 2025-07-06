@@ -1,79 +1,770 @@
-/* styles/even-odd.css */
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* Parent container to fill viewport and stack Header and content */
-.under-construction-container {
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+/* Game Page */
+.eo-game-page {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa; /* Light gray background */
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
 }
 
-/* Main construction container */
-.construction-container {
+/* Container */
+/* .eo-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: #ffffff; /* Light yellow for construction theme */
-  border: 2px solid #1e40af; /* Orange border */
-  border-radius: 8px;
-  margin: 100px auto; /* Center horizontally */
-  width: 750px; /* Fixed width in 700-800px range */
-  height: 300px; /* Fixed height of 500px */
-  text-align: center;
+  gap: 1.5rem;
+} */
+
+/* Bet Form Container */
+.eo-bet-form-container {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Heading styling */
-.construction-container h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1a1a1a; /* Dark text for contrast */
+.eo-bet-form-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Bet Form */
+.eo-bet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* Form Group for Choice Buttons */
+.eo-form-group.eo-choice-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Choice Button Group */
+.eo-choice-button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Choice Buttons (Even/Odd) */
+.eo-choice-button {
+  padding: 0.75rem 1.5rem;
+  border: 3px solid transparent;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Even Button */
+.eo-choice-button.eo-even {
+  background: #10b981;
+  color: #fff;
+}
+
+/* Odd Button */
+.eo-choice-button.eo-odd {
+  background: #3b82f6;
+  color: #fff;
+}
+
+/* Hover and Selected States */
+.eo-choice-button:hover:not(:disabled),
+.eo-choice-button.eo-selected {
+  border-color: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled State */
+.eo-choice-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Modal Overlay */
+.eo-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Modal Content */
+.eo-modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+}
+
+/* Modal Close Button */
+.eo-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.eo-modal-close:hover {
+  background: #e5e7eb;
+}
+
+/* Modal Title */
+.eo-modal-content h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1e40af;
+}
+
+/* Modal Form Group */
+.eo-form-group {
   margin-bottom: 1rem;
 }
 
-/* Paragraph styling */
-.construction-container p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1.5rem;
+/* Modal Label */
+.eo-modal-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 
-/* Explore button styling */
-.explore-button {
-  padding: 10px 20px;
+/* Modal Input */
+.eo-modal-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
-  color: #fff;
-  background-color: #1e40af;
+  transition: border-color 0.2s;
+}
+
+.eo-modal-input:focus {
+  border-color: #1e40af;
+  outline: none;
+}
+
+.eo-modal-input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Suggested Amounts */
+.eo-suggested-amounts {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Suggested Amount Buttons */
+.eo-suggested-amount-button {
+  padding: 0.5rem 1rem;
+  background: #e5e7eb;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.2s;
 }
 
-.explore-button:hover {
-  background-color: #18338C;
+.eo-suggested-amount-button:hover:not(:disabled) {
+  background: #d1d5db;
+  transform: translateY(-2px);
 }
 
-/* Responsive adjustments */
-@media (max-width: 800px) {
-  .construction-container {
-    width: 90%; 
-    height: 300px;
-    margin:  auto;
+.eo-suggested-amount-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal Payout Info */
+.eo-modal-payout-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.eo-modal-payout-info p {
+  margin: 0;
+  padding: 5px 0;
+  font-weight: 500;
+}
+
+.eo-modal-payout-info p::before {
+  content: "• ";
+  color: #007bff;
+}
+
+/* Modal Submit Button */
+.eo-modal-submit {
+  width: 100%;
+  padding: 0.75rem;
+  background: #1e40af;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.eo-modal-submit:hover:not(:disabled) {
+  background: #1e3a8a;
+  transform: translateY(-2px);
+}
+
+.eo-modal-submit:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Jackpot Animation */
+.eo-jackpot-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Confetti Particles */
+.eo-confetti-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: eo-confetti-fall 2s ease-out forwards;
+}
+
+/* Confetti Fall Animation */
+@keyframes eo-confetti-fall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Jackpot Text */
+.eo-jackpot-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: eo-jackpot-text-glow 1.5s ease-in-out infinite;
+}
+
+/* Jackpot Text Glow Animation */
+@keyframes eo-jackpot-text-glow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+/* Loading Spinner */
+.eo-loading-spinner {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e40af;
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.eo-loading-spinner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid #1e40af;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translateY(-50%);
+}
+
+/* Notification Styles */
+.eo-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 30px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 600;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.eo-notification.success {
+  background: #10b981;
+}
+
+.eo-notification.info {
+  background: #3b82f6;
+}
+
+/* Error Message */
+.eo-game-error {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  background: #ef4444;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Game Container */
+.eo-game-container {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+  transition: transform 0.2s ease;
+}
+
+.eo-game-container:hover {
+  transform: translateY(-2px);
+}
+
+/* Round Info */
+.eo-round-info {
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 5px;
+}
+
+.eo-round-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.eo-round-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e40af;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.75rem;
+}
+
+.eo-round-info p {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0.75rem 0;
+  letter-spacing: 0.02em;
+}
+
+/* Result Display */
+.eo-result {
+  font-size: 1.75rem;
+  font-weight: 700;
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  text-align: center;
+  background: #ffffff;
+  position: relative;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+  animation: slideUp 0.5s ease-out;
+  z-index: 10;
+}
+
+.eo-result:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+}
+
+.eo-result.won {
+  border: 5px solid #10b981;
+  background: linear-gradient(90deg, #d1fae5 10%, #ecfdf5 100%);
+  color: #065f46;
+}
+
+.eo-result.lost {
+  border: 5px solid #ef4444;
+  background: linear-gradient(90deg, #fee2e2 10%, #fef2f2 100%);
+  color: #b91c1c;
+}
+
+.eo-result-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.eo-result-close:hover {
+  background: #d1d5db;
+}
+
+.eo-result-header {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.eo-result-detail {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.eo-result-payout {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e40af;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Pending Bet */
+.eo-pending-bet {
+  background: linear-gradient(90deg, #fff3cd 10%, #fef9c3 100%);
+  border: 1px solid #ffeeba;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  max-width: 600px;
+  width: 100%;
+}
+
+.eo-pending-bet p {
+  margin: 0.5rem 0;
+  color: #854d0e;
+  font-weight: 600;
+}
+
+/* History Table */
+.eo-history-table-container {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.eo-history-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.eo-history-table th,
+.eo-history-table td {
+  padding: 1rem;
+  text-align: left;
+  font-size: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.eo-history-table th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #1f2937;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.eo-history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.eo-no-history {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #6b7280;
+  padding: 2rem;
+}
+
+/* Color Classes */
+.eo-color-green {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.eo-color-red {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.eo-pending {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.eo-won {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.eo-lost {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .eo-game-page {
+    padding: 1.5rem 0.75rem;
   }
 
-  .construction-container h1 {
-    font-size: 1.5rem;
+  .eo-bet-form-container {
+    padding: 1.5rem;
   }
 
-  .construction-container p {
+  .eo-game-container {
+    padding: 1.5rem;
+  }
+
+  .eo-round-info {
+    padding: 1.25rem;
+    border-radius: 8px;
+  }
+
+  .eo-round-info h2 {
+    font-size: 1.3rem;
+  }
+
+  .eo-round-info p {
+    font-size: 1.1rem;
+  }
+
+  .eo-choice-button {
+    padding: 0.6rem 1rem;
     font-size: 1rem;
   }
 
-  .explore-button {
-    padding: 8px 16px;
+  .eo-modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .eo-modal-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .eo-jackpot-text {
+    font-size: 36px;
+  }
+
+  .eo-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    padding: 12px 20px;
     font-size: 0.9rem;
+  }
+
+  .eo-history-table th,
+  .eo-history-table td {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .eo-round-info {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .eo-round-info h2 {
+    font-size: 1.2rem;
+  }
+
+  .eo-round-info p {
+    font-size: 1rem;
+  }
+
+  .eo-choice-button {
+    width: 100px;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border-radius: 6px;
+  }
+
+  .eo-modal-payout-info {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .eo-history-table {
+    display: block;
+  }
+
+  .eo-history-table thead {
+    display: none;
+  }
+
+  .eo-history-table tbody,
+  .eo-history-table tr,
+  .eo-history-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .eo-history-table tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .eo-history-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border: none;
+  }
+
+  .eo-history-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4b5563;
+    width: 40%;
   }
 }
