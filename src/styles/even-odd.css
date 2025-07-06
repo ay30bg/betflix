@@ -1,54 +1,111 @@
-
-
-/* Game container styling */
-.game-container {
-  text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  padding: clamp(15px, 4vw, 30px);
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  max-width: clamp(300px, 90vw, 700px);
-  width: 100%;
-  backdrop-filter: blur(5px);
+/* Global styles aligned with FlingoGame */
+:root {
+  --primary-blue: #1e40af;
+  --primary-blue-light: #3b82f6;
+  --red: #ef4444;
+  --green: #10b981;
+  --violet: #8F00FF;
+  --dark-slate: #1f2937;
+  --white: #ffffff;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+  --border-radius: 12px;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Game title with neon glow */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--dark-slate);
+  line-height: 1.5;
+}
+
+/* Game container */
+.game-container {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+/* Game title */
 h1 {
-  font-size: clamp(1.8rem, 5vw, 2.5rem);
-  margin-bottom: clamp(10px, 3vw, 20px);
-  color: #00ffcc;
-  font-family: 'Orbitron', sans-serif;
-  text-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--dark-slate);
+  background: linear-gradient(90deg, var(--primary-blue-light), var(--primary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 /* Balance display */
 .balance {
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
-  font-weight: bold;
-  margin-bottom: clamp(5px, 2vw, 10px);
-  color: #00ffcc;
-  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: var(--white);
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  transition: transform 0.2s ease;
 }
 
-/* Game area with layered space background */
+.balance:hover {
+  transform: translateY(-2px);
+}
+
+.balance-amount {
+  font-weight: 800;
+  color: var(--primary-blue);
+  background: linear-gradient(90deg, var(--primary-blue-light), var(--primary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Game area */
 .game-area {
   position: relative;
-  width: clamp(300px, 90vw, 600px);
-  max-width: 100%;
-  height: clamp(150px, 50vw, 300px);
+  width: 100%;
+  max-width: 800px;
+  height: 400px;
   background: #0a0a23;
-  border: 3px solid #00ffcc;
-  border-radius: 10px;
+  border: 3px solid var(--green);
+  border-radius: var(--border-radius);
   overflow: hidden;
-  margin: 0 auto;
-  transition: background-position-y 0.1s ease-out;
+  box-shadow: var(--shadow-lg);
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="50" cy="50" r="5" fill="rgba(255,255,255,0.8)"/><circle cx="150" cy="80" r="3" fill="rgba(255,255,255,0.7)"/><circle cx="100" cy="150" r="4" fill="rgba(255,255,255,0.6)"/><circle cx="120" cy="40" r="2" fill="rgba(255,255,255,0.5)"/></svg>');
   background-repeat: repeat;
-  background-size: clamp(100px, 30vw, 200px);
+  background-size: 200px;
   z-index: 0;
 }
 
-/* Background layers for parallax effect */
+/* Stormy effect */
+.game-area.stormy {
+  background: #1a252f;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="50" cy="50" r="5" fill="rgba(200,200,200,0.5)"/><circle cx="150" cy="80" r="3" fill="rgba(200,200,200,0.4)"/><circle cx="100" cy="150" r="4" fill="rgba(200,200,200,0.3)"/><circle cx="120" cy="40" r="2" fill="rgba(200,200,200,0.2)"/></svg>');
+  animation: cosmicFlash 2s infinite;
+}
+
+@keyframes cosmicFlash {
+  0%, 10%, 20%, 100% { filter: brightness(1); }
+  5%, 15% { filter: brightness(1.8) contrast(1.2); }
+}
+
+/* Background layers */
 .background-layer {
   position: absolute;
   top: 0;
@@ -61,13 +118,13 @@ h1 {
 
 .far-stars {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.3)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.2)"/><circle cx="50" cy="70" r="1" fill="rgba(255,255,255,0.25)"/></svg>');
-  background-size: clamp(50px, 15vw, 100px);
+  background-size: 100px;
   animation: parallaxFar 20s linear infinite;
 }
 
 .near-stars {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.5)"/><circle cx="120" cy="50" r="2" fill="rgba(255,255,255,0.4)"/><circle cx="80" cy="100" r="2.5" fill="rgba(255,255,255,0.45)"/></svg>');
-  background-size: clamp(75px, 20vw, 150px);
+  background-size: 150px;
   animation: parallaxNear 10s linear infinite;
 }
 
@@ -81,14 +138,14 @@ h1 {
   100% { background-position-y: -300px; }
 }
 
-/* Nebula overlay */
+/* Nebula */
 .nebula {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 20% 20%, rgba(100, 0, 200, 0.3) 0%, rgba(0, 0, 50, 0.2) 70%, transparent 100%);
+  background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.3) 0%, rgba(0, 0, 50, 0.2) 70%, transparent 100%);
   opacity: 0.5;
   z-index: 2;
   animation: nebulaDrift 30s linear infinite;
@@ -110,19 +167,19 @@ h1 {
 .planet-1 {
   top: 20px;
   right: 30px;
-  width: clamp(40px, 10vw, 70px);
-  height: clamp(40px, 10vw, 70px);
-  background: radial-gradient(circle at 30%, #4b8b9b 10%, #2a4a5b 70%, #1a3c34 100%);
-  box-shadow: inset 5px -5px 10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(75, 139, 155, 0.6);
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle at 30%, var(--primary-blue-light) 10%, var(--primary-blue) 70%, var(--dark-slate) 100%);
+  box-shadow: inset 5px -5px 10px rgba(0, 0, 0, 0.4), var(--shadow-md);
 }
 
 .planet-2 {
   bottom: 30px;
   left: 50px;
-  width: clamp(25px, 7vw, 50px);
-  height: clamp(25px, 7vw, 50px);
-  background: radial-gradient(circle at 20%, #8b4b6b 10%, #4a2a3b 70%, #3c1a2a 100%);
-  box-shadow: inset 3px -3px 8px rgba(0, 0, 0, 0.4), 0 0 15px rgba(139, 75, 107, 0.6);
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle at 20%, var(--violet) 10%, #4a2a3b 70%, var(--dark-slate) 100%);
+  box-shadow: inset 3px -3px 8px rgba(0, 0, 0, 0.4), var(--shadow-md);
 }
 
 .planet-ring {
@@ -130,11 +187,11 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotateX(70deg);
-  width: clamp(50px, 12vw, 90px);
-  height: clamp(12px, 3vw, 20px);
+  width: 90px;
+  height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 @keyframes rotatePlanet {
@@ -145,7 +202,7 @@ h1 {
 /* Pulsing stars */
 .pulsing-star {
   position: absolute;
-  background: #fff;
+  background: var(--white);
   border-radius: 50%;
   opacity: 0.7;
   z-index: 3;
@@ -166,19 +223,19 @@ h1 {
 }
 
 .star-head {
-  width: clamp(3px, 1vw, 5px);
-  height: clamp(3px, 1vw, 5px);
-  background: #fff;
+  width: 5px;
+  height: 5px;
+  background: var(--white);
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.5);
-  position: absolute;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), var(--shadow-sm);
+  position sic: absolute;
   top: 0;
   left: 0;
 }
 
 .star-tail {
-  width: clamp(50px, 15vw, 100px);
-  height: clamp(2px, 0.5vw, 3px);
+  width: 100px;
+  height: 3px;
   background: linear-gradient(to right, rgba(255, 255, 255, 0.8), transparent);
   position: absolute;
   top: 50%;
@@ -187,35 +244,23 @@ h1 {
 }
 
 @keyframes shoot {
-  0% {
-    transform: translate(0, 0) rotate(var(--angle, 0deg));
-    opacity: 1;
-  }
-  100% {
-    transform: translate(clamp(300px, 90vw, 600px), clamp(300px, 90vw, 600px)) rotate(var(--angle, 0deg));
-    opacity: 0;
-  }
+  0% { transform: translate(0, 0) rotate(var(--angle, 0deg)); opacity: 1; }
+  100% { transform: translate(600px, 600px) rotate(var(--angle, 0deg)); opacity: 0; }
 }
 
-/* Enhanced asteroids */
+/* Asteroids */
 .asteroid {
   position: absolute;
   background: radial-gradient(circle, #666 50%, #444 100%);
   border-radius: 20%;
-  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2);
+  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.5), var(--shadow-sm);
   z-index: 3;
   animation: driftAsteroid linear forwards, rotateAsteroid linear infinite;
 }
 
 @keyframes driftAsteroid {
-  0% {
-    transform: translate(0, 0) rotate(var(--angle, 0deg));
-    opacity: 0.8;
-  }
-  100% {
-    transform: translate(clamp(300px, 90vw, 620px), clamp(-150px, -45vw, 300px)) rotate(var(--angle, 0deg));
-    opacity: 0.2;
-  }
+  0% { transform: translate(0, 0) rotate(var(--angle, 0deg)); opacity: 0.8; }
+  100% { transform: translate(620px, 300px) rotate(var(--angle, 0deg)); opacity: 0.2; }
 }
 
 @keyframes rotateAsteroid {
@@ -223,37 +268,37 @@ h1 {
   100% { transform: rotate(360deg); }
 }
 
-/* Orbit trail (corrected) */
+/* Orbit trail */
 .orbit-trail {
   position: absolute;
-  width: clamp(1px, 0.3vw, 2px);
+  width: 2px;
   height: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(to top, rgba(0, 255, 204, 0.4), transparent);
+  background: linear-gradient(to top, var(--green), transparent);
   z-index: 3;
   opacity: 0.6;
 }
 
-/* Cockpit HUD overlay */
+/* HUD overlay */
 .hud-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  border: 2px solid #00ffcc;
-  border-radius: 10px;
-  box-shadow: inset 0 0 15px rgba(0, 255, 204, 0.6);
+  border: 2px solid var(--green);
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 0 15px rgba(16, 185, 129, 0.6);
   pointer-events: none;
   z-index: 5;
 }
 
 .hud-corner {
   position: absolute;
-  width: clamp(8px, 2vw, 15px);
-  height: clamp(8px, 2vw, 15px);
-  border: 2px solid #00ffcc;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--green);
   opacity: 0.7;
 }
 
@@ -262,23 +307,11 @@ h1 {
 .hud-corner.bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
 .hud-corner.bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
-/* Stormy effect with lightning */
-.game-area.stormy {
-  background: #1a252f;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="50" cy="50" r="5" fill="rgba(200,200,200,0.5)"/><circle cx="150" cy="80" r="3" fill="rgba(200,200,200,0.4)"/><circle cx="100" cy="150" r="4" fill="rgba(200,200,200,0.3)"/><circle cx="120" cy="40" r="2" fill="rgba(200,200,200,0.2)"/></svg>');
-  animation: cosmicFlash 2s infinite;
-}
-
-@keyframes cosmicFlash {
-  0%, 10%, 20%, 100% { filter: brightness(1); }
-  5%, 15% { filter: brightness(1.8) contrast(1.2); }
-}
-
-/* Rocket styling and animations */
+/* Rocket */
 .rocket {
   position: absolute;
-  width: clamp(50px, 15vw, 100px);
-  height: clamp(75px, 22.5vw, 150px);
+  width: 100px;
+  height: 150px;
   transition: left 0.1s ease-out, bottom 0.1s ease-out;
   z-index: 4;
   opacity: 1;
@@ -293,40 +326,25 @@ h1 {
   animation: explodeRocket 1s forwards;
 }
 
-/* Thrust animation for rocket */
 @keyframes thrust {
   0% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateZ(0) translateY(0); }
   50% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateZ(30px) translateY(-10px); }
   100% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateZ(0) translateY(0); }
 }
 
-/* Subtle vibration for realism */
 @keyframes vibrate {
   0% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateX(0); }
   50% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateX(2px); }
   100% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateX(-2px); }
 }
 
-/* Crash animation */
 @keyframes explodeRocket {
-  0% {
-    transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateY(0) rotate(0deg);
-    opacity: 1;
-    filter: brightness(1);
-  }
-  50% {
-    transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateY(50px) rotate(180deg);
-    opacity: 0.7;
-    filter: brightness(1.5) hue-rotate(30deg);
-  }
-  100% {
-    transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateY(150px) rotate(360deg);
-    opacity: 0;
-    filter: brightness(2) hue-rotate(60deg);
-  }
+  0% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateY(0) rotate(0deg); opacity: 1; filter: brightness(1); }
+  50% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateY(50px) rotate(180deg); opacity: 0.7; filter: brightness(1.5) hue-rotate(30deg); }
+  100% { transform: perspective(1000px) rotateY(15deg) rotateX(10deg) translateY(150px) rotate(360deg); opacity: 0; filter: brightness(2) hue-rotate(60deg); }
 }
 
-/* Rocket flames animation */
+/* Rocket flames */
 .rocket-svg .rocket-flames {
   transform-origin: center;
   animation: flickerFlames 0.12s infinite alternate;
@@ -362,45 +380,44 @@ h1 {
 
 @keyframes exhaustDrift {
   0% { transform: translateY(0) translateX(0); opacity: 0.8; }
-  100% { transform: translateY(clamp(40px, 12vh, 60px)) translateX(calc(clamp(15px, 5vw, 25px) * var(--random-offset, 0))); opacity: 0; }
+  100% { transform: translateY(60px) translateX(calc(25px * var(--random-offset, 0))); opacity: 0; }
 }
 
 /* Multiplier display */
 .multiplier {
   position: absolute;
-  top: clamp(10px, 3vw, 20px);
-  left: clamp(10px, 3vw, 20px);
-  font-size: clamp(0.8rem, 2.5vw, 1.5rem);
-  font-weight: bold;
-  color: #00ffcc;
-  background: rgba(0, 0, 0, 0.8);
-  padding: clamp(4px, 1.5vw, 8px) clamp(6px, 2vw, 12px);
-  border-radius: 5px;
-  font-family: 'Orbitron', sans-serif;
-  border: 1px solid #00ffcc;
-  box-shadow: 0 0 10px #00ffcc;
+  top: 20px;
+  left: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--white);
+  background: var(--dark-slate);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--green);
+  box-shadow: var(--shadow-md);
   z-index: 5;
 }
 
 /* Multiplier progress bar */
 .multiplier-bar {
   position: absolute;
-  bottom: clamp(5px, 2vw, 10px);
-  left: clamp(5px, 2vw, 10px);
-  width: calc(100% - clamp(10px, 4vw, 20px));
-  height: clamp(8px, 2vw, 10px);
+  bottom: 10px;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: 10px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
-  border: 1px solid #00ffcc;
+  border: 1px solid var(--green);
   z-index: 5;
 }
 
 .multiplier-progress {
   height: 100%;
-  background: linear-gradient(90deg, #00ffcc, #28a745);
+  background: linear-gradient(90deg, var(--green), var(--primary-blue-light));
   border-radius: 5px;
   transition: width 0.1s ease;
-  box-shadow: 0 0 10px #00ffcc;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Crash and cash-out messages */
@@ -409,12 +426,16 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(1.2rem, 3vw, 2rem);
-  color: #ff4d4d;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(255, 77, 77, 0.8);
-  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--red);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   z-index: 5;
+  animation: slideUp 0.5s ease-out;
 }
 
 .cashout-message {
@@ -422,122 +443,162 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
-  color: #00ffcc;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
-  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--dark-slate);
+  background: var(--white);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 5px solid var(--green);
+  box-shadow: var(--shadow-lg);
   z-index: 5;
+  animation: slideUp 0.5s ease-out;
 }
 
 /* Controls section */
 .controls {
   display: flex;
   justify-content: center;
-  gap: clamp(5px, 2vw, 10px);
-  margin-top: clamp(10px, 3vw, 20px);
-  background: linear-gradient(45deg, #1a3c34, #2a4a5b);
-  padding: clamp(10px, 3vw, 15px);
-  border-radius: 10px;
-  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
-  border: 2px solid #00ffcc;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 800px;
 }
 
 /* Input fields */
 .bet-input {
-  padding: clamp(8px, 2vw, 10px);
-  font-size: clamp(0.8rem, 2vw, 1rem);
-  border: 2px solid #00ffcc;
-  border-radius: 5px;
-  width: clamp(80px, 20vw, 120px);
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid var(--primary-blue);
+  border-radius: var(--border-radius);
+  width: 150px;
   outline: none;
-  background: rgba(10, 10, 35, 0.8);
-  color: #00ffcc;
-  font-family: 'Orbitron', sans-serif;
+  background: var(--white);
+  color: var(--dark-slate);
+  font-family: var(--font-family);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .bet-input:focus {
-  border-color: #28a745;
-  box-shadow: 0 0 10px #28a745;
+  border-color: var(--green);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.bet-input:disabled {
+  background: #e5e7eb;
+  cursor: not-allowed;
 }
 
 /* Action buttons */
 .action-button {
-  padding: clamp(6px, 2vw, 10px) clamp(12px, 3vw, 20px);
-  font-size: clamp(0.8rem, 2vw, 1rem);
-  background: linear-gradient(45deg, #28a745, #00ffcc);
-  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--green), var(--primary-blue-light));
+  color: var(--white);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: all 0.3s;
-  font-family: 'Orbitron', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-family);
   text-transform: uppercase;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
 }
 
 .action-button:hover {
-  background: linear-gradient(45deg, #218838, #00cc99);
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.9);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.action-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
 
 .action-button.cash-out {
-  background: linear-gradient(45deg, #ffc107, #ff8c00);
+  background: linear-gradient(90deg, var(--red), #f97316);
 }
 
 .action-button.cash-out:hover {
-  background: linear-gradient(45deg, #e0a800, #cc7000);
-  box-shadow: 0 0 20px rgba(255, 193, 7, 0.9);
+  background: linear-gradient(90deg, #dc2626, #ea580c);
+  box-shadow: var(--shadow-md);
+}
+
+/* History button (for modal) */
+.history-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Tab container */
 .tab-container {
-  margin-top: clamp(15px, 4vw, 30px);
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 800px;
 }
 
 /* Tab buttons */
 .tab-buttons {
   display: flex;
   justify-content: center;
-  gap: clamp(5px, 2vw, 10px);
-  margin-bottom: clamp(10px, 3vw, 20px);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .tab-button {
-  padding: clamp(6px, 2vw, 10px) clamp(12px, 3vw, 20px);
-  font-size: clamp(0.8rem, 2vw, 1rem);
-  background: rgba(255, 255, 255, 0.1);
-  color: #00ffcc;
-  border: 2px solid #00ffcc;
-  border-radius: 5px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--white);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: all 0.3s;
-  font-family: 'Orbitron', sans-serif;
+  transition: all 0.3s ease;
 }
 
 .tab-button.active {
-  background: linear-gradient(45deg, #1a3c34, #00ffcc);
-  color: white;
-  box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+  background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+  color: var(--white);
+  box-shadow: var(--shadow-md);
 }
 
 .tab-button:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+  background: #eff6ff;
+  box-shadow: var(--shadow-sm);
 }
 
 /* History and leaderboard sections */
 .history,
 .leaderboard {
   text-align: center;
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
 }
 
 .history h2,
 .leaderboard h2 {
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
-  margin-bottom: clamp(5px, 2vw, 10px);
-  color: #00ffcc;
-  font-family: 'Orbitron', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
 }
 
 /* Tables */
@@ -545,218 +606,201 @@ h1 {
 .leaderboard table {
   width: 100%;
   border-collapse: collapse;
-  background: rgba(10, 10, 35, 0.8);
-  border-radius: 8px;
+  background: var(--white);
+  border-radius: var(--border-radius);
   overflow: hidden;
-  color: #00ffcc;
 }
 
 .history th,
 .history td,
 .leaderboard th,
 .leaderboard td {
-  padding: clamp(6px, 2vw, 10px);
+  padding: 1rem;
   text-align: center;
-  border-bottom: 1px solid #1a3c34;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .history th,
 .leaderboard th {
-  background: linear-gradient(45deg, #1a3c34, #2a4a5b);
-  color: #00ffcc;
+  background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+  color: var(--white);
+  font-weight: 600;
 }
 
-/* Ultra-small mobile devices (below 400px) */
-@media (max-width: 400px) {
+.history tr:nth-child(even),
+.leaderboard tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.modal-close {
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: #e5e7eb;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+/* Notification styles */
+.result {
+  font-size: 1.75rem;
+  font-weight: 700;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin: 1rem 0;
+  text-align: center;
+  background: var(--white);
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+}
+
+.result.error {
+  background: var(--red);
+  color: var(--white);
+}
+
+.result.success {
+  border: 5px solid var(--green);
+  background: linear-gradient(90deg, #d1fae5 10%, #ecfdf5 100%);
+  color: var(--dark-slate);
+}
+
+.result:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--red);
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+  padding-left: 3rem;
+}
+
+.loading-spinner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 5px solid rgba(239, 68, 68, 0.2);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s ease-in-out infinite;
+  transform: translateY(-50%);
+}
+
+.loading-spinner::after {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid rgba(16, 185, 129, 0.2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 1.2s ease-in-out infinite reverse;
+  transform: translateY(-50%);
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, -30%); opacity: 0; }
+  to { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
   .game-container {
-    padding: 10px;
-    max-width: 100%;
-    margin: 0 5px;
+    padding: 1.5rem 0.75rem;
   }
 
   .game-area {
-    width: 100%;
-    height: 150px;
-    border-width: 2px;
-    background-size: 100px;
-  }
-
-  .rocket {
-    width: 50px;
-    height: 75px;
-    transform: perspective(800px) rotateY(10deg) rotateX(5deg);
-  }
-
-  .rocket-svg {
-    width: 50px;
-    height: 75px;
-  }
-
-  .planet-1 {
-    width: 40px;
-    height: 40px;
-    top: 10px;
-    right: 15px;
-  }
-
-  .planet-2 {
-    width: 25px;
-    height: 25px;
-    bottom: 15px;
-    left: 25px;
-  }
-
-  .planet-ring {
-    width: 50px;
-    height: 12px;
-  }
-
-  .asteroid {
-    width: clamp(4px, 1.5vw, 8px);
-    height: clamp(4px, 1.5vw, 8px);
-  }
-
-  .shooting-star .star-head {
-    width: clamp(2px, 0.8vw, 4px);
-    height: clamp(2px, 0.8vw, 4px);
-  }
-
-  .shooting-star .star-tail {
-    width: clamp(30px, 10vw, 60px);
-    height: clamp(1px, 0.3vw, 2px);
-  }
-
-  .multiplier {
-    font-size: 0.8rem;
-    padding: 4px 6px;
-    top: 10px;
-    left: 10px;
-  }
-
-  .multiplier-bar {
-    height: 8px;
-    bottom: 5px;
-    left: 5px;
-    width: calc(100% - 10px);
-  }
-
-  .bet-input {
-    width: 80px;
-    padding: 8px;
-    font-size: 0.8rem;
-  }
-
-  .action-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-
-  .tab-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-
-  .orbit-trail {
-    width: 1px;
-  }
-
-  .hud-overlay {
-    border-width: 1px;
-  }
-
-  .hud-corner {
-    width: 8px;
-    height: 8px;
-    border-width: 1px;
-  }
-
-  .crash-message {
-    font-size: 1.2rem;
-  }
-
-  .cashout-message {
-    font-size: 1rem;
-  }
-
-  .history h2,
-  .leaderboard h2 {
-    font-size: 1.2rem;
-  }
-
-  .history th,
-  .history td,
-  .leaderboard th,
-  .leaderboard td {
-    padding: 6px;
-    font-size: 0.8rem;
-  }
-
-  .background-layer.far-stars {
-    background-size: 50px;
-  }
-
-  .background-layer.near-stars {
-    background-size: 75px;
-  }
-
-  @keyframes explodeRocket {
-    0% {
-      transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(0) rotate(0deg);
-      opacity: 1;
-      filter: brightness(1);
-    }
-    50% {
-      transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(50px) rotate(180deg);
-      opacity: 0.7;
-      filter: brightness(1.5) hue-rotate(30deg);
-    }
-    100% {
-      transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(100px) rotate(360deg);
-      opacity: 0;
-      filter: brightness(2) hue-rotate(60deg);
-    }
-  }
-
-  @keyframes shoot {
-    0% {
-      transform: translate(0, 0) rotate(var(--angle, 0deg));
-      opacity: 1;
-    }
-    100% {
-      transform: translate(clamp(200px, 80vw, 400px), clamp(200px, 80vw, 400px)) rotate(var(--angle, 0deg));
-      opacity: 0;
-    }
-  }
-
-  @keyframes driftAsteroid {
-    0% {
-      transform: translate(0, 0) rotate(var(--angle, 0deg));
-      opacity: 0.8;
-    }
-    100% {
-      transform: translate(clamp(200px, 80vw, 400px), clamp(-100px, -40vw, 200px)) rotate(var(--angle, 0deg));
-      opacity: 0.2;
-    }
-  }
-}
-
-/* Mobile devices (400px to 600px) */
-@media (min-width: 400px) and (max-width: 600px) {
-  .game-container {
-    padding: 15px;
-    max-width: 95%;
-  }
-
-  .game-area {
-    width: 100%;
-    height: 200px;
-    background-size: 150px;
+    height: 300px;
+    max-width: 600px;
   }
 
   .rocket {
     width: 70px;
     height: 105px;
-    transform: perspective(800px) rotateY(10deg) rotateX(5deg);
   }
 
   .rocket-svg {
@@ -778,136 +822,133 @@ h1 {
     left: 30px;
   }
 
-  .planet-ring {
-    width: 60px;
-    height: 15px;
+  .multiplier {
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem;
   }
 
-  .asteroid {
-    width: clamp(6px, 2vw, 10px);
-    height: clamp(6px, 2vw, 10px);
+  .crash-message,
+  .cashout-message {
+    font-size: 1.5rem;
+    padding: 0.75rem 1.5rem;
   }
 
-  .shooting-star .star-head {
-    width: clamp(3px, 1vw, 5px);
-    height: clamp(3px, 1vw, 5px);
+  .controls {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .shooting-star .star-tail {
-    width: clamp(40px, 12vw, 80px);
-    height: clamp(2px, 0.5vw, 3px);
+  .bet-input,
+  .action-button,
+  .tab-button,
+  .history-button {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-area {
+    height: 200px;
+    max-width: 100%;
+  }
+
+  .rocket {
+    width: 50px;
+    height: 75px;
+  }
+
+  .rocket-svg {
+    width: 50px;
+    height: 75px;
+  }
+
+  .planet-1 {
+    width: 40px;
+    height: 40px;
+  }
+
+  .planet-2 {
+    width: 25px;
+    height: 25px;
   }
 
   .multiplier {
     font-size: 1rem;
-    padding: 5px 8px;
-    top: 15px;
-    left: 15px;
+    padding: 0.5rem 1rem;
   }
 
-  .multiplier-bar {
-    height: 8px;
-    bottom: 8px;
-    left: 8px;
-    width: calc(100% - 16px);
-  }
-
-  .bet-input {
-    width: 100px;
-    padding: 8px;
-    font-size: 0.9rem;
-  }
-
-  .action-button {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-  }
-
-  .tab-button {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-  }
-
-  .orbit-trail {
-    width: 1px;
-  }
-
-  .hud-overlay {
-    border-width: 1px;
-  }
-
-  .hud-corner {
-    width: 10px;
-    height: 10px;
-    border-width: 1px;
-  }
-
-  .crash-message {
-    font-size: 1.5rem;
-  }
-
+  .crash-message,
   .cashout-message {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem;
   }
 
-  .history h2,
-  .leaderboard h2 {
-    font-size: 1.5rem;
+  .history table,
+  .leaderboard table {
+    display: block;
   }
 
-  .history th,
+  .history thead,
+  .leaderboard thead {
+    display: none;
+  }
+
+  .history tbody,
+  .leaderboard tbody,
+  .history tr,
+  .leaderboard tr {
+    display: block;
+  }
+
+  .history tr,
+  .leaderboard tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+
   .history td,
-  .leaderboard th,
   .leaderboard td {
-    padding: 8px;
-    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border: none;
   }
 
-  .background-layer.far-stars {
-    background-size: 75px;
+  .history td::before,
+  .leaderboard td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--dark-slate);
+    width: 40%;
   }
 
-  .background-layer.near-stars {
-    background-size: 100px;
-  }
-
-  @keyframes explodeRocket {
-    0% {
-      transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(0) rotate(0deg);
-      opacity: 1;
-      filter: brightness(1);
-    }
-    50% {
-      transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(75px) rotate(180deg);
-      opacity: 0.7;
-      filter: brightness(1.5) hue-rotate(30deg);
-    }
-    100% {
-      transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(150px) rotate(360deg);
-      opacity: 0;
-      filter: brightness(2) hue-rotate(60deg);
-    }
+  .modal-content {
+    width: 95%;
+    padding: 1rem;
   }
 
   @keyframes shoot {
-    0% {
-      transform: translate(0, 0) rotate(var(--angle, 0deg));
-      opacity: 1;
-    }
-    100% {
-      transform: translate(clamp(250px, 85vw, 500px), clamp(250px, 85vw, 500px)) rotate(var(--angle, 0deg));
-      opacity: 0;
-    }
+    0% { transform: translate(0, 0) rotate(var(--angle, 0deg)); opacity: 1; }
+    100% { transform: translate(400px, 400px) rotate(var(--angle, 0deg)); opacity: 0; }
   }
 
   @keyframes driftAsteroid {
-    0% {
-      transform: translate(0, 0) rotate(var(--angle, 0deg));
-      opacity: 0.8;
-    }
-    100% {
-      transform: translate(clamp(250px, 85vw, 500px), clamp(-125px, -42vw, 250px)) rotate(var(--angle, 0deg));
-      opacity: 0.2;
-    }
+    0% { transform: translate(0, 0) rotate(var(--angle, 0deg)); opacity: 0.8; }
+    100% { transform: translate(400px, 200px) rotate(var(--angle, 0deg)); opacity: 0.2; }
+  }
+
+  @keyframes explodeRocket {
+    0% { transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(0) rotate(0deg); opacity: 1; filter: brightness(1); }
+    50% { transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(50px) rotate(180deg); opacity: 0.7; filter: brightness(1.5) hue-rotate(30deg); }
+    100% { transform: perspective(800px) rotateY(10deg) rotateX(5deg) translateY(100px) rotate(360deg); opacity: 0; filter: brightness(2) hue-rotate(60deg); }
   }
 }
