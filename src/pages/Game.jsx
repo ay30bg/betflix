@@ -17,12 +17,12 @@ const GameSelection = () => {
       alt: 'Flingo game preview',
     },
     
-  //   { name: 'Even & Odd', 
-  //    path: '/game/even-odd', 
-  //    description: 'Coming soon!', 
-  //    image: evenImage,
-  //    alt: 'Even & Odd game preview',
-  //   },
+    { name: 'Even & Odd', 
+     path: '/game/even-odd', 
+     description: 'Coming soon!', 
+     image: evenImage,
+     alt: 'Even & Odd game preview',
+    },
   ];
 
   return (
