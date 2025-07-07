@@ -1,11 +1,12 @@
 // import React, { useState, useEffect, useCallback, memo } from 'react';
 // import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 // import { useNavigate } from 'react-router-dom';
-// import { useBalance } from '../context/BalanceContext'; // Assuming a similar context for balance
+// import { useBalance } from '../context/BalanceContext';
+// import BetForm from '../components/EvenOddBetForm';
 // import { jwtDecode } from 'jwt-decode';
 // import '../styles/game.css';
 
-// // ErrorBoundary (unchanged from original)
+// // ErrorBoundary
 // class ErrorBoundary extends React.Component {
 //   state = { error: null };
 //   static getDerivedStateFromError(error) {
@@ -19,10 +20,10 @@
 //   }
 // }
 
-// // API URL (replace with your actual backend)
+// // API URL
 // const API_URL = process.env.REACT_APP_API_URL || 'https://evenodd-backend.vercel.app';
 
-// // Token expiration check (unchanged)
+// // Token expiration check
 // const isTokenExpired = (token) => {
 //   if (!token) return true;
 //   try {
@@ -35,7 +36,7 @@
 //   }
 // };
 
-// // API functions (simplified and adapted for even/odd)
+// // API functions
 // const fetchBets = async () => {
 //   const token = localStorage.getItem('token');
 //   if (!token) throw new Error('Authentication required');
@@ -145,102 +146,6 @@
 //   }
 //   return response.json();
 // };
-
-// // Simplified BetForm component
-// const BetForm = ({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft }) => {
-//   const [amount, setAmount] = useState('');
-//   const [choice, setChoice] = useState('');
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (!choice || !amount || amount <= 0) {
-//       onSubmit({ error: 'Please select even/odd and enter a valid amount' });
-//       return;
-//     }
-//     onSubmit({ choice, amount: parseFloat(amount), period: roundData?.period });
-//   };
-
-//   return (
-//     <div className="bet-form-container">
-//       <form className="bet-form" onSubmit={handleSubmit}>
-//         <div className="color-button-group">
-//           <button
-//             type="button"
-//             className={`color-button even ${choice === 'even' ? 'selected' : ''}`}
-//             onClick={() => setChoice('even')}
-//             disabled={isDisabled}
-//             aria-label="Bet on Even"
-//           >
-//             Even
-//           </button>
-//           <button
-//             type="button"
-//             className={`color-button odd ${choice === 'odd' ? 'selected' : ''}`}
-//             onClick={() => setChoice('odd')}
-//             disabled={isDisabled}
-//             aria-label="Bet on Odd"
-//           >
-//             Odd
-//           </button>
-//         </div>
-//         <div className="form-group">
-//           <label className="modal-label" htmlFor="bet-amount">Bet Amount</label>
-//           <input
-//             id="bet-amount"
-//             type="number"
-//             className="modal-input"
-//             value={amount}
-//             onChange={(e) => setAmount(e.target.value)}
-//             placeholder="Enter amount"
-//             min="0"
-//             step="0.01"
-//             disabled={isDisabled}
-//             aria-describedby="bet-amount-error"
-//           />
-//         </div>
-//         <button type="submit" className="modal-submit" disabled={isLoading || isDisabled}>
-//           {isLoading ? 'Placing Bet...' : 'Place Bet'}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// // Simplified HistoryTable component
-// const HistoryTable = ({ bets }) => (
-//   <div className="history-table-container">
-//     <table className="history-table">
-//       <thead>
-//         <tr>
-//           <th>Period</th>
-//           <th>Choice</th>
-//           <th>Amount</th>
-//           <th>Result</th>
-//           <th>Status</th>
-//         </tr>
-//       </thead>
-//       <tbody>
-//         {bets.length > 0 ? (
-//           bets.map((bet) => (
-//             <tr key={bet._id}>
-//               <td data-label="Period">{bet.period}</td>
-//               <td data-label="Choice">{bet.choice}</td>
-//               <td data-label="Amount">₦{bet.amount.toFixed(2)}</td>
-//               <td data-label="Result">{bet.result || 'N/A'}</td>
-//               <td data-label="Status" className={bet.status === 'won' ? 'won' : bet.status === 'lost' ? 'lost' : 'pending'}>
-//                 {bet.status}
-//               </td>
-//             </tr>
-//           ))
-//         ) : (
-//           <tr>
-//             <td colSpan="5" className="no-history">No bets available</td>
-//           </tr>
-//         )}
-//       </tbody>
-//     </table>
-//   </div>
-// );
 
 // function EvenOddGame() {
 //   const queryClient = useQueryClient();
@@ -619,7 +524,7 @@
 //         {pendingBet && !lastResult && !mutation.isLoading && (
 //           <div className="no-result" role="alert" aria-live="polite">
 //             <p>Bet placed on {pendingBet.period}.</p>
-//             <p>Waiting for results... ⌛</p>
+//             <p>Waiting for results... ⏳</p>
 //           </div>
 //         )}
 //         {!pendingBet && !lastResult && !mutation.isLoading && (
@@ -665,15 +570,6 @@
 //             </div>
 //           </div>
 //         )}
-//         <BetForm
-//           onSubmit={handleBet}
-//           isLoading={mutation.isLoading}
-//           balance={balance ?? 0}
-//           isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
-//           roundData={roundData}
-//           timeLeft={timeLeft}
-//         />
-//         <HistoryTable bets={betsData || []} />
 //       </div>
 //     </ErrorBoundary>
 //   );
@@ -688,6 +584,8 @@ import { useNavigate } from 'react-router-dom';
 import { useBalance } from '../context/BalanceContext';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/game.css';
+import BetForm from './EvenOddBetForm'; // Import the new BetForm component
+import HistoryTable from './HistoryTable'; // Assuming HistoryTable is a separate component
 
 // ErrorBoundary
 class ErrorBoundary extends React.Component {
@@ -829,6 +727,42 @@ const fetchProfile = async () => {
   }
   return response.json();
 };
+
+// HistoryTable component
+const HistoryTable = ({ bets }) => (
+  <div className="history-table-container">
+    <table className="history-table">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Choice</th>
+          <th>Amount</th>
+          <th>Result</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {bets.length > 0 ? (
+          bets.map((bet) => (
+            <tr key={bet._id}>
+              <td data-label="Period">{bet.period}</td>
+              <td data-label="Choice">{bet.choice}</td>
+              <td data-label="Amount">₦{bet.amount.toFixed(2)}</td>
+              <td data-label="Result">{bet.result || 'N/A'}</td>
+              <td data-label="Status" className={bet.status === 'won' ? 'won' : bet.status === 'lost' ? 'lost' : 'pending'}>
+                {bet.status}
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="5" className="no-history">No bets available</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+);
 
 function EvenOddGame() {
   const queryClient = useQueryClient();
@@ -1115,7 +1049,13 @@ function EvenOddGame() {
       return;
     }
     try {
-      await mutation.mutateAsync(betData);
+      // Adjust betData to match backend expectations
+      const adjustedBetData = {
+        choice: betData.value.toLowerCase(), // Convert 'Even'/'Odd' to 'even'/'odd' to match backend
+        amount: betData.amount,
+        period: roundData?.period,
+      };
+      await mutation.mutateAsync(adjustedBetData);
     } catch (err) {
       const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
@@ -1149,7 +1089,7 @@ function EvenOddGame() {
         {error && !notification && (
           <p className="game-error" role="alert" aria-live="polite">
             {error}
-          </p>
+交代
         )}
         {(balanceError || betsError) && (
           <p className="game-error" role="alert" aria-live="polite">
@@ -1207,7 +1147,7 @@ function EvenOddGame() {
         {pendingBet && !lastResult && !mutation.isLoading && (
           <div className="no-result" role="alert" aria-live="polite">
             <p>Bet placed on {pendingBet.period}.</p>
-            <p>Waiting for results... ⏳</p>
+            <p>Waiting for results... ⌛</p>
           </div>
         )}
         {!pendingBet && !lastResult && !mutation.isLoading && (
@@ -1253,6 +1193,16 @@ function EvenOddGame() {
             </div>
           </div>
         )}
+        <BetForm
+          onSubmit={handleBet}
+          isLoading={mutation.isLoading}
+          balance={balance ?? 0}
+          isDisabled={(balance ?? 0) === 0 || mutation.isLoading || timeLeft < 15}
+          roundData={roundData}
+          timeLeft={timeLeft}
+          lastResult={lastResult} // Pass lastResult to BetForm
+        />
+        <HistoryTable bets={betsData || []} />
       </div>
     </ErrorBoundary>
   );
