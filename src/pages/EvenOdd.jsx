@@ -689,7 +689,7 @@ import { useBalance } from '../context/BalanceContext';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/game.css';
 
-// ErrorBoundary (unchanged)
+// ErrorBoundary
 class ErrorBoundary extends React.Component {
   state = { error: null };
   static getDerivedStateFromError(error) {
@@ -840,8 +840,6 @@ function EvenOddGame() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [pendingBet, setPendingBet] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [amount, setAmount] = useState('');
-  const [choice, setChoice] = useState('');
 
   const handleAuthError = useCallback(
     (message) => {
@@ -1026,4 +1024,239 @@ function EvenOddGame() {
 
   const fetchResult = useCallback(
     async (period, retryCount = 40) => {
-_terms of service violation_
+      if (!period) {
+        setError('No valid bet period available');
+        setPendingBet(null);
+        return;
+      }
+      try {
+        const data = await fetchBetResult(period);
+        if (data.bet.status === 'pending') {
+          if (retryCount > 0) {
+            setTimeout(() => debouncedFetchResult(period, retryCount - 1), 2000);
+            return;
+          }
+          setError('Result not available yet. Please refresh.');
+          return;
+        }
+        setLastResult(data.bet);
+        if (typeof data.balance === 'number') {
+          setBalance(data.balance);
+          setNotification({
+            type: data.bet.won ? 'success' : 'info',
+            message: data.bet.won
+              ? `You won ₦${data.bet.payout.toFixed(2)}! Balance updated.`
+              : `Bet lost for round ${data.bet.period}. No payout.`,
+          });
+        }
+        queryClient.invalidateQueries(['bets']);
+        queryClient.invalidateQueries(['pendingBets']);
+        queryClient.invalidateQueries(['profile']);
+        setPendingBet(null);
+      } catch (err) {
+        const errorMessage = err.message.includes('Authentication required')
+          ? 'Session expired. Please log in again.'
+          : err.message;
+        setError(errorMessage);
+        setTimeout(() => setError(''), 5000);
+        if (err.message.includes('Authentication')) {
+          handleAuthError(errorMessage);
+)
+        }
+      }
+    },
+    [queryClient, setBalance, handleAuthError]
+  );
+
+  const debouncedFetchResult = useCallback(debounce(fetchResult, 1000), [fetchResult]);
+
+  useEffect(() => {
+    if (timeLeft <= 20 && pendingBet && !lastResult) {
+      const timer = setTimeout(() => {
+        debouncedFetchResult(pendingBet.period);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [timeLeft, pendingBet, debouncedFetchResult, lastResult]);
+
+  const mutation = useMutation({
+    mutationFn: placeBet,
+    onSuccess: (data) => {
+      if (typeof data.balance === 'number') {
+        setBalance(data.balance);
+      }
+      setPendingBet(data.bet);
+      setError('');
+      setNotification({ type: 'success', message: 'Bet placed successfully!' });
+      queryClient.invalidateQueries(['profile']);
+      queryClient.invalidateQueries(['bets']);
+      queryClient.invalidateQueries(['pendingBets']);
+    },
+    onError: (err) => {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) {
+        handleAuthError(errorMessage);
+      }
+    },
+  });
+
+  const handleBet = async (betData) => {
+    if (betData.error) {
+      setError(betData.error);
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    if (betData.amount > (balance ?? 0)) {
+      setError('Insufficient balance');
+      setTimeout(() => setError(''), 5000);
+      return;
+    }
+    try {
+      await mutation.mutateAsync(betData);
+    } catch (err) {
+      const errorMessage = err.message.includes('Authentication required')
+        ? 'Session expired. Please log in again.'
+        : err.message;
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
+      if (err.message.includes('Authentication')) {
+        handleAuthError(errorMessage);
+      }
+    }
+  };
+
+  if (balanceLoading || betsLoading || roundLoading || roundsLoading || pendingBetsLoading) {
+    return (
+      <ErrorBoundary>
+        <div className="game-page container">
+          <div className="loading-spinner" aria-live="polite">Loading...</div>
+        </div>
+      </ErrorBoundary>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <div className="game-page">
+        {notification && (
+          <div className={`result ${notification.type}`} role="alert" aria-live="polite">
+            {notification.message}
+          </div>
+        )}
+        {error && !notification && (
+          <p className="game-error" role="alert" aria-live="polite">
+            {error}
+          </p>
+        )}
+        {(balanceError || betsError) && (
+          <p className="game-error" role="alert" aria-live="polite">
+            {balanceError?.message || betsError?.message}
+          </p>
+        )}
+        <div className="round-info">
+          <p>Current Round: {roundData?.period || 'Loading...'}</p>
+          <p>Time Left: {timeLeft} seconds</p>
+          <p>Expires At: {roundData?.expiresAt || 'N/A'}</p>
+          <button
+            className="history-button"
+            onClick={() => setIsHistoryModalOpen(true)}
+            aria-label="View recent rounds history"
+          >
+            View History
+          </button>
+        </div>
+        {mutation.isLoading && (
+          <div className="loading-spinner" aria-live="polite">Processing Bet...</div>
+        )}
+        {lastResult && (
+          <div
+            key={lastResult.period}
+            className={`result ${lastResult.won ? 'won' : 'lost'}`}
+            role="alert"
+            aria-live="polite"
+          >
+            <button
+              className="result-close"
+              onClick={() => setLastResult(null)}
+              aria-label="Close bet result notification"
+            >
+              ×
+            </button>
+            <div className="result-header">
+              {lastResult.won ? (
+                <span className="result-icon">🎉 You Won!</span>
+              ) : (
+                <span className="result-icon">😔 You Lost</span>
+              )}
+            </div>
+            <div className="result-detail">
+              Result: {lastResult.result || 'N/A'}
+            </div>
+            <div className="result-payout">
+              {lastResult.payout === 0
+                ? 'No Payout'
+                : lastResult.won
+                ? `+₦${Math.abs(lastResult.payout).toFixed(2)}`
+                : `-₦${Math.abs(lastResult.payout).toFixed(2)}`}
+            </div>
+          </div>
+        )}
+        {pendingBet && !lastResult && !mutation.isLoading && (
+          <div className="no-result" role="alert" aria-live="polite">
+            <p>Bet placed on {pendingBet.period}.</p>
+            <p>Waiting for results... ⌛</p>
+          </div>
+        )}
+        {!pendingBet && !lastResult && !mutation.isLoading && (
+          <p className="no-result">Place a bet to see the result.</p>
+        )}
+        {isHistoryModalOpen && (
+          <div className="modal-overlay" role="dialog" aria-labelledby="history-modal-title">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h2 id="history-modal-title">Recent Rounds History</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setIsHistoryModalOpen(false)}
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <table className="history-table">
+                  <thead>
+                    <tr>
+                      <th>Period</th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentRoundsData?.length > 0 ? (
+                      recentRoundsData.map((round) => (
+                        <tr key={round.period}>
+                          <td>{圓 period}</td>
+                          <td>{round.result || 'N/A'}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="2">No rounds available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </ErrorBoundary>
+  );
+}
+
+export default memo(EvenOddGame);
