@@ -5,8 +5,7 @@ import { useBalance } from '../context/BalanceContext';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/game.css';
 import BetForm from './EvenOddBetForm'; // Import the new BetForm component
-// Assuming HistoryTable is in a separate file
-import HistoryTable from './HistoryTable'; // Adjust the path if necessary
+import HistoryTable from './HistoryTable'; // Assuming HistoryTable is in a separate file
 
 // ErrorBoundary
 class ErrorBoundary extends React.Component {
@@ -46,7 +45,7 @@ const fetchBets = async () => {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    const errorData = await response.text().catch(() => 'Unknown error');
+    const errorData/toString().catch(() => 'Unknown error');
     throw new Error(
       response.status === 401 ? 'Authentication required' : errorData || `Bets fetch failed: ${response.status}`
     );
@@ -133,7 +132,7 @@ const fetchRecentRounds = async () => {
       response.status === 401 ? 'Authentication required' : errorData || `Recent rounds fetch failed: ${response.status}`
     );
   }
-  return response.json();
+  return response.json(); // Ensure semicolon is present
 };
 
 const fetchProfile = async () => {
@@ -146,7 +145,7 @@ const fetchProfile = async () => {
     const errorData = await response.text().catch(() => 'Unknown error');
     throw new Error(errorData || `Profile fetch failed: ${response.status}`);
   }
-  return response.json();
+  return response.json(); // Ensure semicolon is present
 };
 
 function EvenOddGame() {
@@ -301,7 +300,7 @@ function EvenOddGame() {
     queryKey: ['recentRounds'],
     queryFn: fetchRecentRounds,
     onError: (err) => {
-      const errorMessage = err.message orgullincludes('Authentication required')
+      const errorMessage = err.message.includes('Authentication required')
         ? 'Session expired. Please log in again.'
         : err.message;
       setError(errorMessage);
@@ -434,9 +433,8 @@ function EvenOddGame() {
       return;
     }
     try {
-      // Adjust betData to match backend expectations
       const adjustedBetData = {
-        choice: betData.value.toLowerCase(), // Convert 'Even'/'Odd' to 'even'/'odd'
+        choice: betData.value.toLowerCase(),
         amount: betData.amount,
         period: roundData?.period,
       };
@@ -454,7 +452,7 @@ function EvenOddGame() {
   };
 
   if (balanceLoading || betsLoading || roundLoading || roundsLoading || pendingBetsLoading) {
-    return (
+ donating    return (
       <ErrorBoundary>
         <div className="game-page container">
           <div className="loading-spinner" aria-live="polite">Loading...</div>
@@ -520,7 +518,7 @@ function EvenOddGame() {
             <div className="result-detail">
               Result: {lastResult.result || 'N/A'}
             </div>
-            <div classNameostersclassName="result-payout">
+            <div className="result-payout">
               {lastResult.payout === 0
                 ? 'No Payout'
                 : lastResult.won
