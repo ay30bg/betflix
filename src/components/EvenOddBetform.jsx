@@ -1,58 +1,91 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import crypto from 'crypto-js';
-import '../styles/even-odd.css';
+import RecentResults from './recentResult';
+import OnlineUsers from './OnlineUsers';
+import '../styles/game.css';
+import ball0 from '../assets/ball-0.svg';
+import ball1 from '../assets/ball1.svg';
+import ball2 from '../assets/ball2.svg';
+import ball3 from '../assets/ball3.svg';
+import ball4 from '../assets/ball4.svg';
+import ball5 from '../assets/ball5.svg';
+import ball6 from '../assets/ball6.svg';
+import ball7 from '../assets/ball7.svg';
+import ball8 from '../assets/ball8.svg';
+import ball9 from '../assets/ball9.svg';
 
-// Jackpot Animation Component for Even/Odd wins
+// Jackpot Animation Component
 function JackpotAnimation({ isActive }) {
   if (!isActive) return null;
 
   return (
-    <div className="eo-jackpot-animation">
-      {[...Array(20)].map((_, i) => (
+    <div className="jackpot-animation">
+      {[...Array(30)].map((_, i) => (
         <div
           key={i}
-          className="eo-confetti-particle"
+          className="confetti-particle"
           style={{
             left: `${Math.random() * 100}%`,
             animationDelay: `${Math.random() * 0.5}s`,
-            backgroundColor: ['#FFD700', '#00FF00', '#1E90FF'][Math.floor(Math.random() * 3)],
+            backgroundColor: ['#FFD700', '#FF4500', '#00FF00', '#1E90FF'][Math.floor(Math.random() * 4)],
           }}
         />
       ))}
-      <div className="eo-jackpot-text">Winner!</div>
+      <div className="jackpot-text">Jackpot!</div>
     </div>
   );
 }
 
 function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft, lastResult }) {
-  const [selection, setSelection] = useState(null); // 'even' or 'odd'
+  const [selection, setSelection] = useState({ type: 'parity', value: null });
   const [amount, setAmount] = useState('');
   const [clientSeed, setClientSeed] = useState(
     `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showJackpot, setShowJackpot] = useState(false); // State for win animation
+  const [showJackpot, setShowJackpot] = useState(false);
   const modalRef = useRef(null);
   const firstFocusableElementRef = useRef(null);
   const lastFocusableElementRef = useRef(null);
 
   // Payout multiplier for even/odd bets
-  const PAYOUT_MULTIPLIER = 2.0;
+  const PARITY_MULTIPLIER = 1.9;
   const suggestedAmounts = [100, 200, 500, 1000];
 
-  // Trigger animation for winning bets
+  const balls = [
+    { number: 0, src: ball0, parity: 'Even' },
+    { number: 1, src: ball1, parity: 'Odd' },
+    { number: 2, src: ball2, parity: 'Even' },
+    { number: 3, src: ball3, parity: 'Odd' },
+    { number: 4, src: ball4, parity: 'Even' },
+    { number: 5, src: ball5, parity: 'Odd' },
+    { number: 6, src: ball6, parity: 'Even' },
+    { number: 7, src: ball7, parity: 'Odd' },
+    { number: 8, src: ball8, parity: 'Even' },
+    { number: 9, src: ball9, parity: 'Odd' },
+  ];
+
+  const getNumberParity = (number) => {
+    return number % 2 === 0 ? 'Even' : 'Odd';
+  };
+
+  const getPayoutMultiplier = () => {
+    return PARITY_MULTIPLIER;
+  };
+
+  // Check for win and trigger jackpot animation
   useEffect(() => {
-    if (lastResult && lastResult.won) {
+    if (lastResult && lastResult.won && lastResult.betType === 'parity') {
       setShowJackpot(true);
       const timer = setTimeout(() => setShowJackpot(false), 3000);
       return () => clearTimeout(timer);
     }
   }, [lastResult]);
 
-  const handleChoiceSelect = (choice) => {
-    setSelection(choice);
+  const handleParitySelect = (parity) => {
+    setSelection({ type: 'parity', value: parity });
     setIsModalOpen(true);
   };
 
@@ -61,7 +94,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    if (!selection) {
+    if (!selection.value) {
       onSubmit({ error: 'Please select Even or Odd' });
       setIsSubmitting(false);
       return;
@@ -69,7 +102,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
 
     const betAmount = parseFloat(amount);
     if (!betAmount || betAmount < 0.50 || Number.isNaN(betAmount)) {
-      onSubmit({ error: 'Please enter a valid bet amount (minimum ₦0.50)' });
+      onSubmit({ error: 'Please enter a valid bet amount (minimum $0.50)' });
       setIsSubmitting(false);
       return;
     }
@@ -80,15 +113,16 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
       return;
     }
 
-    if (!['even', 'odd'].includes(selection)) {
-      onSubmit({ error: 'Invalid choice selected' });
+    if (!['Even', 'Odd'].includes(selection.value)) {
+      onSubmit({ error: 'Invalid selection' });
       setIsSubmitting(false);
       return;
     }
 
     const newClientSeed = `${crypto.lib.WordArray.random(16).toString()}-${Date.now()}`;
     const bet = {
-      choice: selection,
+      type: selection.type,
+      value: selection.value,
       amount: betAmount,
       clientSeed: newClientSeed,
     };
@@ -96,7 +130,7 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     try {
       await onSubmit(bet);
       setIsModalOpen(false);
-      setSelection(null);
+      setSelection({ type: 'parity', value: null });
       setAmount('');
       setClientSeed(newClientSeed);
     } catch (err) {
@@ -114,15 +148,14 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
   const closeModal = () => {
     setIsModalOpen(false);
     setAmount('');
-    setSelection(null);
+    setSelection({ type: 'parity', value: null });
     setIsSubmitting(false);
   };
 
-  // Accessibility for modal
   useEffect(() => {
     if (isModalOpen && modalRef.current) {
       const focusableElements = modalRef.current.querySelectorAll(
-        'button, input, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
       firstFocusableElementRef.current = focusableElements[0];
       lastFocusableElementRef.current = focusableElements[focusableElements.length - 1];
@@ -146,51 +179,55 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
     }
   }, [isModalOpen]);
 
-  const isBettingDisabled = isDisabled || timeLeft < 5;
+  const isBettingDisabled = isDisabled || timeLeft < 15;
 
   return (
-    <div className="eo-bet-form-container">
+    <div className="bet-form-container">
       <JackpotAnimation isActive={showJackpot} />
-      <form className="eo-bet-form" onSubmit={(e) => e.preventDefault()}>
-        <div className="eo-form-group eo-choice-buttons">
-          <div className="eo-choice-button-group">
-            <button
-              type="button"
-              className={`eo-choice-button eo-even ${selection === 'even' ? 'eo-selected' : ''}`}
-              onClick={() => handleChoiceSelect('even')}
-              aria-pressed={selection === 'even'}
-              aria-label="Bet on Even"
-              disabled={isBettingDisabled}
-            >
-              Even
-            </button>
-            <button
-              type="button"
-              className={`eo-choice-button eo-odd ${selection === 'odd' ? 'eo-selected' : ''}`}
-              onClick={() => handleChoiceSelect('odd')}
-              aria-pressed={selection === 'odd'}
-              aria-label="Bet on Odd"
-              disabled={isBettingDisabled}
-            >
-              Odd
-            </button>
+      <RecentResults balls={balls} />
+      <form className="bet-form" onSubmit={(e) => e.preventDefault()}>
+        <div className="button-balls-container">
+          <div className="form-group parity-buttons">
+            <div className="parity-button-group">
+              <button
+                type="button"
+                className={`parity-button even ${selection.type === 'parity' && selection.value === 'Even' ? 'selected' : ''}`}
+                onClick={() => handleParitySelect('Even')}
+                aria-pressed={selection.type === 'parity' && selection.value === 'Even'}
+                aria-label="Bet on Even"
+                disabled={isBettingDisabled}
+              >
+                Even
+              </button>
+              <button
+                type="button"
+                className={`parity-button odd ${selection.type === 'parity' && selection.value === 'Odd' ? 'selected' : ''}`}
+                onClick={() => handleParitySelect('Odd')}
+                aria-pressed={selection.type === 'parity' && selection.value === 'Odd'}
+                aria-label="Bet on Odd"
+                disabled={isBettingDisabled}
+              >
+                Odd
+              </button>
+            </div>
           </div>
         </div>
       </form>
+      <OnlineUsers />
       {isModalOpen && (
-        <div className="eo-modal-overlay" role="dialog" aria-labelledby="modal-title">
-          <div className="eo-modal-content" ref={modalRef}>
-            <h2 id="modal-title">Bet on {selection.charAt(0).toUpperCase() + selection.slice(1)}</h2>
+        <div className="modal-overlay" role="dialog" aria-labelledby="modal-title">
+          <div className="modal-content" ref={modalRef}>
+            <h2 id="modal-title">Bet on {selection.value}</h2>
             <button
-              className="eo-modal-close"
+              className="modal-close"
               onClick={closeModal}
               aria-label="Close modal"
             >
               ×
             </button>
             <form onSubmit={handleModalSubmit}>
-              <div className="eo-form-group">
-                <label htmlFor="bet-amount" className="eo-modal-label">
+              <div className="form-group">
+                <label htmlFor="bet-amount" className="modal-label">
                   Bet Amount (₦)
                 </label>
                 <input
@@ -203,15 +240,15 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   min="100"
                   required
                   disabled={isBettingDisabled || isSubmitting}
-                  className="eo-modal-input"
+                  className="modal-input"
                 />
               </div>
-              <div className="eo-suggested-amounts">
+              <div className="suggested-amounts">
                 {suggestedAmounts.map((suggestedAmount) => (
                   <button
                     key={suggestedAmount}
                     type="button"
-                    className="eo-suggested-amount-button"
+                    className="suggested-amount-button"
                     onClick={() => handleSuggestedAmount(suggestedAmount)}
                     disabled={isBettingDisabled || isSubmitting}
                   >
@@ -219,17 +256,17 @@ function BetForm({ onSubmit, isLoading, balance, isDisabled, roundData, timeLeft
                   </button>
                 ))}
               </div>
-              <div className="eo-modal-payout-info">
-                <p>Payout Multiplier: {PAYOUT_MULTIPLIER.toFixed(2)}x</p>
+              <div className="modal-payout-info">
+                <p>Payout Multiplier: {getPayoutMultiplier().toFixed(2)}x</p>
                 <p>
                   Potential Win: ₦
-                  {(amount ? parseFloat(amount) * PAYOUT_MULTIPLIER : 0).toFixed(2)}
+                  {(amount ? parseFloat(amount) * getPayoutMultiplier() : 0).toFixed(2)}
                 </p>
               </div>
               <button
                 type="submit"
                 disabled={isLoading || isBettingDisabled || isSubmitting}
-                className="eo-modal-submit"
+                className="modal-submit"
                 aria-disabled={isLoading || isBettingDisabled || isSubmitting}
               >
                 {isSubmitting ? 'Placing Bet...' : 'Place Bet'}
@@ -254,8 +291,8 @@ BetForm.propTypes = {
   timeLeft: PropTypes.number.isRequired,
   lastResult: PropTypes.shape({
     won: PropTypes.bool,
-    choice: PropTypes.string,
-    result: PropTypes.string,
+    betType: PropTypes.string,
+    value: PropTypes.string,
   }),
 };
 
