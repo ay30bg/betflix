@@ -1061,7 +1061,6 @@ function EvenOddGame() {
         setTimeout(() => setError(''), 5000);
         if (err.message.includes('Authentication')) {
           handleAuthError(errorMessage);
-)
         }
       }
     },
@@ -1208,7 +1207,7 @@ function EvenOddGame() {
         {pendingBet && !lastResult && !mutation.isLoading && (
           <div className="no-result" role="alert" aria-live="polite">
             <p>Bet placed on {pendingBet.period}.</p>
-            <p>Waiting for results... ⌛</p>
+            <p>Waiting for results... ⏳</p>
           </div>
         )}
         {!pendingBet && !lastResult && !mutation.isLoading && (
@@ -1239,7 +1238,7 @@ function EvenOddGame() {
                     {recentRoundsData?.length > 0 ? (
                       recentRoundsData.map((round) => (
                         <tr key={round.period}>
-                          <td>{圓 period}</td>
+                          <td>{round.period}</td>
                           <td>{round.result || 'N/A'}</td>
                         </tr>
                       ))
