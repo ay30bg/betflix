@@ -1,95 +1,848 @@
-/* styles.css */
-body {
+/* even-odd.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
-/*   background: #111; */
-  color: #fff;
-  display: flex;
-  justify-content: center;
-/*   padding: 2rem; */
+  padding: 0;
 }
 
-.game-container {
-  max-width: 500px;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+/* Game Page */
+.game-page {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+/* Game Title */
+.game-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1e40af;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-align: center;
-  background: #1e1e1e;
+  margin-bottom: 1rem;
+}
+
+/* Game Error */
+.game-error {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  background: #ef4444;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Wheel Container */
+.wheel-container {
+  width: 100%;
+  max-width: 600px;
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
   padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wheel-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .wheel-wrapper {
   position: relative;
   width: 300px;
   height: 300px;
-  margin: 2rem auto;
+  margin: 0 auto;
 }
 
 .wheel {
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 10px solid #00ffff;
-  position: relative;
-  background: radial-gradient(circle, #222 50%, #000 100%);
   overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .segment {
   position: absolute;
   width: 50%;
   height: 50%;
-  background: #00ffff20;
   transform-origin: 100% 100%;
-  clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+  clip-path: polygon(0 0, 50% 50%, 100% 0);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
   color: #fff;
-  font-weight: bold;
-  font-size: 1rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.segment-even {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.segment-odd {
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+}
+
+.segment span {
+  transform: rotate(45deg);
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 
 .pointer {
   position: absolute;
-  top: -10px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   font-size: 2rem;
-  color: #f00;
+  color: #1e40af;
+  z-index: 10;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.controls {
-  margin-top: 1rem;
+/* Controls (Bet Form) */
+.bet-form-container {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.stake-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.stake-input:focus {
+  border-color: #1e40af;
+  outline: none;
+}
+
+.stake-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-group {
   display: flex;
   gap: 1rem;
   justify-content: center;
 }
 
-.controls input {
-  padding: 0.5rem;
+.spin-button,
+.reset-button {
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  width: 150px;
-}
-
-.controls button {
-  padding: 0.5rem 1.5rem;
-  background: #00ffff;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  color: #111;
-  font-size: 1rem;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
-.controls button:disabled {
-  background: #555;
+.spin-button {
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  color: #fff;
+}
+
+.spin-button:hover:not(:disabled) {
+  background: linear-gradient(90deg, #2563eb, #1e3a8a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.spin-button:disabled {
+  background: #9ca3af;
   cursor: not-allowed;
 }
 
+.reset-button {
+  background: #ef4444;
+  color: #fff;
+}
+
+.reset-button:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.reset-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ef4444;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.loading-spinner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid rgba(239, 68, 68, 0.2);
+  border-top-color: #ef4444;
+  border-radius: 50%;
+  animation: spin 0.8s ease-in-out infinite;
+  transform: translateY(-50%);
+}
+
+.loading-spinner::after {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spin 1.2s ease-in-out infinite reverse;
+  transform: translateY(-50%);
+}
+
+/* Result Display */
 .result {
-  margin-top: 2rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  text-align: center;
+  background: #ffffff;
+  position: relative;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+  line-height: 1.6;
+  animation: slideUp 0.5s ease-out;
+  z-index: 10;
+}
+
+.result:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+}
+
+.result.won {
+  border: 5px solid #10b981;
+  background: linear-gradient(90deg, #d1fae5 10%, #ecfdf5 100%);
+  color: #065f46;
+}
+
+.result.lost {
+  border: 5px solid #ef4444;
+  background: linear-gradient(90deg, #fee2e2 10%, #fef2f2 100%);
+  color: #b91c1c;
+}
+
+.result-header {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.result-icon {
+  display: flex;
+  align
+
+System: I'm sorry, but it looks like the CSS file was cut off mid-definition. I’ll provide a complete version of the `even-odd.css` stylesheet for the `SpinningWheelGame` component, ensuring it aligns with the aesthetic and structure of the `FlingoGame` component’s CSS. The styles will include all necessary elements (wheel, segments, pointer, controls, result, and error messages) and maintain consistency with `FlingoGame`’s modern design, including gradients, shadows, animations, and responsive adjustments. I’ll also ensure the updated `SpinningWheelGame` component from my previous response integrates seamlessly with these styles.
+
+---
+
+### Complete `even-odd.css` for `SpinningWheelGame`
+This stylesheet mirrors the `FlingoGame` CSS, adapting its gradients, typography, shadows, and responsive design to the spinning wheel game.
+
+```css
+/* even-odd.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+/* Game Page */
+.game-page {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+/* Game Title */
+.game-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1e40af;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Game Error */
+.game-error {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  background: #ef4444;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Wheel Container */
+.wheel-container {
+  width: 100%;
+  max-width: 800px; /* Slightly larger to accommodate wheel */
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,  polyline0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wheel-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.wheel-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* Wheel Wrapper and Wheel */
+.wheel-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.wheel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Wheel Segments */
+.segment {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: 100% 100%;
+  clipPath: polygon(0 0, 50% 50%, 100% 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.segment-even {
+  background: linear-gradient(90deg, #10b981, #059669); /* Green gradient for even segments */
+}
+
+.segment-odd {
+  background: linear-gradient(90deg, #ef4444, #b91c1c); /* Red gradient for odd segments */
+}
+
+.segment span {
+  transform: rotate(45deg); /* Adjust text orientation for readability */
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* Pointer */
+.pointer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: #1e40af;
+  z-index: 10;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 1.5s infinite;
+}
+
+/* Controls (Bet Form) */
+.bet-form-container {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.stake-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.stake-input:focus {
+  border-color: #1e40af;
+  outline: none;
+}
+
+.stake-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.spin-button,
+.reset-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.spin-button {
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  color: #fff;
+}
+
+.spin-button:hover:not(:disabled) {
+  background: linear-gradient(90deg, #2563eb, #1e3a8a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.spin-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.reset-button {
+  background: #ef4444;
+  color: #fff;
+}
+
+.reset-button:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.reset-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ef4444;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.loading-spinner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid rgba(239, 68, 68, 0.2);
+  border-top-color: #ef4444;
+  border-radius: 50%;
+  animation: spin 0.8s ease-in-out infinite;
+  transform: translateY(-50%);
+}
+
+.loading-spinner::after {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(16, 185, 129, 0.2);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spin 1.2s ease-in-out infinite reverse;
+  transform: translateY(-50%);
+}
+
+/* Result Display */
+.result {
+  font-size: 1.75rem;
+  font-weight: 700;
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin: 2rem 0;
+  text-align: center;
+  background: #ffffff;
+  position: relative;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+  line-height: 1.6;
+  animation: slideUp 0.5s ease-out;
+  z-index: 10;
+}
+
+.result:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+}
+
+.result.won {
+  border: 5px solid #10b981;
+  background: linear-gradient(90deg, #d1fae5 10%, #ecfdf5 100%);
+  color: #065f46;
+}
+
+.result.lost {
+  border: 5px solid #ef4444;
+  background: linear-gradient(90deg, #fee2e2 10%, #fef2f2 100%);
+  color: #b91c1c;
+}
+
+.result-header {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.result-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.result-detail {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.result-payout {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e40af;
+  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.result-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.result-close:hover {
+  background: #d1d5db;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .game-page {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .game-title {
+    font-size: 2rem;
+  }
+
+  .game-error {
+    font-size: 1.1rem;
+    padding: 0.75rem;
+  }
+
+  .wheel-container {
+    padding: 1.5rem;
+  }
+
+  .wheel-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+
+  .segment {
+    font-size: 1rem;
+  }
+
+  .pointer {
+    font-size: 1.5rem;
+  }
+
+  .bet-form-container {
+    padding: 1.5rem;
+  }
+
+  .stake-input {
+    max-width: 250px;
+  }
+
+  .spin-button,
+  .reset-button {
+    padding: 0.6rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .result {
+    font-size: 1.5rem;
+    padding: 2rem;
+    margin: 1.5rem 0;
+  }
+
+  .result-header {
+    font-size: 2rem;
+  }
+
+  .result-detail {
+    font-size: 1.25rem;
+  }
+
+  .result-payout {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .game-title {
+    font-size: 1.75rem;
+  }
+
+  .game-error {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  .wheel-container {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .wheel-wrapper {
+    width: 200px;
+    height: 200px;
+  }
+
+  .segment {
+    font-size: 0.9rem;
+  }
+
+  .pointer {
+    font-size: 1.2rem;
+  }
+
+  .bet-form-container {
+    padding: 1rem;
+  }
+
+  .stake-input {
+    max-width: 200px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .spin-button,
+  .reset-button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .result {
+    font-size: 1.3rem;
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .result-header {
+    font-size: 1.75rem;
+  }
+
+  .result-detail {
+    font-size: 1.1rem;
+  }
+
+  .result-payout {
+    font-size: 1.3rem;
+  }
 }
