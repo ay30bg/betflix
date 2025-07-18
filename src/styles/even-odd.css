@@ -25,19 +25,21 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 1.5rem;
+  gap: 2rem; /* Increased gap for better spacing */
 }
 
 /* Game Title */
 .game-title {
-  font-size: 2.25rem;
+  font-size: 2.5rem; /* Slightly larger for prominence */
   font-weight: 800;
   color: #1e40af;
   background: linear-gradient(90deg, #3b82f6, #1e40af);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease;
 }
 
 /* Game Error */
@@ -45,22 +47,22 @@ body {
   font-size: 1.25rem;
   font-weight: 700;
   color: #fff;
-  background: #ef4444;
+  background: linear-gradient(90deg, #ef4444, #b91c1c); /* Gradient for error */
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
   width: 100%;
   max-width: 600px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
+  animation: slideIn 0.3s ease;
 }
 
 /* Wheel Container */
 .wheel-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   background: linear-gradient(145deg, #ffffff, #f1f5f9);
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -70,14 +72,25 @@ body {
 }
 
 .wheel-container:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px); /* Slightly stronger lift effect */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
+.wheel-container::before {
+  content: '🎡'; /* Wheel emoji for subtle flair */
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 2rem;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+/* Wheel Wrapper and Wheel */
 .wheel-wrapper {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 350px; /* Slightly larger for better visibility */
+  height: 350px;
   margin: 0 auto;
 }
 
@@ -87,10 +100,12 @@ body {
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e2e8f0;
 }
 
+/* Wheel Segments */
 .segment {
   position: absolute;
   width: 50%;
@@ -100,11 +115,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.3rem; /* Slightly larger for readability */
+  font-weight: 700;
   color: #fff;
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
 }
 
 .segment-even {
@@ -120,342 +135,16 @@ body {
   display: block;
   width: 100%;
   text-align: center;
-}
-
-.pointer {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2rem;
-  color: #1e40af;
-  z-index: 10;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Controls (Bet Form) */
-.bet-form-container {
-  width: 100%;
-  max-width: 600px;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.stake-input {
-  width: 100%;
-  max-width: 300px;
-  padding: 0.75rem;
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-.stake-input:focus {
-  border-color: #1e40af;
-  outline: none;
-}
-
-.stake-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.button-group {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.spin-button,
-.reset-button {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-}
-
-.spin-button {
-  background: linear-gradient(90deg, #3b82f6, #1e40af);
-  color: #fff;
-}
-
-.spin-button:hover:not(:disabled) {
-  background: linear-gradient(90deg, #2563eb, #1e3a8a);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.spin-button:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-.reset-button {
-  background: #ef4444;
-  color: #fff;
-}
-
-.reset-button:hover:not(:disabled) {
-  background: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.reset-button:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-/* Loading Spinner */
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ef4444;
-  position: relative;
-  padding-left: 2.5rem;
-}
-
-.loading-spinner::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 2rem;
-  height: 2rem;
-  border: 4px solid rgba(239, 68, 68, 0.2);
-  border-top-color: #ef4444;
-  border-radius: 50%;
-  animation: spin 0.8s ease-in-out infinite;
-  transform: translateY(-50%);
-}
-
-.loading-spinner::after {
-  content: '';
-  position: absolute;
-  left: 0.25rem;
-  top: 50%;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 3px solid rgba(16, 185, 129, 0.2);
-  border-top-color: #10b981;
-  border-radius: 50%;
-  animation: spin 1.2s ease-in-out infinite reverse;
-  transform: translateY(-50%);
-}
-
-/* Result Display */
-.result {
-  font-size: 1.75rem;
-  font-weight: 700;
-  padding: 2.5rem;
-  border-radius: 16px;
-  margin: 2rem 0;
-  text-align: center;
-  background: #ffffff;
-  position: relative;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
-  max-width: 600px;
-  line-height: 1.6;
-  animation: slideUp 0.5s ease-out;
-  z-index: 10;
-}
-
-.result:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-}
-
-.result.won {
-  border: 5px solid #10b981;
-  background: linear-gradient(90deg, #d1fae5 10%, #ecfdf5 100%);
-  color: #065f46;
-}
-
-.result.lost {
-  border: 5px solid #ef4444;
-  background: linear-gradient(90deg, #fee2e2 10%, #fef2f2 100%);
-  color: #b91c1c;
-}
-
-.result-header {
-  font-size: 2.25rem;
-  font-weight: 800;
-  margin-bottom: 0.75rem;
-  text-transform: uppercase;
-}
-
-.result-icon {
-  display: flex;
-  align
-
-System: I'm sorry, but it looks like the CSS file was cut off mid-definition. I’ll provide a complete version of the `even-odd.css` stylesheet for the `SpinningWheelGame` component, ensuring it aligns with the aesthetic and structure of the `FlingoGame` component’s CSS. The styles will include all necessary elements (wheel, segments, pointer, controls, result, and error messages) and maintain consistency with `FlingoGame`’s modern design, including gradients, shadows, animations, and responsive adjustments. I’ll also ensure the updated `SpinningWheelGame` component from my previous response integrates seamlessly with these styles.
-
----
-
-### Complete `even-odd.css` for `SpinningWheelGame`
-This stylesheet mirrors the `FlingoGame` CSS, adapting its gradients, typography, shadows, and responsive design to the spinning wheel game.
-
-```css
-/* even-odd.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-/* Global Styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  color: #1f2937;
-  line-height: 1.5;
-}
-
-/* Game Page */
-.game-page {
-  padding: 2rem 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 1.5rem;
-}
-
-/* Game Title */
-.game-title {
-  font-size: 2.25rem;
-  font-weight: 800;
-  color: #1e40af;
-  background: linear-gradient(90deg, #3b82f6, #1e40af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-/* Game Error */
-.game-error {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #fff;
-  background: #ef4444;
-  padding: 1rem;
-  border-radius: 8px;
-  text-align: center;
-  width: 100%;
-  max-width: 600px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease;
-}
-
-/* Wheel Container */
-.wheel-container {
-  width: 100%;
-  max-width: 800px; /* Slightly larger to accommodate wheel */
-  background: linear-gradient(145deg, #ffffff, #f1f5f9);
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,  polyline0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.wheel-container:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-.wheel-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
-  z-index: -1;
-  opacity: 0.5;
-}
-
-/* Wheel Wrapper and Wheel */
-.wheel-wrapper {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
-}
-
-.wheel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Wheel Segments */
-.segment {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  transform-origin: 100% 100%;
-  clipPath: polygon(0 0, 50% 50%, 100% 0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fff;
-  text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.segment-even {
-  background: linear-gradient(90deg, #10b981, #059669); /* Green gradient for even segments */
-}
-
-.segment-odd {
-  background: linear-gradient(90deg, #ef4444, #b91c1c); /* Red gradient for odd segments */
-}
-
-.segment span {
-  transform: rotate(45deg); /* Adjust text orientation for readability */
-  display: block;
-  width: 100%;
-  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Pointer */
 .pointer {
   position: absolute;
-  top: 0;
+  top: -10px; /* Slightly adjusted for better alignment */
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: #1e40af;
   z-index: 10;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -474,6 +163,11 @@ body {
   flex-direction: column;
   gap: 1.5rem;
   align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.bet-form-container:hover {
+  transform: translateY(-2px);
 }
 
 .stake-input {
@@ -483,28 +177,32 @@ body {
   border: 2px solid #d1d5db;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .stake-input:focus {
   border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   outline: none;
 }
 
 .stake-input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  background: #f3f4f6;
 }
 
 .button-group {
   display: flex;
   gap: 1rem;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .spin-button,
 .reset-button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 2rem;
   border: none;
   border-radius: 8px;
   font-size: 1.1rem;
@@ -521,7 +219,7 @@ body {
 .spin-button:hover:not(:disabled) {
   background: linear-gradient(90deg, #2563eb, #1e3a8a);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .spin-button:disabled {
@@ -530,14 +228,14 @@ body {
 }
 
 .reset-button {
-  background: #ef4444;
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
   color: #fff;
 }
 
 .reset-button:hover:not(:disabled) {
-  background: #dc2626;
+  background: linear-gradient(90deg, #dc2626, #991b1b);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .reset-button:disabled {
@@ -662,11 +360,12 @@ body {
   height: 36px;
   font-size: 1.4rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .result-close:hover {
   background: #d1d5db;
+  transform: scale(1.1);
 }
 
 /* Animations */
@@ -676,6 +375,17 @@ body {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -728,19 +438,20 @@ body {
 
   .wheel-container {
     padding: 1.5rem;
+    max-width: 600px;
   }
 
   .wheel-wrapper {
-    width: 250px;
-    height: 250px;
+    width: 280px;
+    height: 280px;
   }
 
   .segment {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .pointer {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   .bet-form-container {
@@ -753,7 +464,7 @@ body {
 
   .spin-button,
   .reset-button {
-    padding: 0.6rem 1.25rem;
+    padding: 0.6rem 1.5rem;
     font-size: 1rem;
   }
 
@@ -796,16 +507,17 @@ body {
   }
 
   .wheel-wrapper {
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
   }
 
   .segment {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
   .pointer {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    top: -8px;
   }
 
   .bet-form-container {
@@ -825,7 +537,7 @@ body {
   .reset-button {
     width: 100%;
     padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
   .result {
