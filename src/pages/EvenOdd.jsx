@@ -594,77 +594,157 @@
 // export default memo(EvenOddGame);
 
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import '../styles/even-odd.css';
 
-const multipliers = ["0x", "1x", "1.85x", "2.5x", "6.8x", "10x"];
+const multipliers = ['0x', '1x', '1.85x', '2.5x', '6.8x', '10x'];
 const degreesPerSegment = 360 / multipliers.length;
 
-export default function SpinningWheelGame() {
+function SpinningWheelGame() {
   const [spinning, setSpinning] = useState(false);
   const [angle, setAngle] = useState(0);
   const [result, setResult] = useState(null);
-  const [stake, setStake] = useState(0);
+  const [stake, setStake] = useState('');
   const [payout, setPayout] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleStakeChange = (e) => {
+    const value = e.target.value;
+    const parsed = parseFloat(value);
+    if (value === '' || (parsed >= 0 && !isNaN(parsed))) {
+      setStake(value);
+      setError('');
+    } else {
+      setError('Please enter a valid stake (positive number).');
+    }
+  };
 
   const handleSpin = () => {
-    if (!stake || spinning) return;
+    const parsedStake = parseFloat(stake);
+    if (!parsedStake || parsedStake <= 0 || spinning) {
+      setError('Please enter a valid stake greater than 0.');
+      return;
+    }
 
     setSpinning(true);
+    setError('');
     const randomIndex = Math.floor(Math.random() * multipliers.length);
-    const spins = 6; // full spins before stopping
-    const newAngle = 360 * spins + (360 - randomIndex * degreesPerSegment);
+    const spins = 6;
+    const newAngle = 360 * spins + (360 - randomIndex * degreesPerSegment + Math.random() * 10 - 5);
     setAngle(newAngle);
 
     setTimeout(() => {
-      const multiplier = parseFloat(multipliers[randomIndex]);
+      const multiplier = parseFloat(multipliers[randomIndex].replace('x', '')) || 0;
       setResult(multipliers[randomIndex]);
-      setPayout((stake * multiplier).toFixed(2));
+      setPayout((parsedStake * multiplier).toFixed(2));
       setSpinning(false);
     }, 4000);
   };
 
-  return (
-    <div className="game-container">
-      <h1>🎡 Spinning Wheel Game</h1>
-      <div className="wheel-wrapper">
-        <motion.div
-          className="wheel"
-          animate={{ rotate: angle }}
-          transition={{ duration: 4, ease: "easeOut" }}
-        >
-          {multipliers.map((value, index) => (
-            <div
-              key={index}
-              className="segment"
-              style={{ transform: `rotate(${index * degreesPerSegment}deg)` }}
-            >
-              <span>{value}</span>
-            </div>
-          ))}
-        </motion.div>
-        <div className="pointer">▼</div>
-      </div>
+  const handleReset = () => {
+    setResult(null);
+    setPayout(null);
+    setStake('');
+    setAngle(0);
+    setError('');
+  };
 
-      <div className="controls">
+  return (
+    <div className="game-page">
+      <h1 className="game-title">🎡 Spinning Wheel Game</h1>
+      {error && (
+        <p className="game-error" role="alert" aria-live="polite">
+          {error}
+        </p>
+      )}
+      <div className="wheel-container">
+        <div className="wheel-wrapper">
+          <motion.div
+            className="wheel"
+            animate={{ rotate: angle }}
+            transition={{ duration: 4, ease: 'easeOut' }}
+          >
+            {multipliers.map((value, index) => (
+              <div
+                key={index}
+                className={`segment segment-${index % 2 === 0 ? 'even' : 'odd'}`}
+                style={{ transform: `rotate(${index * degreesPerSegment}deg)` }}
+              >
+                <span>{value}</span>
+              </div>
+            ))}
+          </motion.div>
+          <div className="pointer">▼</div>
+        </div>
+      </div>
+      <div className="controls bet-form-container">
+        <label htmlFor="stake-input" className="sr-only">
+          Enter your stake
+        </label>
         <input
+          id="stake-input"
           type="number"
           placeholder="Enter stake"
           value={stake}
-          onChange={(e) => setStake(parseFloat(e.target.value))}
+          onChange={handleStakeChange}
+          className="stake-input"
+          aria-describedby="stake-error"
+          disabled={spinning}
         />
-        <button onClick={handleSpin} disabled={spinning}>
-          {spinning ? "Spinning..." : "Spin"}
-        </button>
+        <div className="button-group">
+          <button
+            onClick={handleSpin}
+            disabled={spinning || !parseFloat(stake) || parseFloat(stake) <= 0}
+            className="spin-button"
+            aria-label={spinning ? 'Spinning, please wait' : 'Spin the wheel'}
+          >
+            {spinning ? (
+              <span className="loading-spinner">Spinning...</span>
+            ) : (
+              'Spin'
+            )}
+          </button>
+          <button
+            onClick={handleReset}
+            disabled={spinning}
+            className="reset-button"
+            aria-label="Reset the game"
+          >
+            Reset
+          </button>
+        </div>
       </div>
-
       {result && (
-        <div className="result">
-          <h2>🎉 Result: {result}</h2>
-          <h3>Payout: ${payout}</h3>
+        <div
+          className={`result ${
+            parseFloat(result) === 0 ? 'lost' : 'won'
+          }`}
+          role="alert"
+          aria-live="polite"
+        >
+          <button
+            className="result-close"
+            onClick={() => setResult(null)}
+            aria-label="Close result notification"
+          >
+            ×
+          </button>
+          <div className="result-header">
+            {parseFloat(result) === 0 ? (
+              <span className="result-icon">😔 You Lost</span>
+            ) : (
+              <span className="result-icon">🎉 You Won!</span>
+            )}
+          </div>
+          <div className="result-detail">Multiplier: {result}</div>
+          <div className="result-payout">
+            Payout: ${payout}
+          </div>
         </div>
       )}
     </div>
   );
 }
+
+export default SpinningWheelGame;
