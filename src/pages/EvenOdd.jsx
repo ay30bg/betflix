@@ -596,7 +596,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import '../styles/game.css';
+import '../styles/even-odd.css';
 
 const multipliers = ["0x", "1x", "1.85x", "2.5x", "6.8x", "10x"];
 const degreesPerSegment = 360 / multipliers.length;
