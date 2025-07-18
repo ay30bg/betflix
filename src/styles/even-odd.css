@@ -1,7 +1,5 @@
-/* even-odd.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* Global Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -22,7 +20,7 @@ body {
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
-  margin: 50px auto; /* Add this line to center horizontally */
+  margin: 50px auto;
 }
 
 .wheel-wrapper {
@@ -46,7 +44,6 @@ body {
   position: absolute;
   width: 50%;
   height: 50%;
-  background: #00ffff20;
   transform-origin: 100% 100%;
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
   display: flex;
@@ -90,6 +87,12 @@ body {
   cursor: pointer;
   color: #111;
   font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+.controls button:hover {
+  background: #00e0e0;
+  transform: scale(1.05);
 }
 
 .controls button:disabled {
@@ -99,4 +102,24 @@ body {
 
 .result {
   margin-top: 2rem;
+  color: #fff;
+}
+
+.history {
+  margin-top: 2rem;
+  text-align: left;
+  background: #111;
+  padding: 1rem;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.history ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.history li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
