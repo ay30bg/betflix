@@ -13,8 +13,6 @@ body {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   color: #1f2937;
   line-height: 1.5;
-  display: flex;
-  justify-content: center;
 }
 
 .game-container {
@@ -24,6 +22,7 @@ body {
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
+  margin: 0 auto; /* Add this line to center horizontally */
 }
 
 .wheel-wrapper {
