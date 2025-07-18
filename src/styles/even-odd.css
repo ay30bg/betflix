@@ -1,5 +1,5 @@
 /* styles.css */
-body {
+/* body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
   background: #111;
@@ -7,7 +7,7 @@ body {
   display: flex;
   justify-content: center;
   padding: 2rem;
-}
+} */
 
 .game-container {
   max-width: 500px;
