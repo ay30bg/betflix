@@ -1,13 +1,13 @@
 /* styles.css */
-/* body {
+body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background: #111;
+/*   background: #111; */
   color: #fff;
   display: flex;
   justify-content: center;
   padding: 2rem;
-} */
+}
 
 .game-container {
   max-width: 500px;
