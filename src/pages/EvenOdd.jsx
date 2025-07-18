@@ -31,6 +31,7 @@ export default function SpinningWheelGame() {
   };
 
   return (
+  <div className="game-page">
    <Header />
     <div className="game-container">
       <h1>🎡 Spinning Wheel Game</h1>
@@ -72,5 +73,6 @@ export default function SpinningWheelGame() {
         </div>
       )}
     </div>
+  </div>
   );
 }
