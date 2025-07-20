@@ -136,23 +136,21 @@ body {
 
 body {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
   color: #fff;
 }
 
 .game-container {
-  width: 100%;
   max-width: 500px;
+  text-align: center;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-radius: 20px;
   padding: 2rem;
-  margin: 2rem;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  margin: 2rem auto 1rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  text-align: center;
 }
 
 .wheel-wrapper {
@@ -207,31 +205,18 @@ body {
 }
 
 @keyframes pulse {
-  0% { transform: translateX(-50%) scale(1); }
+  0%, 100% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.2); }
-  100% { transform: translateX(-50%) scale(1); }
 }
 
 .controls {
   margin-top: 1.5rem;
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
-.controls input {
-  padding: 0.75rem 1rem;
-  border: 1px solid #00ffff;
-  background: #111;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 1rem;
-  width: 140px;
-  outline: none;
-}
-
-.controls button {
+.spin-btn {
+  width: 220px;
   padding: 0.75rem 1.5rem;
   background: linear-gradient(to right, #00ffff, #00e0e0);
   border: none;
@@ -243,12 +228,12 @@ body {
   transition: all 0.2s ease;
 }
 
-.controls button:hover {
+.spin-btn:hover {
   background: linear-gradient(to right, #00e0e0, #00cfcf);
   transform: scale(1.05);
 }
 
-.controls button:disabled {
+.spin-btn:disabled {
   background: #444;
   cursor: not-allowed;
   color: #aaa;
@@ -261,14 +246,17 @@ body {
   color: #0f0;
 }
 
+/* History Section Outside Container */
 .history {
-  margin-top: 2rem;
+  margin: 1rem auto 2rem;
   text-align: left;
   background: rgba(0, 0, 0, 0.4);
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   border-radius: 10px;
   color: #fff;
   font-size: 0.95rem;
+  max-width: 500px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .history ul {
@@ -282,6 +270,7 @@ body {
   padding-bottom: 0.25rem;
 }
 
+/* Modal */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -368,4 +357,3 @@ body {
   background: #ff4444;
   color: #fff;
 }
-
