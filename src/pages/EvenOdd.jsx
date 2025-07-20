@@ -126,13 +126,26 @@ export default function SpinningWheelGame() {
   const [stake, setStake] = useState(0);
   const [payout, setPayout] = useState(null);
   const [history, setHistory] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [tempStake, setTempStake] = useState("");
 
   const { width, height } = useWindowSize();
   const showConfetti = result && parseFloat(result) >= 2.5;
 
-  const handleSpin = () => {
-    if (!stake || spinning) return;
+  const handleSpinStart = () => {
+    setShowModal(true);
+    setTempStake("");
+  };
 
+  const confirmStakeAndSpin = () => {
+    const chosenStake = parseFloat(tempStake);
+    if (!chosenStake || chosenStake <= 0) return;
+    setStake(chosenStake);
+    setShowModal(false);
+    triggerSpin(chosenStake);
+  };
+
+  const triggerSpin = (stakeValue) => {
     setSpinning(true);
     const randomIndex = Math.floor(Math.random() * multipliers.length);
     const spins = 6;
@@ -142,12 +155,12 @@ export default function SpinningWheelGame() {
     setTimeout(() => {
       const multiplier = parseFloat(multipliers[randomIndex]);
       const spinResult = multipliers[randomIndex];
-      const calculatedPayout = (stake * multiplier).toFixed(2);
+      const calculatedPayout = (stakeValue * multiplier).toFixed(2);
 
       setResult(spinResult);
       setPayout(calculatedPayout);
       setHistory((prev) => [
-        { stake, result: spinResult, payout: calculatedPayout },
+        { stake: stakeValue, result: spinResult, payout: calculatedPayout },
         ...prev,
       ]);
       setSpinning(false);
@@ -184,13 +197,7 @@ export default function SpinningWheelGame() {
         </div>
 
         <div className="controls">
-          <input
-            type="number"
-            placeholder="Enter stake"
-            value={stake}
-            onChange={(e) => setStake(parseFloat(e.target.value))}
-          />
-          <button onClick={handleSpin} disabled={spinning}>
+          <button onClick={handleSpinStart} disabled={spinning}>
             {spinning ? "Spinning..." : "Spin"}
           </button>
         </div>
@@ -208,14 +215,39 @@ export default function SpinningWheelGame() {
             <ul>
               {history.slice(0, 5).map((entry, index) => (
                 <li key={index}>
-                  Stake: ${entry.stake} | Result: {entry.result} | Payout: $
-                  {entry.payout}
+                  Stake: ${entry.stake} | Result: {entry.result} | Payout: ${entry.payout}
                 </li>
               ))}
             </ul>
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h2>Enter Your Stake</h2>
+            <input
+              type="number"
+              placeholder="e.g. 100"
+              value={tempStake}
+              onChange={(e) => setTempStake(e.target.value)}
+            />
+            <div className="suggested-buttons">
+              {[100, 200, 500, 1000].map((val) => (
+                <button key={val} onClick={() => setTempStake(val)}>
+                  {val}
+                </button>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button className="confirm" onClick={confirmStakeAndSpin}>Confirm</button>
+              <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
