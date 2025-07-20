@@ -139,9 +139,6 @@ body {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
   color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .game-container {
