@@ -109,7 +109,7 @@
 //   );
 // }
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import { useWindowSize } from "@uidotdev/usehooks";
@@ -119,6 +119,10 @@ import "../styles/even-odd.css";
 const multipliers = ["0x", "1x", "1.85x", "2.5x", "6.8x", "10x", "54x"];
 const degreesPerSegment = 360 / multipliers.length;
 
+const colorfulSegmentColors = [
+  "#ff6b6b", "#6bc1ff", "#6bff95", "#f5c542", "#a66bff", "#ff8c42", "#42fff2"
+];
+
 export default function SpinningWheelGame() {
   const [spinning, setSpinning] = useState(false);
   const [angle, setAngle] = useState(0);
@@ -126,13 +130,26 @@ export default function SpinningWheelGame() {
   const [stake, setStake] = useState(0);
   const [payout, setPayout] = useState(null);
   const [history, setHistory] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [tempStake, setTempStake] = useState("");
 
   const { width, height } = useWindowSize();
   const showConfetti = result && parseFloat(result) >= 2.5;
 
-  const handleSpin = () => {
-    if (!stake || spinning) return;
+  const handleSpinStart = () => {
+    setShowModal(true);
+    setTempStake("");
+  };
 
+  const confirmStakeAndSpin = () => {
+    const chosenStake = parseFloat(tempStake);
+    if (!chosenStake || chosenStake <= 0) return;
+    setStake(chosenStake);
+    setShowModal(false);
+    triggerSpin(chosenStake);
+  };
+
+  const triggerSpin = (stakeValue) => {
     setSpinning(true);
     const randomIndex = Math.floor(Math.random() * multipliers.length);
     const spins = 6;
@@ -142,34 +159,24 @@ export default function SpinningWheelGame() {
     setTimeout(() => {
       const multiplier = parseFloat(multipliers[randomIndex]);
       const spinResult = multipliers[randomIndex];
-      const calculatedPayout = (stake * multiplier).toFixed(2);
+      const calculatedPayout = (stakeValue * multiplier).toFixed(2);
 
       setResult(spinResult);
       setPayout(calculatedPayout);
       setHistory((prev) => [
-        { stake, result: spinResult, payout: calculatedPayout },
+        { stake: stakeValue, result: spinResult, payout: calculatedPayout },
         ...prev,
       ]);
       setSpinning(false);
     }, 4000);
   };
 
-  // Auto-clear result after 4s
-  useEffect(() => {
-    if (result) {
-      const timer = setTimeout(() => {
-        setResult(null);
-        setPayout(null);
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [result]);
-
   return (
     <div className="game-page">
       <Header />
+
       {showConfetti && <Confetti width={width} height={height} />}
-      
+
       <div className="game-container">
         <div className="wheel-wrapper">
           <motion.div
@@ -183,7 +190,7 @@ export default function SpinningWheelGame() {
                 className="segment"
                 style={{
                   transform: `rotate(${index * degreesPerSegment}deg)`,
-                  background: `hsl(${index * 45}, 85%, 50%)`,
+                  background: colorfulSegmentColors[index % colorfulSegmentColors.length],
                 }}
               >
                 <span>{value}</span>
@@ -194,34 +201,22 @@ export default function SpinningWheelGame() {
         </div>
 
         <div className="controls">
-          <input
-            type="number"
-            placeholder="Enter stake"
-            value={stake}
-            onChange={(e) => setStake(parseFloat(e.target.value))}
-          />
-          <button onClick={handleSpin} disabled={spinning}>
+          <button onClick={handleSpinStart} disabled={spinning} className="spin-btn">
             {spinning ? "Spinning..." : "Spin"}
           </button>
         </div>
+
+        {result && (
+          <div className="result">
+            <h2>🎉 Result: {result}</h2>
+            <h3>Payout: ${payout}</h3>
+          </div>
+        )}
       </div>
 
-      {/* Result Modal */}
-      {result && (
-        <div className="result-modal">
-          <div className="result-card">
-            <h2>🎉 Result: <span>{result}</span></h2>
-            <h3>Payout: <span>${payout}</span></h3>
-            <button className="close-btn" onClick={() => { setResult(null); setPayout(null); }}>
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* History section outside game-container */}
+      {/* History (Outside container) */}
       {history.length > 0 && (
-        <div className="history-section">
+        <div className="history">
           <h3>🎲 Spin History</h3>
           <ul>
             {history.slice(0, 5).map((entry, index) => (
@@ -230,6 +225,30 @@ export default function SpinningWheelGame() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h2>Enter Your Stake</h2>
+            <input
+              type="number"
+              placeholder="e.g. 100"
+              value={tempStake}
+              onChange={(e) => setTempStake(e.target.value)}
+            />
+            <div className="suggested-buttons">
+              {[100, 200, 500, 1000].map((val) => (
+                <button key={val} onClick={() => setTempStake(val)}>{val}</button>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button className="confirm" onClick={confirmStakeAndSpin}>Confirm</button>
+              <button className="cancel" onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
