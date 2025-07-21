@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import { motion } from "framer-motion";
 // import Confetti from "react-confetti";
 // import { useWindowSize } from "@uidotdev/usehooks";
@@ -24,6 +24,16 @@
 
 //   const { width, height } = useWindowSize();
 //   const showConfetti = result && parseFloat(result) >= 2.5;
+
+//   useEffect(() => {
+//     if (result) {
+//       const timer = setTimeout(() => {
+//         setResult(null);
+//         setPayout(null);
+//       }, 5000);
+//       return () => clearTimeout(timer);
+//     }
+//   }, [result]);
 
 //   const handleSpinStart = () => {
 //     setShowModal(true);
@@ -103,7 +113,6 @@
 //         )}
 //       </div>
 
-//       {/* History (Outside container) */}
 //       {history.length > 0 && (
 //         <div className="history">
 //           <h3>🎲 Spin History</h3>
@@ -117,7 +126,6 @@
 //         </div>
 //       )}
 
-//       {/* Modal */}
 //       {showModal && (
 //         <div className="modal-backdrop">
 //           <div className="modal">
@@ -246,18 +254,19 @@ export default function SpinningWheelGame() {
           <div className="pointer">▼</div>
         </div>
 
-        <div className="controls">
-          <button onClick={handleSpinStart} disabled={spinning} className="spin-btn">
-            {spinning ? "Spinning..." : "Spin"}
-          </button>
-        </div>
-
+        {/* Moved result here */}
         {result && (
           <div className="result">
             <h2>🎉 Result: {result}</h2>
             <h3>Payout: ${payout}</h3>
           </div>
         )}
+
+        <div className="controls">
+          <button onClick={handleSpinStart} disabled={spinning} className="spin-btn">
+            {spinning ? "Spinning..." : "Spin"}
+          </button>
+        </div>
       </div>
 
       {history.length > 0 && (
@@ -298,3 +307,4 @@ export default function SpinningWheelGame() {
     </div>
   );
 }
+
