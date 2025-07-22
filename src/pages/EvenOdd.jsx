@@ -99,30 +99,41 @@
 //           <div className="pointer">▼</div>
 //         </div>
 
-//         <div className="controls">
-//           <button onClick={handleSpinStart} disabled={spinning} className="spin-btn">
-//             {spinning ? "Spinning..." : "Spin"}
-//           </button>
-//         </div>
-
 //         {result && (
 //           <div className="result">
 //             <h2>🎉 Result: {result}</h2>
 //             <h3>Payout: ${payout}</h3>
 //           </div>
 //         )}
+
+//         <div className="controls">
+//           <button onClick={handleSpinStart} disabled={spinning} className="spin-btn">
+//             {spinning ? "Spinning..." : "Spin"}
+//           </button>
+//         </div>
 //       </div>
 
 //       {history.length > 0 && (
 //         <div className="history">
 //           <h3>🎲 Spin History</h3>
-//           <ul>
-//             {history.slice(0, 5).map((entry, index) => (
-//               <li key={index}>
-//                 Stake: ${entry.stake} | Result: {entry.result} | Payout: ${entry.payout}
-//               </li>
-//             ))}
-//           </ul>
+//           <table className="history-table">
+//             <thead>
+//               <tr>
+//                 <th>Stake</th>
+//                 <th>Result</th>
+//                 <th>Payout</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {history.slice(0, 5).map((entry, index) => (
+//                 <tr key={index}>
+//                   <td>${entry.stake}</td>
+//                   <td>{entry.result}</td>
+//                   <td>${entry.payout}</td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
 //         </div>
 //       )}
 
@@ -176,6 +187,7 @@ export default function SpinningWheelGame() {
   const [history, setHistory] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [tempStake, setTempStake] = useState("");
+  const [highestWin, setHighestWin] = useState(0);
 
   const { width, height } = useWindowSize();
   const showConfetti = result && parseFloat(result) >= 2.5;
@@ -221,6 +233,9 @@ export default function SpinningWheelGame() {
         { stake: stakeValue, result: spinResult, payout: calculatedPayout },
         ...prev,
       ]);
+      if (multiplier > highestWin) {
+        setHighestWin(multiplier);
+      }
       setSpinning(false);
     }, 4000);
   };
@@ -232,6 +247,23 @@ export default function SpinningWheelGame() {
       {showConfetti && <Confetti width={width} height={height} />}
 
       <div className="game-container">
+        {/* Jackpot (Highest Multiplier) Display */}
+        <div className="jackpot-alert">
+          🏆 Highest Multiplier So Far: {highestWin}x
+        </div>
+
+        {/* How to Play */}
+        <details className="how-to-play">
+          <summary>📖 How to Play</summary>
+          <p style={{ marginTop: "0.5rem" }}>
+            1. Enter your stake amount.<br />
+            2. Click <strong>Spin</strong> to start the wheel.<br />
+            3. The segment it lands on determines your <strong>multiplier</strong> and payout.<br />
+            4. Win more by hitting higher multipliers like <strong>6.8x</strong> or <strong>54x!</strong>
+          </p>
+        </details>
+
+        {/* Wheel */}
         <div className="wheel-wrapper">
           <motion.div
             className="wheel"
