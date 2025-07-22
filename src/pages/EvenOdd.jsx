@@ -81,12 +81,7 @@ export default function SpinningWheelGame() {
       {showConfetti && <Confetti width={width} height={height} />}
 
       <div className="game-container">
-        {/* Jackpot (Highest Multiplier) Display */}
-        <div className="jackpot-alert">
-          🏆 Highest Multiplier So Far: {highestWin}x
-        </div>
-
-        {/* How to Play */}
+       {/* How to Play */}
         <details className="how-to-play">
           <summary>📖 How to Play</summary>
           <p style={{ marginTop: "0.5rem" }}>
