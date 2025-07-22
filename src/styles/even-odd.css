@@ -14,7 +14,7 @@ body {
 }
 
 .game-container {
-  max-width: 600px;
+  max-width: 500px;
   width: 100%;
   text-align: center;
   background: #ffffff;
@@ -169,13 +169,14 @@ body {
 }
  */
 
+/* History Section with Table */
 .history {
   margin: 1.5rem auto 2rem;
   background: #ffffff;
   backdrop-filter: blur(16px);
   border-radius: 12px;
   padding: 2rem;
-  max-width: 600px;
+  max-width: 500px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #333;
@@ -189,21 +190,34 @@ body {
   text-align: center;
 }
 
-.history ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 
-.history li {
+.history-table th,
+.history-table td {
   padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  background: #f5f7fa;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.history-table th {
+  background-color: #eef2f8;
+  color: #1e3a8a;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.history-table td {
+  background-color: #f9fafb;
+  color: #333;
   font-weight: 500;
-  color: #222;
+}
+
+.history-table tr:last-child td {
+  border-bottom: none;
 }
 
 
