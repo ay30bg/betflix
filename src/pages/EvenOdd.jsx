@@ -254,7 +254,6 @@ export default function SpinningWheelGame() {
           <div className="pointer">▼</div>
         </div>
 
-        {/* Moved result here */}
         {result && (
           <div className="result">
             <h2>🎉 Result: {result}</h2>
@@ -272,13 +271,24 @@ export default function SpinningWheelGame() {
       {history.length > 0 && (
         <div className="history">
           <h3>🎲 Spin History</h3>
-          <ul>
-            {history.slice(0, 5).map((entry, index) => (
-              <li key={index}>
-                Stake: ${entry.stake} | Result: {entry.result} | Payout: ${entry.payout}
-              </li>
-            ))}
-          </ul>
+          <table className="history-table">
+            <thead>
+              <tr>
+                <th>Stake</th>
+                <th>Result</th>
+                <th>Payout</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.slice(0, 5).map((entry, index) => (
+                <tr key={index}>
+                  <td>${entry.stake}</td>
+                  <td>{entry.result}</td>
+                  <td>${entry.payout}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -307,4 +317,3 @@ export default function SpinningWheelGame() {
     </div>
   );
 }
-
